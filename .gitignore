@@ -1,0 +1,17 @@
+# Dependências
+node_modules/
+
+# Segredos (banco de dados, senhas)
+.env
+
+# Arquivos enviados pelos alunos
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Sistema
+*.log
+.DS_Store
+
+# Banco PostgreSQL local (modo desenvolvimento)
+.pglocal/
+backend/.pglocal/

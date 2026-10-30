@@ -1,0 +1,33 @@
+{
+  "name": "sistemax",
+  "version": "1.0.0",
+  "description": "Sistema de entrega de trabalhos escolares estilo Google Classroom — alunos enviam trabalhos direto para o professor de cada matéria.",
+  "main": "servidor.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node backend/servidor.js",
+    "dev": "node --watch backend/servidor.js",
+    "criar-banco": "node backend/src/criarBanco.js"
+  },
+  "keywords": [
+    "escola",
+    "trabalhos",
+    "classroom",
+    "express",
+    "postgresql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^16.6.1",
+    "embedded-postgres": "^17.10.0-beta.17",
+    "express": "^5.3.0",
+    "express-session": "^1.19.0",
+    "multer": "^2.5.0",
+    "pg": "^8.23.1"
+  },
+  "allowScripts": {
+    "@embedded-postgres/windows-x64@17.10.0-beta.17": true
+  }
+}
