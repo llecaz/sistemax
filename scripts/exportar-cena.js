@@ -1,6 +1,10 @@
-/** Gera a ilustração do calendário como PNG transparente (2×) usando o Edge headless.
- *  Uso: node scripts/exportar-cena.js
- *  Saída: frontend/img/calendario-cena.png
+/** Gera a ilustração do calendário como PNG transparente usando o Edge headless.
+ *
+ *  Uso:
+ *    node scripts/exportar-cena.js
+ *    node scripts/exportar-cena.js --largura=1280 --altura=600 --sem-sombra --saida=calendario-cena-grande.png
+ *
+ *  Saída padrão: frontend/img/calendario-cena.png (640×300, 2×)
  */
 const fs = require('fs');
 const path = require('path');
@@ -8,10 +12,29 @@ const { execFileSync } = require('child_process');
 const raiz = path.join(__dirname, '..');
 const { ilustracaoCalendario } = require(path.join(raiz, 'backend', 'src', 'paginas', 'ilustracoes'));
 
-const LARGURA = 640;
-const ALTURA = 300;
+/** Lê `--chave=valor` dos argumentos. */
+function opcoes(argv) {
+  const o = {};
+  argv.forEach((arg) => {
+    const m = arg.match(/^--([^=]+)=(.+)$/);
+    if (m) o[m[1]] = m[2];
+    else if (arg.startsWith('--')) o[arg.slice(2)] = true;
+  });
+  return o;
+}
+
+const opt = opcoes(process.argv.slice(2));
+const LARGURA = Number(opt.largura) || 640;
+const ALTURA = Number(opt.altura) || Math.round((LARGURA * 300) / 640);
+const SEM_SOMBRA = Boolean(opt['sem-sombra']);
+const arquivo = String(opt.saida || 'calendario-cena.png');
+
 const pasta = path.join(raiz, 'frontend', 'img');
 fs.mkdirSync(pasta, { recursive: true });
+
+// A cena é desenhada em 320×150; omitir o elemento "sombra" remove a elipse do chão.
+let cena = ilustracaoCalendario();
+if (SEM_SOMBRA) cena = cena.replace(/<ellipse class="cena-sombra"[^>]*\/>/, '');
 
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>
 html,body{margin:0;padding:0;width:${LARGURA}px;height:${ALTURA}px;background:transparent;overflow:hidden}
@@ -29,13 +52,13 @@ svg{display:block;width:${LARGURA}px;height:${ALTURA}px}
 .folha{fill:#8fbc8a}.folha-clara{fill:#a9cfa2}
 .vaso{fill:#e0a189}.vaso-borda{fill:#cf8b72}
 .brilho{fill:#e0a83e;opacity:.85}
-</style></head><body>${ilustracaoCalendario()}</body></html>`;
+</style></head><body>${cena}</body></html>`;
 
 const htmlPath = path.join(raiz, '_cena.html');
 fs.writeFileSync(htmlPath, html);
 
 const edge = process.env.EDGE_PATH || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-const destino = path.join(pasta, 'calendario-cena.png');
+const destino = path.join(pasta, arquivo);
 execFileSync(
   edge,
   [
@@ -50,4 +73,8 @@ execFileSync(
   { stdio: 'ignore' }
 );
 fs.unlinkSync(htmlPath);
-console.log('PNG gerado:', destino, fs.statSync(destino).size, 'bytes');
+console.log(
+  `PNG gerado: ${destino} (${LARGURA}×${ALTURA}${SEM_SOMBRA ? ', sem sombra' : ', com sombra'}) —`,
+  fs.statSync(destino).size,
+  'bytes'
+);
