@@ -116,6 +116,15 @@ function tamanhoLegivel(bytes) {
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+/** Domínio legível de um link entregue: "https://drive.google.com/..." → "drive.google.com". */
+function dominioLink(valor) {
+  try {
+    return new URL(String(valor)).hostname.replace(/^www\./, '');
+  } catch {
+    return 'link entregue';
+  }
+}
+
 module.exports = {
   esc,
   dataBR,
@@ -127,4 +136,5 @@ module.exports = {
   iniciais,
   corDe,
   tamanhoLegivel,
+  dominioLink,
 };

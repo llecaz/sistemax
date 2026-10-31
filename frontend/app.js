@@ -210,6 +210,45 @@
     return (bytes / 1048576).toFixed(1) + ' MB';
   }
 
+  /* ---------- Abas do envio (arquivo / link / drive) ---------- */
+  document.addEventListener('click', function (evento) {
+    var aba = evento.target.closest('[data-envio-aba]');
+    if (!aba) return;
+    var bloco = aba.closest('.bloco-envio');
+    if (!bloco) return;
+    var qual = aba.getAttribute('data-envio-aba');
+
+    bloco.querySelectorAll('[data-envio-aba]').forEach(function (b) {
+      var ativa = b === aba;
+      b.classList.toggle('ativa', ativa);
+      b.setAttribute('aria-selected', ativa ? 'true' : 'false');
+    });
+
+    // Painéis: mostra o escolhido e desabilita os campos dos outros
+    // (senão o "required" dos campos ocultos impediria o envio)
+    bloco.querySelectorAll('[data-envio-painel]').forEach(function (painel) {
+      var ativo = painel.getAttribute('data-envio-painel') === qual;
+      painel.classList.toggle('ativo', ativo);
+      painel.querySelectorAll('input, button, select, textarea').forEach(function (campo) {
+        if (ativo) {
+          campo.removeAttribute('disabled');
+        } else {
+          campo.setAttribute('disabled', 'disabled');
+        }
+      });
+    });
+
+    // Informa ao servidor o método escolhido
+    var oculto = bloco.querySelector('[data-metodo-envio]');
+    if (oculto) oculto.value = qual;
+  });
+
+  // Ao carregar a página, deixa os painéis iniciais consistentes
+  document.querySelectorAll('.bloco-envio').forEach(function (bloco) {
+    var ativa = bloco.querySelector('[data-envio-aba].ativa') || bloco.querySelector('[data-envio-aba]');
+    if (ativa) ativa.click();
+  });
+
   /* ---------- Confirmações (excluir, gerar código...) ---------- */
   document.addEventListener('submit', function (evento) {
     var form = evento.target;
@@ -218,7 +257,7 @@
       evento.preventDefault();
       return;
     }
-    var botao = form.querySelector('button[type="submit"]');
+    var botao = evento.submitter || form.querySelector('button[type="submit"]');
     if (botao && !form.classList.contains('form-correcao') && form.id !== 'form-tema') {
       botao.classList.add('carregando');
       botao.disabled = true;

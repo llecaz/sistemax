@@ -3,6 +3,7 @@ const express = require('express');
 const { um, todos, query } = require('../db');
 const { exigePerfil } = require('../auth');
 const { gradeProfessor, paginaMateriaProfessor, paginaAtividadeProfessor } = require('../paginas/professor');
+const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
 
 const router = express.Router();
@@ -11,6 +12,56 @@ router.use(exigePerfil('professor'));
 function flash(req, tipo, texto) {
   req.session.flash = [{ tipo, texto }];
 }
+
+/** Calendário escolar do professor: trabalhos e avaliações das matérias. */
+router.get('/calendario', async (req, res) => {
+  try {
+    const usuario = req.session.usuario;
+    const agora = new Date();
+    const ano = Number(req.query.ano) || agora.getFullYear();
+    const mes = Math.min(11, Math.max(0, (Number(req.query.mes) || agora.getMonth() + 1) - 1));
+
+    const [eventos, materias] = await Promise.all([
+      todos(
+        `SELECT a.id, a.titulo, a.descricao, a.prazo, a.tipo, td.id AS vinculo_id,
+                d.nome AS materia, t.nome AS turma,
+                (SELECT count(*) FROM entregas e WHERE e.atividade_id = a.id) AS total_entregas,
+                (SELECT count(*) FROM entregas e WHERE e.atividade_id = a.id AND e.nota IS NOT NULL) AS corrigidas,
+                (SELECT count(*) FROM usuarios u WHERE u.turma_id = td.turma_id AND u.tipo = 'aluno' AND u.ativo) AS alunos_turma
+           FROM atividades a
+           JOIN turma_disciplina td ON td.id = a.vinculo_id
+           JOIN disciplinas d ON d.id = td.disciplina_id
+           JOIN turmas t ON t.id = td.turma_id
+          WHERE a.professor_id = $1 AND a.ativa
+          ORDER BY (a.prazo IS NULL), a.prazo`,
+        [usuario.id]
+      ),
+      todos(
+        `SELECT td.id AS vinculo_id, d.nome AS materia, t.nome AS turma
+           FROM turma_disciplina td
+           JOIN disciplinas d ON d.id = td.disciplina_id
+           JOIN turmas t ON t.id = td.turma_id
+          WHERE td.professor_id = $1
+          ORDER BY t.nome, d.nome`,
+        [usuario.id]
+      ),
+    ]);
+
+    res.send(
+      pagina({
+        titulo: 'Calendário do mês',
+        usuario,
+        req,
+        ativa: 'calendario',
+        corpo: paginaCalendario({ usuario, eventos, ano, mes, professor: true, materias }),
+      })
+    );
+  } catch (erro) {
+    console.error('[prof/calendario]', erro);
+    flash(req, 'erro', 'Não foi possível carregar o calendário.');
+    res.redirect('/professor');
+  }
+});
 
 /** Matérias que o professor leciona (por turma). */
 router.get('/', async (req, res) => {
@@ -31,7 +82,7 @@ router.get('/', async (req, res) => {
       [usuario.id]
     );
     res.send(
-      pagina({ titulo: 'Minhas matérias', usuario, req, corpo: gradeProfessor({ usuario, materias }) })
+      pagina({ titulo: 'Minhas matérias', usuario, req, ativa: 'inicio', corpo: gradeProfessor({ usuario, materias }) })
     );
   } catch (erro) {
     console.error('[prof/home]', erro);
@@ -62,7 +113,7 @@ router.get('/materia/:id', async (req, res) => {
     }
 
     const atividades = await todos(
-      `SELECT a.id, a.titulo, a.descricao, a.prazo, a.criado_em,
+      `SELECT a.id, a.titulo, a.descricao, a.prazo, a.criado_em, a.tipo,
               (SELECT count(*) FROM entregas e WHERE e.atividade_id = a.id) AS total_entregas,
               (SELECT count(*) FROM entregas e WHERE e.atividade_id = a.id AND e.nota IS NOT NULL) AS corrigidas,
               (SELECT count(*) FROM usuarios u WHERE u.turma_id = $2 AND u.tipo = 'aluno' AND u.ativo) AS alunos_turma
@@ -77,6 +128,7 @@ router.get('/materia/:id', async (req, res) => {
         titulo: materia.materia,
         usuario,
         req,
+        ativa: 'inicio',
         corpo: paginaMateriaProfessor({ materia, atividades, aba }),
       })
     );
@@ -95,10 +147,14 @@ router.post('/atividade', async (req, res) => {
     const titulo = String(req.body.titulo || '').trim();
     const descricao = String(req.body.descricao || '').trim();
     const prazo = req.body.prazo ? new Date(req.body.prazo) : null;
+    const tipo = ['trabalho', 'avaliacao', 'tarefa', 'projeto', 'evento'].includes(req.body.tipo)
+      ? req.body.tipo
+      : 'trabalho';
+    const voltarCalendario = req.body.voltar === 'calendario';
 
     if (!titulo) {
       flash(req, 'erro', 'Dê um título à atividade.');
-      return res.redirect('/professor');
+      return res.redirect(voltarCalendario ? '/professor/calendario' : '/professor');
     }
 
     const vinculo = await um(
@@ -111,13 +167,20 @@ router.post('/atividade', async (req, res) => {
     }
 
     await query(
-      `INSERT INTO atividades (vinculo_id, professor_id, titulo, descricao, prazo)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [vinculoId, usuario.id, titulo, descricao, prazo && !Number.isNaN(prazo.getTime()) ? prazo : null]
+      `INSERT INTO atividades (vinculo_id, professor_id, titulo, descricao, prazo, tipo)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [vinculoId, usuario.id, titulo, descricao, prazo && !Number.isNaN(prazo.getTime()) ? prazo : null, tipo]
     );
 
-    flash(req, 'ok', 'Atividade publicada! Os alunos já podem entregar.');
-    res.redirect(`/professor/materia/${vinculoId}`);
+    const mensagens = {
+      trabalho: 'Trabalho publicado! Os alunos já podem entregar.',
+      avaliacao: 'Prova marcada! Ela aparece no calendário dos alunos.',
+      tarefa: 'Tarefa/quiz marcada no calendário.',
+      projeto: 'Projeto marcado no calendário.',
+      evento: 'Evento adicionado ao calendário.',
+    };
+    flash(req, 'ok', mensagens[tipo]);
+    res.redirect(voltarCalendario ? '/professor/calendario' : `/professor/materia/${vinculoId}`);
   } catch (erro) {
     console.error('[prof/atividade]', erro);
     flash(req, 'erro', 'Não foi possível publicar a atividade.');
@@ -172,7 +235,7 @@ router.get('/atividade/:id', async (req, res) => {
     const alunos = await todos(
       `SELECT u.id, u.nome, u.email,
               e.id AS entrega_id, e.arquivo_nome, e.arquivo_tamanho, e.enviado_em,
-              e.nota, e.observacao, e.corrigido_em
+              e.nota, e.observacao, e.corrigido_em, e.link, e.metodo
          FROM usuarios u
          LEFT JOIN entregas e ON e.aluno_id = u.id AND e.atividade_id = $1
         WHERE u.turma_id = $2 AND u.tipo = 'aluno' AND u.ativo
@@ -190,6 +253,7 @@ router.get('/atividade/:id', async (req, res) => {
         titulo: atividade.titulo,
         usuario,
         req,
+        ativa: 'inicio',
         corpo: paginaAtividadeProfessor({ materia, atividade, alunos }),
       })
     );

@@ -63,6 +63,16 @@ CREATE TABLE IF NOT EXISTS atividades (
 );
 CREATE INDEX IF NOT EXISTS idx_atividade_vinculo ON atividades(vinculo_id);
 
+-- Tipo da atividade: trabalho (entrega), avaliacao/prova, tarefa/quiz,
+-- projeto ou evento. Os três últimos são marcações de calendário.
+ALTER TABLE atividades ADD COLUMN IF NOT EXISTS tipo TEXT NOT NULL DEFAULT 'trabalho';
+DO $$
+BEGIN
+  ALTER TABLE atividades DROP CONSTRAINT IF EXISTS atividades_tipo_check;
+  ALTER TABLE atividades ADD CONSTRAINT atividades_tipo_check
+    CHECK (tipo IN ('trabalho','avaliacao','tarefa','projeto','evento'));
+END $$;
+
 -- Entrega do aluno (uma por atividade; reenvio substitui enquanto não corrigida)
 CREATE TABLE IF NOT EXISTS entregas (
   id             SERIAL PRIMARY KEY,
@@ -72,6 +82,8 @@ CREATE TABLE IF NOT EXISTS entregas (
   arquivo        TEXT,                              -- nome do arquivo no disco
   arquivo_tipo   TEXT,
   arquivo_tamanho BIGINT,
+  link           TEXT,                              -- entrega via link (Drive, site, Docs...)
+  metodo         TEXT        NOT NULL DEFAULT 'arquivo' CHECK (metodo IN ('arquivo','link','drive')),
   enviado_em     TIMESTAMPTZ NOT NULL DEFAULT now(),
   nota           NUMERIC(6,2),
   observacao     TEXT         NOT NULL DEFAULT '',
@@ -79,6 +91,18 @@ CREATE TABLE IF NOT EXISTS entregas (
   UNIQUE (atividade_id, aluno_id)
 );
 CREATE INDEX IF NOT EXISTS idx_entrega_aluno ON entregas(aluno_id);
+
+-- Migrações de colunas novas (tabelas já existentes ignoram o CREATE TABLE acima)
+ALTER TABLE entregas ADD COLUMN IF NOT EXISTS link TEXT;                          -- entrega via link (Drive, site, Docs...)
+ALTER TABLE entregas ADD COLUMN IF NOT EXISTS metodo TEXT NOT NULL DEFAULT 'arquivo';
+-- Corrige o domínio de valores aceitos (arquivo/link/drive) de forma segura
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'entregas_metodo_check') THEN
+    ALTER TABLE entregas ADD CONSTRAINT entregas_metodo_check
+      CHECK (metodo IN ('arquivo','link','drive'));
+  END IF;
+END $$;
 
 -- Sessões (usado pelo express-session + connect-pg-simple)
 CREATE TABLE IF NOT EXISTS session (

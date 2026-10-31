@@ -1,6 +1,7 @@
 /** Páginas do aluno: grade de matérias e trabalhos da matéria (com abas). */
-const { esc, dataBR, dataHoraBR, decorrido, corDe, tamanhoLegivel } = require('../util');
+const { esc, dataBR, dataHoraBR, decorrido, corDe, tamanhoLegivel, dominioLink } = require('../util');
 const { classificar, abasDe, ROTULOS_ABA } = require('../regras');
+const { TIPOS } = require('./calendario');
 
 function avatarProfessor(nome) {
   if (!nome) return `<span class="avatar pequeno"><span style="background:#9aa0a6">?</span></span>`;
@@ -78,33 +79,92 @@ function blocoEntrega(a, s) {
       </div>
     </div>`;
   }
+  const detalhe =
+    a.metodo === 'link' && a.link
+      ? `<a class="arquivo-enviado link-entrega" href="${esc(a.link)}" target="_blank" rel="noopener noreferrer">
+           🔗 ${esc(dominioLink(a.link))} · abrir link entregue
+         </a>`
+      : `<span class="arquivo-enviado">${esc(a.arquivo_nome || '')} · ${tamanhoLegivel(a.arquivo_tamanho)}</span>`;
   return `
   <div class="entregue-em">
     <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
     <span>Entregue <strong>${decorrido(a.enviado_em)}</strong> (${dataHoraBR(a.enviado_em)})</span>
-    <span class="arquivo-enviado">${esc(a.arquivo_nome || '')} · ${tamanhoLegivel(a.arquivo_tamanho)}</span>
+    ${detalhe}
   </div>`;
 }
 
-function blocoAcoes(a, s, vinculoId) {
+/** Categorias de arquivo que o aluno pode enviar. */
+const CATEGORIAS_ARQUIVO = [
+  ['📄', 'Documentos', '.pdf, .doc, .docx, .txt'],
+  ['📊', 'Planilhas', '.xls, .xlsx'],
+  ['📽️', 'Apresentações', '.ppt, .pptx'],
+  ['🖼️', 'Imagens', '.jpg, .jpeg, .png'],
+];
+
+function blocoAcoes(a, s) {
   const temNota = s.corrigido;
   if (temNota) {
-    return `<div class="acoes-atividade">
-      <a class="btn secundario" href="/arquivos/entrega/${a.entrega_id}">Baixar meu arquivo</a>
-    </div>`;
+    const botao =
+      a.metodo === 'link' && a.link
+        ? `<a class="btn secundario" href="${esc(a.link)}" target="_blank" rel="noopener noreferrer">Abrir meu link</a>`
+        : `<a class="btn secundario" href="/arquivos/entrega/${a.entrega_id}">Baixar meu arquivo</a>`;
+    return `<div class="acoes-atividade">${botao}</div>`;
   }
   const fora = s.foraDoPrazo;
-  const rotulo = s.temEntrega ? 'Reenviar arquivo' : fora ? 'Entregar atrasado' : 'Entregar trabalho';
+  const rotulo = s.temEntrega ? 'Reenviar' : fora ? 'Entregar atrasado' : 'Entregar trabalho';
+  const chips = CATEGORIAS_ARQUIVO.map(
+    ([icone, nome, ext]) => `<li class="chip-arquivo" title="${esc(ext)}"><span>${icone}</span>${esc(nome)}</li>`
+  ).join('');
+
   return `
-  <form class="form-entrega" method="post" action="/aluno/entregar/${a.id}" enctype="multipart/form-data"
-        data-limite="15728640">
-    <label class="seletor-arquivo">
-      <input type="file" name="arquivo" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.txt" required>
-      <span class="btn ${s.temEntrega ? 'secundario' : 'primario'}">${rotulo}</span>
-      <span class="nome-arquivo"></span>
-    </label>
-    <button class="btn primario ocultar" type="submit">Enviar</button>
-  </form>`;
+  <div class="bloco-envio">
+    <nav class="abas-envio" role="tablist" aria-label="Formas de entrega">
+      <button class="aba-envio ativa" type="button" role="tab" aria-selected="true" data-envio-aba="arquivo">📎 Arquivo</button>
+      <button class="aba-envio" type="button" role="tab" aria-selected="false" data-envio-aba="link">🔗 Link</button>
+      <button class="aba-envio" type="button" role="tab" aria-selected="false" data-envio-aba="drive">☁️ Drive</button>
+    </nav>
+
+    <form class="form-entrega" method="post" action="/aluno/entregar/${a.id}" enctype="multipart/form-data"
+          data-limite="15728640">
+      <input type="hidden" name="metodo" value="arquivo" data-metodo-envio>
+
+      <!-- Painel: arquivo do computador -->
+      <div class="envio-painel ativo" data-envio-painel="arquivo">
+        <label class="seletor-arquivo">
+          <input type="file" name="arquivo" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.txt" required>
+          <span class="btn ${s.temEntrega ? 'secundario' : 'primario'}">${rotulo} de arquivo</span>
+          <span class="nome-arquivo"></span>
+        </label>
+        <ul class="chips-arquivo" aria-label="Tipos aceitos">
+          ${chips}
+        </ul>
+        <small class="dica-envio">Documentos, planilhas, apresentações, imagens e texto — até 15 MB.</small>
+        <button class="btn primario ocultar" type="submit">Enviar arquivo</button>
+      </div>
+
+      <!-- Painel: link avulso -->
+      <div class="envio-painel" data-envio-painel="link">
+        <div class="campo">
+          <input type="url" name="link" id="link-${a.id}" placeholder=" " maxlength="2000" required disabled
+                 pattern="https?://.+" autocomplete="off">
+          <label for="link-${a.id}">Cole o link do trabalho (site, artigo, post...)</label>
+        </div>
+        <small class="dica-envio">Use um endereço que comece com http:// ou https://.</small>
+        <button class="btn primario" type="submit" disabled>${rotulo} com link</button>
+      </div>
+
+      <!-- Painel: Google Drive -->
+      <div class="envio-painel" data-envio-painel="drive">
+        <div class="campo">
+          <input type="url" name="link" id="drive-${a.id}" placeholder=" " maxlength="2000" required disabled
+                 pattern="https?://.+" autocomplete="off">
+          <label for="drive-${a.id}">Link do arquivo no Google Drive</label>
+        </div>
+        <small class="dica-envio">No Drive: clique com o botão direito no arquivo → Compartilhar → Copiar link.</small>
+        <button class="btn primario" type="submit" disabled>${rotulo} do Drive</button>
+      </div>
+    </form>
+  </div>`;
 }
 
 function blocoPrazo(a, s) {
@@ -116,7 +176,8 @@ function blocoPrazo(a, s) {
 }
 
 function listaAtividades(atividades, aba) {
-  const visiveis = atividades.filter((a) => abasDe(a).abas.includes(aba));
+  const ehTrabalho = (a) => (a.tipo || 'trabalho') === 'trabalho';
+  const visiveis = atividades.filter((a) => (ehTrabalho(a) ? abasDe(a).abas.includes(aba) : aba === 'todos'));
   if (!visiveis.length) {
     const textos = {
       todos: ['Nenhum trabalho por aqui', 'Assim que o professor publicar uma atividade, ela aparece nesta lista.'],
@@ -134,6 +195,31 @@ function listaAtividades(atividades, aba) {
     .map((a) => {
       const { s } = abasDe(a);
       const cor = corDe(a.materia || '').claro;
+      if ((a.tipo || 'trabalho') !== 'trabalho') {
+        const info = TIPOS[a.tipo] || TIPOS.trabalho;
+        return `
+      <article class="atividade">
+        <div class="atividade-icone" style="background:${cor}">
+          <span style="font-size:20px;color:#fff">${info.icone}</span>
+        </div>
+        <div class="atividade-corpo">
+          <div class="atividade-topo">
+            <div>
+              <h3>${esc(a.titulo)}</h3>
+              <p class="atividade-professor">${avatarProfessor(a.professor)} ${esc(a.professor || 'Professor não definido')}</p>
+            </div>
+            <span class="chip avaliacao">${info.rotulo}</span>
+          </div>
+          ${a.descricao ? `<p class="atividade-descricao">${esc(a.descricao)}</p>` : ''}
+          <div class="atividade-meta">${
+            a.prazo ? `<span class="prazo">${dataHoraBR(a.prazo)}</span>` : '<span class="prazo neutro">Sem data</span>'
+          }</div>
+          <div class="atividade-rodape">
+            <a class="link-suave" href="/aluno/calendario">Ver no calendário</a>
+          </div>
+        </div>
+      </article>`;
+      }
       return `
       <article class="atividade">
         <div class="atividade-icone" style="background:${cor}">
@@ -180,6 +266,7 @@ function paginaMateria({ usuario, materia, atividades, aba }) {
   const cor = corDe(materia.materia).claro;
   const contagens = { todos: 0, 'nao-corrigidos': 0, corrigidos: 0, atrasados: 0 };
   atividades.forEach((a) => {
+    if ((a.tipo || 'trabalho') !== 'trabalho') return;
     abasDe(a).abas.forEach((x) => contagens[x]++);
   });
 

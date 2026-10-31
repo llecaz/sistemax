@@ -37,6 +37,7 @@ function itemGaveta(href, texto, ativo, icone, extra = '') {
 
 const IC = {
   casa: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 3 2 12h3v8h6v-6h2v6h6v-8h3z"/></svg>`,
+  calendario: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2m0 16H5V10h14zm0-12H5V6h14z"/></svg>`,
   engrenagem: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="m19.4 13-.1-1 .1-1 2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-1.7-1L14.9 3h-3.8l-.4 2.5c-.6.2-1.2.6-1.7 1l-2.4-1-2 3.4 2 1.6-.1 1 .1 1-2 1.6 2 3.4 2.4-1c.5.4 1.1.8 1.7 1l.4 2.5h3.8l.4-2.5c.6-.2 1.2-.6 1.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>`,
   sair: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M17 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2h-2v2H5V5h10v2zm4-2v14h-2v-2h-2v2h2v2h2v2h2v-2h2V9h-2V7h-2z"/></svg>`,
   pasta: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8z"/></svg>`,
@@ -60,15 +61,17 @@ function topo(usuario, ativa) {
   </header>`;
 }
 
-function gaveta(usuario) {
+function gaveta(usuario, ativa = '') {
   const tipo = usuario ? usuario.tipo : '';
   let itens = '';
   if (tipo === 'aluno') {
-    itens += itemGaveta('/aluno', 'Início', true, IC.casa);
-    itens += itemGaveta('/configuracoes', 'Configurações', false, IC.engrenagem);
+    itens += itemGaveta('/aluno', 'Início', ativa === 'inicio', IC.casa);
+    itens += itemGaveta('/aluno/calendario', 'Calendário do mês', ativa === 'calendario', IC.calendario);
+    itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   } else if (tipo === 'professor') {
-    itens += itemGaveta('/professor', 'Início', true, IC.casa);
-    itens += itemGaveta('/configuracoes', 'Configurações', false, IC.engrenagem);
+    itens += itemGaveta('/professor', 'Início', ativa === 'inicio', IC.casa);
+    itens += itemGaveta('/professor/calendario', 'Calendário do mês', ativa === 'calendario', IC.calendario);
+    itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   } else {
     itens += itemGaveta('/admin', 'Painel administrativo', true, IC.pasta);
     itens += itemGaveta('/configuracoes', 'Configurações', false, IC.engrenagem);
@@ -112,6 +115,42 @@ function homeDo(usuario) {
   return usuario.tipo === 'admin' ? '/admin' : usuario.tipo === 'professor' ? '/professor' : '/aluno';
 }
 
+/**
+ * Decoração e widgets exclusivos de temas — renderizados sempre no HTML e
+ * visíveis apenas quando o tema correspondente está ativo (via CSS em
+ * temas.css). Assim funcionam na pré-visualização da galeria de temas.
+ * Hoje: Lo-fi Night (rádio lo-fi) e Moonroom (cantinho da lua).
+ */
+function decoracaoTema() {
+  return `
+<div class="tema-decoracao" aria-hidden="true">
+  <!-- Lo-fi Night: cantinho com rádio lo-fi tocando -->
+  <div class="deco-lofi">
+    <div class="deco-lofi-player">
+      <span class="deco-lofi-nota">♫</span>
+      <div class="deco-lofi-textos">
+        <strong>lo-fi radio</strong>
+        <small>estudando com chuvinha ✿</small>
+      </div>
+      <span class="deco-equalizador"><i></i><i></i><i></i><i></i></span>
+    </div>
+  </div>
+  <!-- Moonroom: luminária da lua com estrelinhas -->
+  <div class="deco-moonroom">
+    <div class="deco-moonroom-widget">
+      <span class="deco-lua"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12.3 4.9a7.1 7.1 0 1 0 6.8 9.4 7.1 7.1 0 0 1-6.8-9.4"/></svg></span>
+      <div class="deco-moonroom-textos">
+        <strong>cantinho da lua</strong>
+        <small>luz suave pra focar 🌙</small>
+      </div>
+      <i class="deco-estrela e1">✦</i>
+      <i class="deco-estrela e2">✧</i>
+      <i class="deco-estrela e3">✦</i>
+    </div>
+  </div>
+</div>`;
+}
+
 /** Página HTML completa com topo + gaveta + conteúdo. */
 function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
   // Tema salvo na conta (sessão) — o servidor já renderiza com ele, sem "piscar".
@@ -132,11 +171,12 @@ ${scriptTemas()}
 </head>
 <body>
 ${topo(usuario, ativa)}
-${gaveta(usuario)}
+${gaveta(usuario, ativa)}
 <main class="conteudo">
 ${mensagens(req)}
 ${corpo}
 </main>
+${decoracaoTema()}
 <script src="/app.js"></script>
 </body>
 </html>`;

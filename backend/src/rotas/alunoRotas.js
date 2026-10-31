@@ -8,6 +8,7 @@ const { exigePerfil } = require('../auth');
 const { nomeArquivoUnico } = require('../util');
 const { abasDe, ROTULOS_ABA } = require('../regras');
 const { gradeMaterias, paginaMateria, paginaTrabalho } = require('../paginas/aluno');
+const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
 
 const router = express.Router();
@@ -17,6 +18,21 @@ const PASTA = path.join(__dirname, '..', '..', 'uploads', 'entregas');
 fs.mkdirSync(PASTA, { recursive: true });
 
 const EXTENSOES = ['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.txt'];
+
+/**
+ * Valida um link de entrega (Drive, site, Docs...).
+ * Só aceita http/https com host com ponto; rejeita javascript:, data: etc.
+ */
+function linkValido(valor) {
+  try {
+    const u = new URL(String(valor).trim());
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+    if (!u.hostname.includes('.') || u.hostname.endsWith('.')) return null;
+    return u.href;
+  } catch {
+    return null;
+  }
+}
 
 const enviarArquivo = multer({
   storage: multer.diskStorage({
@@ -50,6 +66,7 @@ router.get('/', async (req, res) => {
           titulo: 'Minhas matérias',
           usuario,
           req,
+          ativa: 'inicio',
           corpo: `<div class="vazio"><div class="vazio-icone">🏫</div>
             <h3>Você ainda não está em nenhuma turma</h3>
             <p>Fale com a secretaria para receber o código de matrícula da sua turma.</p></div>`,
@@ -73,12 +90,64 @@ router.get('/', async (req, res) => {
     );
 
     res.send(
-      pagina({ titulo: 'Minhas matérias', usuario, req, corpo: gradeMaterias({ usuario, materias }) })
+      pagina({ titulo: 'Minhas matérias', usuario, req, ativa: 'inicio', corpo: gradeMaterias({ usuario, materias }) })
     );
   } catch (erro) {
     console.error('[aluno/home]', erro);
     flash(req, 'erro', 'Não foi possível carregar suas matérias.');
     res.redirect('/');
+  }
+});
+
+/** Calendário escolar do aluno: prazos de trabalhos e avaliações. */
+router.get('/calendario', async (req, res) => {
+  try {
+    const usuario = req.session.usuario;
+    const agora = new Date();
+    const ano = Number(req.query.ano) || agora.getFullYear();
+    const mes = Math.min(11, Math.max(0, (Number(req.query.mes) || agora.getMonth() + 1) - 1));
+
+    if (!usuario.turma_id) {
+      return res.send(
+        pagina({
+          titulo: 'Calendário do mês',
+          usuario,
+          req,
+          ativa: 'calendario',
+          corpo: `<div class="vazio"><div class="vazio-icone">🗓️</div>
+            <h3>Sem turma definida</h3>
+            <p>Fale com a secretaria para entrar em uma turma.</p></div>`,
+        })
+      );
+    }
+
+    // Todos os trabalhos e avaliações da turma (com situação da entrega do aluno)
+    const eventos = await todos(
+      `SELECT a.id, a.titulo, a.descricao, a.prazo, a.tipo, td.id AS vinculo_id,
+              d.nome AS materia,
+              e.id AS entrega_id, e.enviado_em, e.nota
+         FROM atividades a
+         JOIN turma_disciplina td ON td.id = a.vinculo_id
+         JOIN disciplinas d ON d.id = td.disciplina_id
+         LEFT JOIN entregas e ON e.atividade_id = a.id AND e.aluno_id = $2
+        WHERE td.turma_id = $1 AND a.ativa
+        ORDER BY (a.prazo IS NULL), a.prazo`,
+      [usuario.turma_id, usuario.id]
+    );
+
+    res.send(
+      pagina({
+        titulo: 'Calendário do mês',
+        usuario,
+        req,
+        ativa: 'calendario',
+        corpo: paginaCalendario({ usuario, eventos, ano, mes, professor: false }),
+      })
+    );
+  } catch (erro) {
+    console.error('[aluno/calendario]', erro);
+    flash(req, 'erro', 'Não foi possível carregar o calendário.');
+    res.redirect('/aluno');
   }
 });
 
@@ -104,11 +173,11 @@ router.get('/materia/:id', async (req, res) => {
     }
 
     const atividades = await todos(
-      `SELECT a.id, a.titulo, a.descricao, a.prazo, a.criado_em,
+      `SELECT a.id, a.titulo, a.descricao, a.prazo, a.criado_em, a.tipo,
               $3::int AS vinculo_id, $4::text AS materia,
               COALESCE(p.nome,'') AS professor,
               e.id AS entrega_id, e.enviado_em, e.nota, e.observacao,
-              e.arquivo_nome, e.arquivo_tamanho, e.corrigido_em
+              e.arquivo_nome, e.arquivo_tamanho, e.corrigido_em, e.link, e.metodo
          FROM atividades a
          LEFT JOIN usuarios p ON p.id = a.professor_id
          LEFT JOIN entregas e ON e.atividade_id = a.id AND e.aluno_id = $2
@@ -122,6 +191,7 @@ router.get('/materia/:id', async (req, res) => {
         titulo: materia.materia,
         usuario,
         req,
+        ativa: 'inicio',
         corpo: paginaMateria({ usuario, materia, atividades, aba }),
       })
     );
@@ -140,7 +210,7 @@ router.get('/trabalho/:id', async (req, res) => {
       `SELECT a.id, a.titulo, a.descricao, a.prazo, a.criado_em, td.id AS vinculo_id,
               d.nome AS materia, t.nome AS turma, COALESCE(p.nome,'') AS professor,
               e.id AS entrega_id, e.enviado_em, e.nota, e.observacao,
-              e.arquivo_nome, e.arquivo_tamanho, e.corrigido_em
+              e.arquivo_nome, e.arquivo_tamanho, e.corrigido_em, e.link, e.metodo
          FROM atividades a
          JOIN turma_disciplina td ON td.id = a.vinculo_id
          JOIN disciplinas d ON d.id = td.disciplina_id
@@ -155,7 +225,7 @@ router.get('/trabalho/:id', async (req, res) => {
       return res.redirect('/aluno');
     }
     res.send(
-      pagina({ titulo: atividade.titulo, usuario, req, corpo: paginaTrabalho({ usuario, a: atividade }) })
+      pagina({ titulo: atividade.titulo, usuario, req, ativa: 'inicio', corpo: paginaTrabalho({ usuario, a: atividade }) })
     );
   } catch (erro) {
     console.error('[aluno/trabalho]', erro);
@@ -164,7 +234,7 @@ router.get('/trabalho/:id', async (req, res) => {
   }
 });
 
-/** Envio (ou reenvio) de arquivo. */
+/** Envio (ou reenvio) de trabalho: arquivo OU link (Drive, site, Docs...). */
 router.post('/entregar/:id', (req, res) => {
   enviarArquivo.single('arquivo')(req, res, async (erro) => {
     const usuario = req.session.usuario;
@@ -188,7 +258,19 @@ router.post('/entregar/:id', (req, res) => {
         [atividadeId]
       );
 
-      if (!atividade || !atividade.ativa || atividade.turma_id !== usuario.turma_id || !req.file) {
+      // Decide o método: link/drive vêm no corpo, senão exige arquivo
+      const bruto = req.body && req.body.metodo;
+      const metodo = bruto === 'link' || bruto === 'drive' ? bruto : 'arquivo';
+      let link = null;
+      if (metodo !== 'arquivo') {
+        link = linkValido(req.body && req.body.link);
+        if (!link) {
+          flash(req, 'erro', 'Link inválido. Use um endereço começando com http:// ou https://.');
+          return res.redirect(`/aluno/trabalho/${atividadeId}`);
+        }
+      }
+
+      if (!atividade || !atividade.ativa || atividade.turma_id !== usuario.turma_id || (metodo === 'arquivo' && !req.file)) {
         flash(req, 'erro', 'Não foi possível entregar o trabalho.');
         return res.redirect('/aluno');
       }
@@ -198,15 +280,39 @@ router.post('/entregar/:id', (req, res) => {
         [atividadeId, usuario.id]
       );
       if (existente && existente.nota !== null && existente.nota !== undefined) {
-        fs.unlink(req.file.path, () => {});
+        if (req.file) fs.unlink(req.file.path, () => {});
         flash(req, 'erro', 'Este trabalho já foi corrigido pelo professor. Fale com ele para solicitar reavaliação.');
         return res.redirect(`/aluno/trabalho/${atividadeId}`);
       }
 
+      if (metodo !== 'arquivo') {
+        await query(
+          `INSERT INTO entregas (atividade_id, aluno_id, metodo, link, arquivo_nome, arquivo, arquivo_tipo, arquivo_tamanho)
+           VALUES ($1, $2, $3, $4, NULL, NULL, NULL, NULL)
+           ON CONFLICT (atividade_id, aluno_id) DO UPDATE SET
+             metodo = EXCLUDED.metodo,
+             link = EXCLUDED.link,
+             arquivo_nome = NULL,
+             arquivo = NULL,
+             arquivo_tipo = NULL,
+             arquivo_tamanho = NULL,
+             enviado_em = now()`,
+          [atividadeId, usuario.id, metodo, link]
+        );
+        // Ao trocar de arquivo para link, remove o arquivo antigo do disco
+        if (existente && existente.arquivo) {
+          fs.unlink(path.join(PASTA, existente.arquivo), () => {});
+        }
+        flash(req, 'ok', existente ? 'Trabalho reenviado com sucesso!' : 'Trabalho entregue com sucesso!');
+        return res.redirect(`/aluno/materia/${atividade.vinculo_id}?aba=todos`);
+      }
+
       await query(
-        `INSERT INTO entregas (atividade_id, aluno_id, arquivo_nome, arquivo, arquivo_tipo, arquivo_tamanho)
-         VALUES ($1, $2, $3, $4, $5, $6)
+        `INSERT INTO entregas (atividade_id, aluno_id, metodo, link, arquivo_nome, arquivo, arquivo_tipo, arquivo_tamanho)
+         VALUES ($1, $2, 'arquivo', NULL, $3, $4, $5, $6)
          ON CONFLICT (atividade_id, aluno_id) DO UPDATE SET
+           metodo = 'arquivo',
+           link = NULL,
            arquivo_nome = EXCLUDED.arquivo_nome,
            arquivo = EXCLUDED.arquivo,
            arquivo_tipo = EXCLUDED.arquivo_tipo,

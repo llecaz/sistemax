@@ -75,6 +75,16 @@ const TEMAS = [
     descricao: 'Nuvens, estrelas e tons pastel numa atmosfera delicada e sonhadora.',
     paleta: ['#f7f4ff', '#ffffff', '#4a4458', '#9b8cf5', '#f7a8c4'],
   },
+  {
+    id: 'moonroom',
+    nome: 'Moonroom',
+    categoria: 'Cozy e aesthetic',
+    modo: 'escuro',
+    par: 'pastel-dream',
+    padrao: false,
+    descricao: 'Quarto à meia-luz rosa: lua na janela, luzes penduradas e um cantinho doce para estudar.',
+    paleta: ['#2a1a28', '#3a2536', '#ffe4ef', '#ff9ec4', '#8fdfc0'],
+  },
 
   /* ---------- Vintage e retrô ---------- */
   {

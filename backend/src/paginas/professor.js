@@ -1,6 +1,7 @@
 /** Páginas do professor: matérias que leciona, atividades e correções. */
-const { esc, dataBR, dataHoraBR, decorrido, corDe, tamanhoLegivel, paraInputDataHora } = require('../util');
+const { esc, dataBR, dataHoraBR, decorrido, corDe, tamanhoLegivel, paraInputDataHora, dominioLink } = require('../util');
 const { avatar } = require('./layout');
+const { TIPOS } = require('./calendario');
 
 function selo(texto, tipo) {
   return `<span class="chip ${tipo}">${esc(texto)}</span>`;
@@ -57,6 +58,13 @@ function blocoNovaAtividade(vinculoId) {
     <summary><span class="btn primario">+ Nova atividade</span></summary>
     <form method="post" action="/professor/atividade" class="form-interno">
       <input type="hidden" name="vinculo_id" value="${vinculoId}">
+      <div class="campo linha-dupla">
+        <label for="tipo" class="acima">Tipo</label>
+        <select id="tipo" name="tipo">
+          <option value="trabalho">Trabalho (os alunos entregam arquivo ou link)</option>
+          <option value="avaliacao">Avaliação / Prova (aparece no calendário)</option>
+        </select>
+      </div>
       <div class="campo">
         <input type="text" id="titulo" name="titulo" placeholder=" " maxlength="160" required>
         <label for="titulo">Título da atividade</label>
@@ -97,6 +105,7 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
   const cor = corDe(materia.materia).claro;
   const contagens = { todas: atividades.length, pendentes: 0, corrigidas: 0 };
   atividades.forEach((a) => {
+    if ((a.tipo || 'trabalho') !== 'trabalho') return; // provas/eventos não têm entregas
     const total = Number(a.total_entregas || 0);
     const corrigidas = Number(a.corrigidas || 0);
     if (total > corrigidas) contagens.pendentes++;
@@ -104,6 +113,7 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
   });
 
   const visiveis = atividades.filter((a) => {
+    if ((a.tipo || 'trabalho') !== 'trabalho') return aba === 'todas';
     const total = Number(a.total_entregas || 0);
     const corrigidas = Number(a.corrigidas || 0);
     if (aba === 'pendentes') return total > corrigidas;
@@ -114,10 +124,39 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
   const lista = visiveis.length
     ? visiveis
         .map((a) => {
+          const info = TIPOS[a.tipo || 'trabalho'] || TIPOS.trabalho;
           const total = Number(a.total_entregas || 0);
           const corrigidas = Number(a.corrigidas || 0);
           const turmaTotal = Number(a.alunos_turma || 0);
           const prazoVencido = a.prazo && new Date(a.prazo) < new Date();
+
+          // Provas, projetos, tarefas/quiz e eventos: marcação de calendário
+          if ((a.tipo || 'trabalho') !== 'trabalho') {
+            return `
+        <article class="atividade">
+          <div class="atividade-icone" style="background:${cor}">
+            <span style="font-size:20px;color:#fff">${info.icone}</span>
+          </div>
+          <div class="atividade-corpo">
+            <div class="atividade-topo">
+              <div>
+                <h3>${esc(a.titulo)}</h3>
+                <p class="atividade-professor">${info.rotulo} · ${esc(materia.turma)}</p>
+              </div>
+              ${a.prazo ? selo(dataHoraBR(a.prazo), 'pendente') : selo('Sem data', 'pendente')}
+            </div>
+            ${a.descricao ? `<p class="atividade-descricao">${esc(a.descricao)}</p>` : ''}
+            <div class="atividade-rodape">
+              <a class="btn secundario" href="/professor/calendario">Ver no calendário</a>
+              <form method="post" action="/professor/atividade/${a.id}/excluir" class="inline"
+                    data-confirma="Excluir "${esc(a.titulo)}" do calendário?">
+                <button class="btn texto-perigo" type="submit">Excluir</button>
+              </form>
+            </div>
+          </div>
+        </article>`;
+          }
+
           return `
         <article class="atividade">
           <div class="atividade-icone" style="background:${cor}">
@@ -190,14 +229,24 @@ function paginaAtividadeProfessor({ materia, atividade, alunos }) {
         : selo('Não entregue', 'pendente');
 
       const arquivo = temArquivo
-        ? `<div class="linha-arquivo">
-             <a class="btn secundario pequeno" href="/arquivos/entrega/${al.entrega_id}">Baixar</a>
-             <div class="linha-arquivo-info">
-               <strong>${esc(al.arquivo_nome || 'arquivo')}</strong>
-               <small>${decorrido(al.enviado_em)} · ${tamanhoLegivel(al.arquivo_tamanho)}</small>
-             </div>
-           </div>`
-        : `<p class="sem-arquivo">Sem arquivo enviado</p>`;
+        ? al.metodo && al.metodo !== 'arquivo' && al.link
+          ? `<div class="linha-arquivo">
+               <a class="btn secundario pequeno" href="${esc(al.link)}" target="_blank" rel="noopener noreferrer">🔗 Abrir ${
+               al.metodo === 'drive' ? 'no Drive' : 'link'
+             }</a>
+               <div class="linha-arquivo-info">
+                 <strong>${esc(dominioLink(al.link))}</strong>
+                 <small>${decorrido(al.enviado_em)} · entrega via ${al.metodo === 'drive' ? 'Google Drive' : 'link'}</small>
+               </div>
+             </div>`
+          : `<div class="linha-arquivo">
+               <a class="btn secundario pequeno" href="/arquivos/entrega/${al.entrega_id}">Baixar</a>
+               <div class="linha-arquivo-info">
+                 <strong>${esc(al.arquivo_nome || 'arquivo')}</strong>
+                 <small>${decorrido(al.enviado_em)} · ${tamanhoLegivel(al.arquivo_tamanho)}</small>
+               </div>
+             </div>`
+        : `<p class="sem-arquivo">Sem trabalho entregue</p>`;
 
       const correcao = temArquivo
         ? `<form method="post" action="/professor/corrigir/${al.entrega_id}" class="form-correcao">

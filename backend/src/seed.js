@@ -154,6 +154,7 @@ async function semear() {
       titulo: 'Prova Bimestral de Matemática',
       descricao: 'Levar impresso. Permitido usar apenas calculadora simples.',
       prazo: dias(-1),
+      tipo: 'avaliacao',
       entrega: null, // não entregue → aparece em Atrasados
       arq: null,
     },
@@ -163,9 +164,9 @@ async function semear() {
     const vinculo = vinculos[a.chave];
     if (!vinculo) continue;
     const r = await query(
-      `INSERT INTO atividades (vinculo_id, professor_id, titulo, descricao, prazo)
-       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-      [vinculo.id, professores['Maria Silva'].id, a.titulo, a.descricao, a.prazo]
+      `INSERT INTO atividades (vinculo_id, professor_id, titulo, descricao, prazo, tipo)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      [vinculo.id, professores['Maria Silva'].id, a.titulo, a.descricao, a.prazo, a.tipo || 'trabalho']
     );
     // professor dono correto: usa o professor do vínculo
     const profDoVinculo = await query(`SELECT professor_id FROM turma_disciplina WHERE id = $1`, [vinculo.id]);

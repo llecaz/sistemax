@@ -11,7 +11,8 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 ### 🎨 Visual
 - Estética **Google Classroom / minimalista**: Roboto, cards brancos com cantos arredondados, faixa colorida no topo de cada matéria, botões arredondados no azul do Google `#1a73e8`.
 - **🎨 Sistema de personalização de temas** (⚙️ Configurações → **Aparência**):
-  - **7 temas**: `Clean Minimal` (padrão), `Japandi`, `Dark Minimal`, `Soft UI`, `Lo-fi Night`, `Pastel Dream` e `Dark Academia`.
+  - **8 temas**: `Clean Minimal` (padrão), `Japandi`, `Dark Minimal`, `Soft UI`, `Lo-fi Night`, `Pastel Dream`, `Moonroom` e `Dark Academia`.
+  - **Lo-fi Night** e **Moonroom** também mudam o **design** (decoração de fundo + widget exclusivo: rádio lo-fi e cantinho da lua), sem alterar a paleta do Lo-fi Night.
   - Galeria com **cards de pré-visualização** (miniatura da interface), **paleta de cores**, **descrição da estética** e selos `Selecionado` / `Visualizando` / `Padrão`.
   - Clique num card para **visualizar** a aparência na plataforma inteira e depois **Aplicar tema** (ou **Cancelar pré-visualização**).
   - O tema fica salvo **na conta (banco de dados)** — sobrevive a atualizar a página, sair e entrar novamente, e vale para qualquer dispositivo.
@@ -37,7 +38,14 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
   - *Corrigidos*: com nota e observação do professor
   - *Atrasados*: prazo vencido e não entregue (ou entregue fora do prazo)
 - Envio de arquivo (PDF, DOCX, PPTX, XLSX, JPG/PNG, TXT — até 15 MB).
+- **Outras formas de entrega**: abas **Arquivo**, **Link** (site, artigo, post) e **Google Drive** (link compartilhado), com validação de URL no servidor e chips de categorias (documentos, planilhas, apresentações, imagens).
 - **Reenvio permitido enquanto o trabalho não for corrigido.**
+
+### 🗓️ Calendário do mês (aluno e professor)
+- Página própria com grade do **mês**, prazos e provas marcados por dia.
+- Indicadores coloridos: **tarefa/quiz**, **entrega**, **prova**, **projeto** e **evento**.
+- Coluna lateral **Próximas tarefas**, **progresso do mês** e legenda de cores.
+- O **professor** pode usar **+ Adicionar evento** para marcar provas/projetos/eventos no mês; o aluno apenas visualiza.
 
 ### 👩‍🏫 Área do Professor
 - Cards das turmas/matérias que leciona (com entregas aguardando correção).

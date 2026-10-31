@@ -74,6 +74,7 @@ router.get('/', async (req, res) => {
         titulo: 'Configurações',
         usuario,
         req,
+        ativa: 'config',
         corpo: paginaConfiguracoes({ usuario }),
       })
     );
