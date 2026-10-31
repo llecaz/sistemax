@@ -1,7 +1,9 @@
 /**
- * Ilustrações vetoriais (SVG inline) do calendário.
- * Cores definidas no CSS (frontend/estilo.css, bloco "Ilustrações") para
- * acompanharem o tema ativo.
+ * Ilustrações do calendário.
+ *
+ * A cena do gatinho é desenhada em SVG aqui e exportada para
+ * `frontend/img/calendario-cena.png` (2×, fundo transparente) pelo script
+ * `scripts/exportar-cena.js`. A página usa o PNG.
  */
 
 /** Cena do calendário: gatinho dormindo sobre livros ao lado de uma plantinha. */

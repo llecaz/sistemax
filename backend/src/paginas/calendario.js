@@ -1,6 +1,6 @@
 /** Página "Calendário do mês": grade mensal, próximas tarefas, progresso e legenda. */
 const { esc, dataBR, corDe } = require('../util');
-const { ilustracaoCalendario, patinha } = require('./ilustracoes');
+const { patinha } = require('./ilustracoes');
 
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const DIAS_SEMANA_LONGO = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
@@ -296,7 +296,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
     </section>
 
     <div class="cal-ilustracoes">
-      ${ilustracaoCalendario()}
+      <img class="cal-cena" src="/img/calendario-cena.png" width="320" height="150" alt="Ilustração de um gatinho dormindo sobre uma pilha de livros ao lado de uma plantinha">
     </div>
   </aside>`;
 
