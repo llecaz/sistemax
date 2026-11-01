@@ -977,6 +977,22 @@ body.tela-login {
   background: var(--ambar-fundo);
   color: var(--ambar);
 }
+.chip.tarefa {
+  background: rgba(226, 85, 95, 0.14);
+  color: #d84a55;
+}
+.chip.prova {
+  background: rgba(224, 168, 62, 0.2);
+  color: #b8841f;
+}
+.chip.projeto {
+  background: rgba(91, 141, 239, 0.16);
+  color: #4a7bdc;
+}
+.chip.evento {
+  background: rgba(155, 124, 240, 0.16);
+  color: #8266d6;
+}
 
 .prazo {
   font-size: 13px;
@@ -2294,5 +2310,420 @@ body.tela-login {
   }
   .card-materia {
     min-height: 180px;
+  }
+}
+
+/* ------------------- Início (painel) ------------------- */
+.ini-cabecalho {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.ini-data {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+.ini-saudacao h1 {
+  font-size: 26px;
+  line-height: 1.15;
+  margin: 4px 0 2px;
+}
+.ini-resumo {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ini-resumo-item {
+  min-width: 108px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  box-shadow: var(--sombra);
+  text-align: center;
+}
+.ini-resumo-item strong {
+  display: block;
+  font-size: 22px;
+  line-height: 1.1;
+}
+.ini-resumo-item span {
+  font-size: 11px;
+  color: var(--texto-suave);
+}
+.ini-resumo-item.destaque {
+  background: var(--azul-claro);
+  border-color: var(--azul);
+}
+.ini-resumo-item.destaque strong {
+  color: var(--azul);
+}
+
+.ini-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 18px;
+  align-items: start;
+}
+.ini-principal {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.ini-lateral {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+.ini-painel {
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  border-radius: 18px;
+  box-shadow: var(--sombra);
+  padding: 18px 20px;
+  min-width: 0;
+}
+.ini-painel-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ini-painel-topo h2 {
+  font-size: 16px;
+}
+.ini-link-suave {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--azul);
+  text-decoration: none;
+}
+.ini-link-suave:hover {
+  text-decoration: underline;
+}
+.ini-painel .abas {
+  margin: 12px -20px 6px;
+  padding: 0 12px;
+}
+
+.ini-tarefas,
+.ini-materias,
+.ini-proximas {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.ini-tarefa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  min-width: 0;
+}
+.ini-tarefa:hover {
+  background: var(--superficie-2);
+}
+.ini-tarefa-cor {
+  width: 5px;
+  align-self: stretch;
+  border-radius: 999px;
+  flex: none;
+}
+.ini-tarefa-corpo {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.ini-tarefa-corpo a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--texto);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ini-tarefa-corpo a:hover {
+  color: var(--azul);
+}
+.ini-tarefa-corpo small {
+  font-size: 12px;
+  color: var(--texto-suave);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ini-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  flex: none;
+}
+
+.ini-materia {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: 12px;
+}
+.ini-materia:hover {
+  background: var(--superficie-2);
+}
+.ini-materia-icone {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  flex: none;
+}
+.ini-materia-info {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.ini-materia-info a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--texto);
+  text-decoration: none;
+}
+.ini-materia-info a:hover {
+  color: var(--azul);
+}
+.ini-materia-info small {
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+.ini-turma {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--texto-suave);
+  background: var(--superficie-2);
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-left: 4px;
+  vertical-align: 1px;
+}
+.ini-barra {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--superficie-3);
+  overflow: hidden;
+  max-width: 260px;
+  margin-top: 2px;
+}
+.ini-barra i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--azul), var(--verde));
+  transition: width 0.3s ease;
+}
+.ini-materia-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--texto-suave);
+  white-space: nowrap;
+}
+.ini-vazio-lista {
+  padding: 14px 8px;
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+/* Mini-calendário */
+.ini-cal-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.ini-cal-topo h2 {
+  font-size: 15px;
+}
+.ini-cal-nav {
+  display: flex;
+  gap: 4px;
+}
+.ini-cal-nav a {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  color: var(--texto);
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 1;
+}
+.ini-cal-nav a:hover {
+  background: var(--superficie-2);
+}
+.ini-cal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  text-align: center;
+}
+.ini-cal-semana {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  padding-bottom: 2px;
+}
+.ini-cal-dia {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 12px;
+  color: var(--texto);
+}
+.ini-cal-dia.tem {
+  background: var(--superficie-2);
+}
+.ini-cal-dia.hoje {
+  background: var(--azul);
+  color: var(--azul-texto);
+  font-weight: 700;
+}
+.ini-cal-dia.fora {
+  opacity: 0;
+}
+.ini-cal-pontos {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+.ini-cal-pontos .ponto {
+  width: 6px;
+  height: 6px;
+}
+.ini-cal-ver {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--azul);
+  text-decoration: none;
+}
+.ini-cal-ver:hover {
+  text-decoration: underline;
+}
+
+/* Próximas tarefas */
+.ini-proxima {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 7px 4px;
+}
+.ini-proxima .ponto {
+  margin-top: 5px;
+}
+.ini-proxima-corpo {
+  display: grid;
+  min-width: 0;
+}
+.ini-proxima-corpo span {
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ini-proxima-corpo small {
+  font-size: 11px;
+  color: var(--texto-suave);
+}
+
+/* Cartão ilustrado */
+.ini-dica {
+  padding: 10px 12px 14px;
+  display: grid;
+  gap: 6px;
+  background: var(--superficie-2);
+  border: none;
+  box-shadow: none;
+}
+.ini-dica img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+.ini-dica p {
+  font-size: 12px;
+  color: var(--texto-suave);
+  line-height: 1.5;
+  padding: 0 4px;
+}
+
+@media (max-width: 1080px) {
+  .ini-grade {
+    grid-template-columns: 1fr;
+  }
+  .ini-lateral {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ini-dica {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 700px) {
+  .ini-cabecalho {
+    align-items: flex-start;
+  }
+  .ini-saudacao h1 {
+    font-size: 22px;
+  }
+  .ini-resumo-item {
+    min-width: 88px;
+    padding: 8px 12px;
+  }
+  .ini-resumo-item strong {
+    font-size: 19px;
+  }
+  .ini-lateral {
+    grid-template-columns: 1fr;
+  }
+  .ini-painel {
+    padding: 16px 14px;
+  }
+  .ini-painel .abas {
+    margin: 12px -14px 6px;
+    padding: 0 8px;
+  }
+  .ini-materia-pct {
+    display: none;
   }
 }

@@ -2,7 +2,8 @@
 const express = require('express');
 const { um, todos, query } = require('../db');
 const { exigePerfil } = require('../auth');
-const { gradeProfessor, paginaMateriaProfessor, paginaAtividadeProfessor } = require('../paginas/professor');
+const { paginaMateriaProfessor, paginaAtividadeProfessor } = require('../paginas/professor');
+const { paginaInicioProfessor } = require('../paginas/inicio');
 const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
 
@@ -63,26 +64,64 @@ router.get('/calendario', async (req, res) => {
   }
 });
 
-/** Matérias que o professor leciona (por turma). */
+/** Início: painel do professor (correções, matérias e calendário). */
 router.get('/', async (req, res) => {
   try {
     const usuario = req.session.usuario;
-    const materias = await todos(
-      `SELECT td.id AS vinculo_id, t.nome AS turma, d.nome AS materia,
-              (SELECT count(*) FROM atividades a WHERE a.vinculo_id = td.id AND a.ativa) AS atividades,
-              (SELECT count(*) FROM entregas e
-                 JOIN atividades a ON a.id = e.atividade_id
-                WHERE a.vinculo_id = td.id AND e.nota IS NULL) AS pendentes,
-              (SELECT count(*) FROM usuarios u WHERE u.turma_id = t.id AND u.tipo = 'aluno' AND u.ativo) AS alunos
-         FROM turma_disciplina td
-         JOIN turmas t ON t.id = td.turma_id
-         JOIN disciplinas d ON d.id = td.disciplina_id
-        WHERE td.professor_id = $1 AND t.ativa
-        ORDER BY t.nome, d.nome`,
-      [usuario.id]
-    );
+    const [materias, entregas, eventos] = await Promise.all([
+      todos(
+        `SELECT td.id AS vinculo_id, t.nome AS turma, d.nome AS materia,
+                (SELECT count(*) FROM atividades a WHERE a.vinculo_id = td.id AND a.ativa) AS atividades,
+                (SELECT count(*) FROM entregas e
+                   JOIN atividades a ON a.id = e.atividade_id
+                  WHERE a.vinculo_id = td.id) AS entregas,
+                (SELECT count(*) FROM entregas e
+                   JOIN atividades a ON a.id = e.atividade_id
+                  WHERE a.vinculo_id = td.id AND e.nota IS NULL) AS pendentes,
+                (SELECT count(*) FROM usuarios u WHERE u.turma_id = t.id AND u.tipo = 'aluno' AND u.ativo) AS alunos
+           FROM turma_disciplina td
+           JOIN turmas t ON t.id = td.turma_id
+           JOIN disciplinas d ON d.id = td.disciplina_id
+          WHERE td.professor_id = $1 AND t.ativa
+          ORDER BY t.nome, d.nome`,
+        [usuario.id]
+      ),
+      todos(
+        `SELECT e.id, e.enviado_em, e.metodo, e.link, e.arquivo_nome,
+                a.id AS atividade_id, a.titulo, a.prazo, a.vinculo_id,
+                d.nome AS materia, t.nome AS turma, u.nome AS aluno,
+                (a.prazo IS NOT NULL AND e.enviado_em > a.prazo) AS atrasada
+           FROM entregas e
+           JOIN atividades a ON a.id = e.atividade_id
+           JOIN turma_disciplina td ON td.id = a.vinculo_id
+           JOIN disciplinas d ON d.id = td.disciplina_id
+           JOIN turmas t ON t.id = td.turma_id
+           JOIN usuarios u ON u.id = e.aluno_id
+          WHERE a.professor_id = $1 AND e.nota IS NULL
+          ORDER BY e.enviado_em
+          LIMIT 8`,
+        [usuario.id]
+      ),
+      todos(
+        `SELECT a.id, a.titulo, a.prazo, a.tipo, td.id AS vinculo_id,
+                d.nome AS materia, t.nome AS turma
+           FROM atividades a
+           JOIN turma_disciplina td ON td.id = a.vinculo_id
+           JOIN disciplinas d ON d.id = td.disciplina_id
+           JOIN turmas t ON t.id = td.turma_id
+          WHERE a.professor_id = $1 AND a.ativa
+          ORDER BY (a.prazo IS NULL), a.prazo`,
+        [usuario.id]
+      ),
+    ]);
     res.send(
-      pagina({ titulo: 'Minhas matérias', usuario, req, ativa: 'inicio', corpo: gradeProfessor({ usuario, materias }) })
+      pagina({
+        titulo: 'Início',
+        usuario,
+        req,
+        ativa: 'inicio',
+        corpo: paginaInicioProfessor({ usuario, materias, entregas, eventos }),
+      })
     );
   } catch (erro) {
     console.error('[prof/home]', erro);

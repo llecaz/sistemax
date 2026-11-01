@@ -32,6 +32,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 - Tentativas de login limitadas (proteção contra força bruta).
 
 ### 🎓 Área do Aluno
+- **Início em painel**: saudação, resumo (a fazer / aguardando correção / corrigidas), **Minhas tarefas** com abas, **Minhas matérias** com barra de progresso, mini-calendário e próximas tarefas.
 - Grade de **cards das matérias** da turma (cada matéria com o nome do professor).
 - Abas de filtro dos trabalhos: `Todos` · `Não corrigidos` · `Corrigidos` · `Atrasados`
   - *Não corrigidos*: entregue, aguardando correção
@@ -48,6 +49,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 - O **professor** pode usar **+ Adicionar evento** para marcar provas/projetos/eventos no mês; o aluno apenas visualiza.
 
 ### 👩‍🏫 Área do Professor
+- **Início em painel**: entregas para corrigir, matérias com progresso de correções, mini-calendário e próximas tarefas.
 - Cards das turmas/matérias que leciona (com entregas aguardando correção).
 - Criar **atividade com prazo de entrega**; filtros `Todas / Aguardando correção / Corrigidas`.
 - Lista de alunos com download do arquivo e correção: **nota (0–10) + observação**.

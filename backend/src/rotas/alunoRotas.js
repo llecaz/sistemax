@@ -7,7 +7,8 @@ const { um, todos, query } = require('../db');
 const { exigePerfil } = require('../auth');
 const { nomeArquivoUnico } = require('../util');
 const { abasDe, ROTULOS_ABA } = require('../regras');
-const { gradeMaterias, paginaMateria, paginaTrabalho } = require('../paginas/aluno');
+const { paginaMateria, paginaTrabalho } = require('../paginas/aluno');
+const { paginaInicioAluno } = require('../paginas/inicio');
 const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
 
@@ -74,23 +75,50 @@ router.get('/', async (req, res) => {
       );
     }
 
-    const materias = await todos(
-      `SELECT td.id AS vinculo_id, d.nome AS materia,
-              COALESCE(p.nome, '') AS professor,
-              (SELECT count(*) FROM atividades a WHERE a.vinculo_id = td.id AND a.ativa) AS total,
-              (SELECT count(*) FROM atividades a
-                 JOIN entregas e ON e.atividade_id = a.id
-                WHERE a.vinculo_id = td.id AND e.aluno_id = $2 AND e.nota IS NULL) AS aguardando
-         FROM turma_disciplina td
-         JOIN disciplinas d ON d.id = td.disciplina_id
-         LEFT JOIN usuarios p ON p.id = td.professor_id
-        WHERE td.turma_id = $1
-        ORDER BY d.nome`,
-      [usuario.turma_id, usuario.id]
-    );
+    const [materias, atividades] = await Promise.all([
+      todos(
+        `SELECT td.id AS vinculo_id, d.nome AS materia,
+                COALESCE(p.nome, '') AS professor,
+                (SELECT count(*) FROM atividades a WHERE a.vinculo_id = td.id AND a.ativa AND a.tipo = 'trabalho') AS total_trabalhos,
+                (SELECT count(*) FROM atividades a
+                   JOIN entregas e ON e.atividade_id = a.id
+                  WHERE a.vinculo_id = td.id AND a.ativa AND a.tipo = 'trabalho' AND e.aluno_id = $2) AS entregues,
+                (SELECT count(*) FROM atividades a
+                   JOIN entregas e ON e.atividade_id = a.id
+                  WHERE a.vinculo_id = td.id AND e.aluno_id = $2 AND e.nota IS NULL) AS aguardando
+           FROM turma_disciplina td
+           JOIN disciplinas d ON d.id = td.disciplina_id
+           LEFT JOIN usuarios p ON p.id = td.professor_id
+          WHERE td.turma_id = $1
+          ORDER BY d.nome`,
+        [usuario.turma_id, usuario.id]
+      ),
+      todos(
+        `SELECT a.id, a.titulo, a.descricao, a.prazo, a.tipo, td.id AS vinculo_id,
+                d.nome AS materia,
+                e.id AS entrega_id, e.enviado_em, e.nota
+           FROM atividades a
+           JOIN turma_disciplina td ON td.id = a.vinculo_id
+           JOIN disciplinas d ON d.id = td.disciplina_id
+           LEFT JOIN entregas e ON e.atividade_id = a.id AND e.aluno_id = $2
+          WHERE td.turma_id = $1 AND a.ativa
+          ORDER BY (a.prazo IS NULL), a.prazo`,
+        [usuario.turma_id, usuario.id]
+      ),
+    ]);
+
+    const aba = ['todas', 'afazer', 'entregues', 'corrigidas'].includes(req.query.aba)
+      ? req.query.aba
+      : 'todas';
 
     res.send(
-      pagina({ titulo: 'Minhas matérias', usuario, req, ativa: 'inicio', corpo: gradeMaterias({ usuario, materias }) })
+      pagina({
+        titulo: 'Início',
+        usuario,
+        req,
+        ativa: 'inicio',
+        corpo: paginaInicioAluno({ usuario, materias, atividades, eventos: atividades, aba }),
+      })
     );
   } catch (erro) {
     console.error('[aluno/home]', erro);
