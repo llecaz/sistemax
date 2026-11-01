@@ -1754,6 +1754,67 @@ body.tela-login {
     align-items: flex-start;
   }
 }
+@media (max-width: 560px) {
+  .cal-mes-cartao {
+    overflow-x: visible;
+    padding: 14px 12px;
+  }
+  .cal-grade {
+    min-width: 0;
+    gap: 3px;
+  }
+  .cal-cabecalho-dia {
+    font-size: 9px;
+    letter-spacing: 0.2px;
+    padding: 2px 0;
+  }
+  .cal-dia {
+    min-height: 56px;
+    padding: 4px 3px;
+    gap: 3px;
+    border-radius: 8px;
+  }
+  .cal-num {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
+  .cal-marca-prova {
+    font-size: 9px;
+  }
+  .cal-dia-eventos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .cal-pilula {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border-left: 0;
+    border-radius: 50%;
+  }
+  .cal-pilula-titulo,
+  .cal-pilula-hora,
+  .cal-mais {
+    display: none;
+  }
+  .cal-pilula.tarefa {
+    background: #e2555f;
+  }
+  .cal-pilula.entrega {
+    background: #4caf7d;
+  }
+  .cal-pilula.prova {
+    background: #e0a83e;
+  }
+  .cal-pilula.projeto {
+    background: #5b8def;
+  }
+  .cal-pilula.evento {
+    background: #9b7cf0;
+  }
+}
 
 
 /* ------------------- Estado vazio ------------------- */

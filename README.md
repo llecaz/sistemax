@@ -48,6 +48,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 - Página própria com grade do **mês**, prazos e provas marcados por dia.
 - Indicadores coloridos: **tarefa/quiz**, **entrega**, **prova**, **projeto** e **evento**.
 - Coluna lateral **Próximas tarefas**, **progresso do mês** e legenda de cores.
+- No celular, a grade mostra a **semana inteira** com pontinhos coloridos por tipo de atividade.
 - O **professor** pode usar **+ Adicionar evento** para marcar provas/projetos/eventos no mês; o aluno apenas visualiza.
 
 ### 👩‍🏫 Área do Professor
