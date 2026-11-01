@@ -34,6 +34,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 ### 🎓 Área do Aluno
 - **Início em painel**: saudação, resumo (a fazer / aguardando correção / corrigidas), **Minhas tarefas** com abas, **Minhas matérias** com barra de progresso, mini-calendário e próximas tarefas.
 - **Página da matéria em painel**: lista de trabalhos + resumo lateral com entregues, progresso e próximo prazo.
+- **Detalhe do trabalho em painel**: descrição, prazo, entrega/correção e envio + resumo lateral (situação, prazo, envio, nota), orientações de entrega e atalhos.
 - Grade de **cards das matérias** da turma (cada matéria com o nome do professor).
 - Abas de filtro dos trabalhos: `Todos` · `Não corrigidos` · `Corrigidos` · `Atrasados`
   - *Não corrigidos*: entregue, aguardando correção
@@ -58,6 +59,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 - Lista de alunos com download do arquivo e correção: **nota (0–10) + observação**.
 
 ### ⚙️ Área do Admin
+- **Painel com resumo lateral**: totais de turmas, alunos, professores, matérias e vínculos, alertas (sem vínculo/sem turma) e atalhos.
 - Cadastrar **turmas** (gera o **código de matrícula**, com botão "Copiar" e regeneração).
 - Cadastrar **disciplinas** e **professores**.
 - **Vincular professor ↔ turma ↔ matéria** (é daí que o aluno escolhe quem é professor de quê).

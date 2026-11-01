@@ -279,6 +279,15 @@ function painelAdmin({ secao, dados, usuario }) {
   if (secao === 'vinculos') conteudo = secaoVinculos(dados);
   if (secao === 'alunos') conteudo = secaoAlunos(dados);
 
+  const turmasAtivas = dados.turmas.filter((t) => t.ativa).length;
+  const alunosAtivos = dados.alunos.filter((a) => a.ativo).length;
+  const professoresAtivos = dados.professores.filter((p) => p.ativo).length;
+  const semVinculo = dados.disciplinas.filter((d) => !Number(d.vinculos || 0));
+  const semTurma = dados.alunos.filter((a) => !a.turma_id);
+  const pctVinculo = dados.disciplinas.length
+    ? Math.round(((dados.disciplinas.length - semVinculo.length) / dados.disciplinas.length) * 100)
+    : 0;
+
   return `
   <div class="cabecalho-secao">
     <div>
@@ -286,8 +295,53 @@ function painelAdmin({ secao, dados, usuario }) {
       <p class="descricao">Cadastre turmas, matérias e professores, e defina quem leciona cada matéria.</p>
     </div>
   </div>
-  ${seletorSecao(secao)}
-  <div class="painel">${conteudo}</div>`;
+
+  <div class="mat-grade">
+    <div class="admin-conteudo">
+      ${seletorSecao(secao)}
+      ${conteudo}
+    </div>
+
+    <aside class="mat-lateral">
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Resumo da escola</h2></header>
+        <ul class="mat-resumo">
+          <li><span>Turmas</span><strong>${dados.turmas.length}</strong></li>
+          <li><span>Alunos</span><strong>${dados.alunos.length}</strong></li>
+          <li><span>Professores</span><strong>${dados.professores.length}</strong></li>
+          <li><span>Matérias</span><strong>${dados.disciplinas.length}</strong></li>
+          <li><span>Vínculos turma ↔ matéria</span><strong>${dados.vinculos.length}</strong></li>
+        </ul>
+        <div class="mat-progresso-topo">
+          <span>Matérias com vínculo</span><strong>${pctVinculo}%</strong>
+        </div>
+        <div class="ini-barra"><i style="width:${pctVinculo}%"></i></div>
+      </section>
+
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Precisa de atenção</h2></header>
+        <ul class="mat-resumo mat-lista-link">
+          <li><a href="/admin?secao=turmas">Turmas ativas</a><strong>${turmasAtivas}/${dados.turmas.length}</strong></li>
+          <li><a href="/admin?secao=alunos">Alunos ativos</a><strong>${alunosAtivos}/${dados.alunos.length}</strong></li>
+          <li><a href="/admin?secao=professores">Professores ativos</a><strong>${professoresAtivos}/${dados.professores.length}</strong></li>
+          <li><a href="/admin?secao=disciplinas">Matérias sem vínculo</a><strong>${semVinculo.length}</strong></li>
+          <li><a href="/admin?secao=alunos">Alunos sem turma</a><strong>${semTurma.length}</strong></li>
+        </ul>
+      </section>
+
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Atalhos</h2></header>
+        <ul class="trab-atalhos">
+          ${SECOES.map(
+            ([chave, rotulo]) =>
+              `<li><a href="/admin?secao=${chave}" ${chave === secao ? 'aria-current="page"' : ''}>${rotulo}${
+                chave === secao ? ' ·' : ''
+              }</a></li>`
+          ).join('')}
+        </ul>
+      </section>
+    </aside>
+  </div>`;
 }
 
 module.exports = { painelAdmin };

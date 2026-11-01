@@ -858,6 +858,13 @@ body.tela-login {
 .abas-admin {
   margin-top: 0;
 }
+.admin-conteudo {
+  min-width: 0;
+}
+.admin-conteudo .abas-admin {
+  margin: 0 0 14px;
+  padding: 0;
+}
 
 /* ------------------- Atividades ------------------- */
 .lista-atividades {
@@ -2836,6 +2843,81 @@ body.tela-login {
   font-size: 13px;
   color: var(--texto-suave);
   line-height: 1.5;
+}
+
+/* ------------------- Detalhe do trabalho (aluno) ------------------- */
+.trab-conteudo {
+  display: block;
+  padding: 0;
+  border-bottom: 0;
+}
+.trab-conteudo .atividade-topo {
+  align-items: center;
+}
+.trab-conteudo .atividade-descricao.sem-descricao {
+  color: var(--texto-suave);
+  font-style: italic;
+}
+.trab-observacao {
+  margin: 8px 0 6px;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.trab-data {
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+.trab-dicas {
+  list-style: none;
+  margin: 8px 0 10px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.trab-dicas li {
+  display: grid;
+  gap: 2px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: var(--superficie-2);
+}
+.trab-dicas strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.trab-dicas small {
+  font-size: 12px;
+  color: var(--texto-suave);
+  line-height: 1.45;
+}
+.trab-nota {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--texto-suave);
+}
+.trab-atalhos {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: grid;
+}
+.trab-atalhos li {
+  border-bottom: 1px solid var(--borda-suave);
+}
+.trab-atalhos li:last-child {
+  border-bottom: none;
+}
+.trab-atalhos a {
+  display: block;
+  padding: 10px 0;
+  font-size: 13px;
+  color: var(--texto);
+  text-decoration: none;
+}
+.trab-atalhos a:hover {
+  color: var(--azul);
 }
 
 @media (max-width: 1080px) {

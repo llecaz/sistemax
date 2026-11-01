@@ -341,33 +341,93 @@ function paginaMateria({ usuario, materia, atividades, aba }) {
 function paginaTrabalho({ usuario, a }) {
   const { s } = abasDe(a);
   const cor = corDe(a.materia || '').claro;
+  const info = TIPOS[a.tipo || 'trabalho'] || TIPOS.trabalho;
+  const estado = s.corrigido
+    ? 'Corrigido'
+    : s.atrasado
+      ? s.temEntrega
+        ? 'Entregue fora do prazo'
+        : 'Atrasado'
+      : s.aguardando
+        ? 'Aguardando correção'
+        : s.temEntrega
+          ? 'Entregue'
+          : 'Ainda não entregue';
+  const metodo =
+    !s.temEntrega ? '—' : a.metodo === 'link' ? 'Link' : a.metodo === 'drive' ? 'Google Drive' : 'Arquivo';
+
   return `
-  <div class="painel">
-    <div class="painel-topo">
-      <a class="btn text" href="/aluno/materia/${a.vinculo_id}?aba=todos">← Voltar aos trabalhos</a>
-    </div>
-    <article class="atividade detalhe" style="--cor-fundo:${cor}">
-      <div class="atividade-icone" style="background:${cor}">
-        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm0 2 4 4h-4zM8 13h8v2H8zm0 4h5v2H8z"/></svg>
+  <header class="faixa-materia" style="background:${cor}">
+    <div class="faixa-conteudo">
+      <div>
+        <span class="rotulo-faixa">${esc(a.materia)} · ${esc(a.turma)}</span>
+        <h1>${esc(a.titulo)}</h1>
+        <p>${esc(a.professor || 'Professor não definido')} · Publicado em ${dataBR(a.criado_em)}</p>
       </div>
-      <div class="atividade-corpo">
+      <span class="faixa-avatar">${avatarProfessor(a.professor)}</span>
+    </div>
+  </header>
+
+  <div class="mat-grade">
+    <div class="painel">
+      <div class="painel-topo">
+        <h2>Trabalho</h2>
+        <a class="btn text" href="/aluno/materia/${a.vinculo_id}?aba=todos">← Voltar aos trabalhos</a>
+      </div>
+
+      <article class="atividade detalhe trab-conteudo" style="--cor-fundo:${cor}">
         <div class="atividade-topo">
-          <div>
-            <span class="rotulo-materia">${esc(a.materia)} · ${esc(a.turma)}</span>
-            <h1>${esc(a.titulo)}</h1>
-            <p class="atividade-professor">${avatarProfessor(a.professor)} ${esc(a.professor || '')}</p>
-          </div>
+          <span class="chip ${info.classe}">${info.rotulo}</span>
           ${chipStatus(s)}
         </div>
-        ${a.descricao ? `<p class="atividade-descricao">${esc(a.descricao)}</p>` : ''}
+        ${a.descricao ? `<p class="atividade-descricao">${esc(a.descricao)}</p>` : '<p class="atividade-descricao sem-descricao">Sem descrição enviada pelo professor.</p>'}
         <div class="atividade-meta">
           ${blocoPrazo(a, s)}
           <span class="prazo neutro">Publicado em ${dataBR(a.criado_em)}</span>
         </div>
         ${blocoEntrega(a, s)}
         <div class="atividade-rodape">${blocoAcoes(a, s)}</div>
-      </div>
-    </article>
+      </article>
+    </div>
+
+    <aside class="mat-lateral">
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Resumo da entrega</h2></header>
+        <ul class="mat-resumo">
+          <li><span>Situação</span><strong>${estado}</strong></li>
+          <li><span>Prazo</span><strong>${a.prazo ? dataBR(a.prazo) : 'Sem prazo'}</strong></li>
+          <li><span>Enviado em</span><strong>${a.enviado_em ? dataBR(a.enviado_em) : '—'}</strong></li>
+          <li><span>Forma de envio</span><strong>${metodo}</strong></li>
+          <li><span>Nota</span><strong>${s.corrigido && a.nota !== null && a.nota !== undefined ? esc(String(a.nota)) : '—'}</strong></li>
+        </ul>
+      </section>
+
+      ${
+        s.corrigido
+          ? `<section class="ini-painel">
+               <header class="ini-painel-topo"><h2>Observação do professor</h2></header>
+               <p class="trab-observacao">${esc(a.observacao || 'Sem observações.')}</p>
+               <small class="trab-data">Corrigido em ${dataHoraBR(a.corrigido_em)}</small>
+             </section>`
+          : `<section class="ini-painel">
+               <header class="ini-painel-topo"><h2>Como entregar</h2></header>
+               <ul class="trab-dicas">
+                 <li><strong>Arquivo</strong><small>PDF, DOCX, PPTX, XLSX, JPG/PNG ou TXT — até 15 MB.</small></li>
+                 <li><strong>Link</strong><small>Site, artigo ou post com endereço http(s).</small></li>
+                 <li><strong>Google Drive</strong><small>Link compartilhado do arquivo no Drive.</small></li>
+               </ul>
+               <p class="trab-nota">${s.temEntrega ? 'Você pode reenviar enquanto o trabalho não for corrigido.' : 'Envie antes do prazo para evitar atraso.'}</p>
+             </section>`
+      }
+
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Atalhos</h2></header>
+        <ul class="trab-atalhos">
+          <li><a href="/aluno/materia/${a.vinculo_id}?aba=todos">Ver trabalhos de ${esc(a.materia)}</a></li>
+          <li><a href="/aluno/calendario">Calendário do mês</a></li>
+        </ul>
+      </section>
+    </aside>
   </div>`;
 }
 
