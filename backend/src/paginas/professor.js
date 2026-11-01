@@ -190,6 +190,19 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
        <h3>${aba === 'todas' ? 'Nenhuma atividade publicada' : 'Nada nesta aba'}</h3>
        <p>${aba === 'todas' ? 'Use o botão "+ Nova atividade" para publicar um trabalho com prazo.' : 'Nenhuma atividade corresponde a este filtro.'}</p></div>`;
 
+  // Resumo lateral
+  const trabalhos = atividades.filter((a) => (a.tipo || 'trabalho') === 'trabalho');
+  const totalEntregas = trabalhos.reduce((soma, a) => soma + Number(a.total_entregas || 0), 0);
+  const totalCorrigidas = trabalhos.reduce((soma, a) => soma + Number(a.corrigidas || 0), 0);
+  const aCorrigir = totalEntregas - totalCorrigidas;
+  const pctCorrecao = totalEntregas ? Math.round((totalCorrigidas / totalEntregas) * 100) : 0;
+  const comPendencia = trabalhos
+    .filter((a) => Number(a.total_entregas || 0) > Number(a.corrigidas || 0))
+    .sort((a, b) => Number(b.total_entregas) - Number(b.corrigidas) - (Number(a.total_entregas) - Number(a.corrigidas)));
+  const proxima = atividades
+    .filter((a) => a.prazo && new Date(a.prazo).getTime() >= Date.now())
+    .sort((a, b) => new Date(a.prazo) - new Date(b.prazo))[0];
+
   return `
   <header class="faixa-materia" style="background:${cor}">
     <div class="faixa-conteudo">
@@ -200,10 +213,66 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
       <a class="btn fantasma" href="/professor">← Minhas matérias</a>
     </div>
   </header>
-  <div class="painel">
-    ${blocoNovaAtividade(materia.vinculo_id)}
-    ${seletorAba(aba, contagens)}
-    <div class="lista-atividades">${lista}</div>
+
+  <div class="mat-grade">
+    <div class="painel">
+      ${blocoNovaAtividade(materia.vinculo_id)}
+      ${seletorAba(aba, contagens)}
+      <div class="lista-atividades">${lista}</div>
+    </div>
+
+    <aside class="mat-lateral">
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Resumo da matéria</h2></header>
+        <ul class="mat-resumo">
+          <li><span>Alunos na turma</span><strong>${Number(materia.alunos || 0)}</strong></li>
+          <li><span>Atividades publicadas</span><strong>${atividades.length}</strong></li>
+          <li><span>Entregas recebidas</span><strong>${totalEntregas}</strong></li>
+          <li><span>A corrigir</span><strong>${aCorrigir}</strong></li>
+        </ul>
+        <div class="mat-progresso-topo">
+          <span>Correções concluídas</span><strong>${pctCorrecao}%</strong>
+        </div>
+        <div class="ini-barra"><i style="width:${pctCorrecao}%;background:${cor}"></i></div>
+      </section>
+
+      <section class="ini-painel">
+        <header class="ini-painel-topo">
+          <h2>Correções pendentes</h2>
+          ${aCorrigir ? `<span class="chip aguardando">${aCorrigir}</span>` : ''}
+        </header>
+        ${
+          comPendencia.length
+            ? `<ul class="mat-resumo mat-lista-link">${comPendencia
+                .slice(0, 4)
+                .map(
+                  (a) =>
+                    `<li><a href="/professor/atividade/${a.id}">${esc(a.titulo)}</a><strong>${
+                      Number(a.total_entregas) - Number(a.corrigidas)
+                    }</strong></li>`
+                )
+                .join('')}</ul>`
+            : '<p class="mat-vazio">Nenhuma entrega pendente de correção.</p>'
+        }
+      </section>
+
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Próximo prazo</h2></header>
+        ${
+          proxima
+            ? (() => {
+                const info = TIPOS[proxima.tipo || 'trabalho'] || TIPOS.trabalho;
+                return `<a class="mat-prazo" href="/professor/atividade/${proxima.id}">
+                  <span class="chip ${info.classe}">${info.rotulo}</span>
+                  <strong>${esc(proxima.titulo)}</strong>
+                  <small>${dataHoraBR(proxima.prazo)}</small>
+                </a>`;
+              })()
+            : '<p class="mat-vazio">Nenhuma atividade com prazo em aberto.</p>'
+        }
+        <a class="ini-cal-ver" href="/professor/calendario">Ver calendário do mês →</a>
+      </section>
+    </aside>
   </div>`;
 }
 

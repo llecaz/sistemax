@@ -993,6 +993,10 @@ body.tela-login {
   background: rgba(155, 124, 240, 0.16);
   color: #8266d6;
 }
+.chip.entrega {
+  background: rgba(76, 175, 125, 0.16);
+  color: #3d9568;
+}
 
 .prazo {
   font-size: 13px;
@@ -2763,6 +2767,22 @@ body.tela-login {
 }
 .mat-resumo li strong {
   font-size: 15px;
+}
+.mat-lista-link li a {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--texto);
+  text-decoration: none;
+  font-size: 13px;
+}
+.mat-lista-link li a:hover {
+  color: var(--azul);
+}
+.mat-lista-link li strong {
+  color: var(--texto-suave);
 }
 .mat-progresso-topo {
   display: flex;
