@@ -52,6 +52,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 ### 👩‍🏫 Área do Professor
 - **Início em painel**: entregas para corrigir, matérias com progresso de correções, mini-calendário e próximas tarefas.
 - **Página da matéria em painel**: publicar atividades + resumo lateral (entregas, correções pendentes e próximo prazo).
+- **Tela de correção em painel**: entregas dos alunos + resumo lateral (prazo, alunos, entregues, corrigidas, média e progresso), lista de quem está aguardando e de quem não entregou (com atalho para o aluno).
 - Cards das turmas/matérias que leciona (com entregas aguardando correção).
 - Criar **atividade com prazo de entrega**; filtros `Todas / Aguardando correção / Corrigidas`.
 - Lista de alunos com download do arquivo e correção: **nota (0–10) + observação**.

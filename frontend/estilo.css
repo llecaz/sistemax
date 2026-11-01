@@ -1917,6 +1917,11 @@ body.tela-login {
   border-radius: 12px;
   padding: 16px;
   background: var(--superficie);
+  scroll-margin-top: 96px;
+}
+.linha-aluno:target {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--azul) 18%, transparent);
 }
 .linha-aluno.foi-corrigido {
   border-color: color-mix(in srgb, var(--verde) 40%, transparent);
@@ -2783,6 +2788,11 @@ body.tela-login {
 }
 .mat-lista-link li strong {
   color: var(--texto-suave);
+}
+.mat-lista-link li small {
+  font-size: 11px;
+  color: var(--texto-suave);
+  white-space: nowrap;
 }
 .mat-progresso-topo {
   display: flex;

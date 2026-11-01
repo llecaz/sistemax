@@ -335,7 +335,7 @@ function paginaAtividadeProfessor({ materia, atividade, alunos }) {
         : '';
 
       return `
-      <article class="linha-aluno ${corrigido ? 'foi-corrigido' : ''}">
+      <article class="linha-aluno ${corrigido ? 'foi-corrigido' : ''}" id="aluno-${al.id}">
         <div class="linha-aluno-topo">
           <div class="aluno-identidade">${avatar(al, 'pequeno')}<strong>${esc(al.nome)}</strong></div>
           ${estado}
@@ -349,6 +349,14 @@ function paginaAtividadeProfessor({ materia, atividade, alunos }) {
 
   const entregas = alunos.filter((a) => a.entrega_id).length;
   const corrigidas = alunos.filter((a) => a.entrega_id && a.nota !== null && a.nota !== undefined).length;
+  const pendentes = alunos.filter((a) => a.entrega_id && (a.nota === null || a.nota === undefined));
+  const semEntrega = alunos.filter((a) => !a.entrega_id);
+  const notas = alunos
+    .filter((a) => a.entrega_id && a.nota !== null && a.nota !== undefined)
+    .map((a) => Number(a.nota));
+  const media = notas.length ? (notas.reduce((s, n) => s + n, 0) / notas.length).toFixed(1).replace('.', ',') : null;
+  const pctCorrecao = entregas ? Math.round((corrigidas / entregas) * 100) : 0;
+  const info = TIPOS[atividade.tipo || 'trabalho'] || TIPOS.trabalho;
 
   return `
   <header class="faixa-materia" style="background:${cor}">
@@ -363,9 +371,65 @@ function paginaAtividadeProfessor({ materia, atividade, alunos }) {
       <a class="btn fantasma" href="/professor/materia/${materia.vinculo_id}">← Voltar</a>
     </div>
   </header>
-  <div class="painel">
-    ${atividade.descricao ? `<p class="descricao-atividade">${esc(atividade.descricao)}</p>` : ''}
-    <div class="lista-alunos">${linhas || '<div class="vazio"><div class="vazio-icone">👥</div><h3>Sem alunos na turma</h3></div>'}</div>
+
+  <div class="mat-grade">
+    <div class="painel">
+      ${atividade.descricao ? `<p class="descricao-atividade">${esc(atividade.descricao)}</p>` : ''}
+      <div class="lista-alunos">${
+        linhas || '<div class="vazio"><div class="vazio-icone">👥</div><h3>Sem alunos na turma</h3></div>'
+      }</div>
+    </div>
+
+    <aside class="mat-lateral">
+      <section class="ini-painel">
+        <header class="ini-painel-topo">
+          <h2>Resumo da atividade</h2>
+          <span class="chip ${info.classe}">${info.rotulo}</span>
+        </header>
+        <ul class="mat-resumo">
+          <li><span>Prazo</span><strong>${atividade.prazo ? dataBR(atividade.prazo) : 'Sem prazo'}</strong></li>
+          <li><span>Alunos na turma</span><strong>${alunos.length}</strong></li>
+          <li><span>Entregues</span><strong>${entregas}</strong></li>
+          <li><span>Corrigidas</span><strong>${corrigidas}</strong></li>
+          <li><span>Média da turma</span><strong>${media ?? '—'}</strong></li>
+        </ul>
+        <div class="mat-progresso-topo">
+          <span>Correções concluídas</span><strong>${pctCorrecao}%</strong>
+        </div>
+        <div class="ini-barra"><i style="width:${pctCorrecao}%;background:${cor}"></i></div>
+      </section>
+
+      <section class="ini-painel">
+        <header class="ini-painel-topo">
+          <h2>Aguardando correção</h2>
+          ${pendentes.length ? `<span class="chip aguardando">${pendentes.length}</span>` : ''}
+        </header>
+        ${
+          pendentes.length
+            ? `<ul class="mat-resumo mat-lista-link">${pendentes
+                .map(
+                  (a) =>
+                    `<li><a href="#aluno-${a.id}">${esc(a.nome)}</a><small>${decorrido(a.enviado_em)}</small></li>`
+                )
+                .join('')}</ul>`
+            : '<p class="mat-vazio">Nenhuma entrega aguardando correção.</p>'
+        }
+      </section>
+
+      <section class="ini-painel">
+        <header class="ini-painel-topo">
+          <h2>Não entregaram</h2>
+          ${semEntrega.length ? `<span class="chip pendente">${semEntrega.length}</span>` : ''}
+        </header>
+        ${
+          semEntrega.length
+            ? `<ul class="mat-resumo mat-lista-link">${semEntrega
+                .map((a) => `<li><a href="#aluno-${a.id}">${esc(a.nome)}</a></li>`)
+                .join('')}</ul>`
+            : '<p class="mat-vazio">Todos os alunos entregaram.</p>'
+        }
+      </section>
+    </aside>
   </div>`;
 }
 
