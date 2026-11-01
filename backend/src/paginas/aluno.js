@@ -261,14 +261,27 @@ function abas(aba, contagens) {
   </nav>`;
 }
 
-/** Página da matéria (cabeçalho colorido + abas + lista). */
+/** Página da matéria (cabeçalho colorido + painel de trabalhos + resumo lateral). */
 function paginaMateria({ usuario, materia, atividades, aba }) {
   const cor = corDe(materia.materia).claro;
   const contagens = { todos: 0, 'nao-corrigidos': 0, corrigidos: 0, atrasados: 0 };
+  const trabalhos = atividades.filter((a) => (a.tipo || 'trabalho') === 'trabalho');
   atividades.forEach((a) => {
     if ((a.tipo || 'trabalho') !== 'trabalho') return;
     abasDe(a).abas.forEach((x) => contagens[x]++);
   });
+
+  const total = trabalhos.length;
+  const entregues = trabalhos.filter((a) => a.entrega_id).length;
+  const aEntregar = total - entregues;
+  const pct = total ? Math.round((entregues / total) * 100) : 0;
+
+  // Próximo prazo entre os trabalhos ainda não entregues
+  const pendentes = trabalhos
+    .filter((a) => !a.entrega_id && a.prazo)
+    .sort((a, b) => new Date(a.prazo) - new Date(b.prazo));
+  const proxima = pendentes[0];
+  const proximaS = proxima ? abasDe(proxima).s : null;
 
   return `
   <header class="faixa-materia" style="background:${cor}">
@@ -280,13 +293,47 @@ function paginaMateria({ usuario, materia, atividades, aba }) {
       <span class="faixa-avatar">${avatarProfessor(materia.professor)}</span>
     </div>
   </header>
-  <div class="painel">
-    <div class="painel-topo">
-      <h2>Trabalhos</h2>
-      <a class="btn text" href="/aluno">← Voltar às matérias</a>
+
+  <div class="mat-grade">
+    <div class="painel">
+      <div class="painel-topo">
+        <h2>Trabalhos</h2>
+        <a class="btn text" href="/aluno">← Voltar às matérias</a>
+      </div>
+      ${abas(aba, contagens)}
+      <div class="lista-atividades">${listaAtividades(atividades, aba)}</div>
     </div>
-    ${abas(aba, contagens)}
-    <div class="lista-atividades">${listaAtividades(atividades, aba)}</div>
+
+    <aside class="mat-lateral">
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Resumo da matéria</h2></header>
+        <ul class="mat-resumo">
+          <li><span>Trabalhos publicados</span><strong>${total}</strong></li>
+          <li><span>Entregues por você</span><strong>${entregues}</strong></li>
+          <li><span>A entregar</span><strong>${aEntregar}</strong></li>
+        </ul>
+        <div class="mat-progresso-topo">
+          <span>Seu progresso</span><strong>${pct}%</strong>
+        </div>
+        <div class="ini-barra"><i style="width:${pct}%;background:${cor}"></i></div>
+      </section>
+
+      <section class="ini-painel">
+        <header class="ini-painel-topo"><h2>Próximo prazo</h2></header>
+        ${
+          proxima
+            ? `<a class="mat-prazo" href="/aluno/trabalho/${proxima.id}">
+                 <span class="chip ${proximaS && proximaS.atrasado && !proxima.entrega_id ? 'atrasado' : 'aguardando'}">${
+                   proximaS && proximaS.atrasado && !proxima.entrega_id ? 'Atrasado' : 'Em aberto'
+                 }</span>
+                 <strong>${esc(proxima.titulo)}</strong>
+                 <small>${dataHoraBR(proxima.prazo)}</small>
+               </a>`
+            : '<p class="mat-vazio">Nenhum prazo em aberto. Tudo entregue por aqui!</p>'
+        }
+        <a class="ini-cal-ver" href="/aluno/calendario">Ver calendário do mês →</a>
+      </section>
+    </aside>
   </div>`;
 }
 

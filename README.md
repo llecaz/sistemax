@@ -33,6 +33,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 
 ### 🎓 Área do Aluno
 - **Início em painel**: saudação, resumo (a fazer / aguardando correção / corrigidas), **Minhas tarefas** com abas, **Minhas matérias** com barra de progresso, mini-calendário e próximas tarefas.
+- **Página da matéria em painel**: lista de trabalhos + resumo lateral com entregues, progresso e próximo prazo.
 - Grade de **cards das matérias** da turma (cada matéria com o nome do professor).
 - Abas de filtro dos trabalhos: `Todos` · `Não corrigidos` · `Corrigidos` · `Atrasados`
   - *Não corrigidos*: entregue, aguardando correção
