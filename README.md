@@ -46,10 +46,16 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 
 ### 🗓️ Calendário do mês (aluno e professor)
 - Página própria com grade do **mês**, prazos e provas marcados por dia.
+- **Visual lo-fi / dreamy em pixel art**: quarto de estudos aconchegante, tons pastel de rosa, lilás, roxo e creme.
+- **Barra lateral escura** com navegação em ícones pixel, estante de livros, luas e plantinhas.
+- **Player lo-fi** funcional (acordes, baixo e chuva sintetizados com Web Audio — sem arquivos externos).
+- Área principal com cabeçalho ilustrado, navegação de meses e cartão do calendário.
+- Painel direito com **Próximas tarefas**, cartão motivacional e ilustrações de gatinhos.
+- Rodapé com **resumo do dia**, **progresso do mês** e legenda de cores.
 - Indicadores coloridos: **tarefa/quiz**, **entrega**, **prova**, **projeto** e **evento**.
-- Coluna lateral **Próximas tarefas**, **progresso do mês** e legenda de cores.
 - No celular, a grade mostra a **semana inteira** com pontinhos coloridos por tipo de atividade.
 - O **professor** pode usar **+ Adicionar evento** para marcar provas/projetos/eventos no mês; o aluno apenas visualiza.
+- Ilustrações em SVG pixel art geradas por `scripts/gerar-pixel-art.js` e salvas em `frontend/img/lofi/`.
 
 ### 👩‍🏫 Área do Professor
 - **Início em painel**: entregas para corrigir, matérias com progresso de correções, mini-calendário e próximas tarefas.
@@ -158,7 +164,11 @@ sistemax/
 ├── frontend/                # Lado cliente (estáticos servidos pelo Express)
 │   ├── estilo.css           # Tema base (variáveis) + visual Classroom + galeria
 │   ├── temas.css            # ⭐ Identidade visual de cada tema (variáveis CSS)
+│   ├── lofi.css             # ⭐ Visual lo-fi/pixel art da página de calendário
+│   ├── lofi.js              # ⭐ Player lo-fi (Web Audio API)
+│   ├── img/lofi/            # ⭐ Ilustrações pixel art (gatos, livros, plantas, lua)
 │   └── app.js               # Temas, menu, confirmações, seleção de arquivos
+├── scripts/gerar-pixel-art.js  # Gera os SVGs das ilustrações do calendário
 ├── backend/uploads/         # Arquivos enviados (fora da área pública)
 ├── package.json             # Scripts: start, dev, criar-banco
 ├── .env.exemplo             # Modelo de configuração

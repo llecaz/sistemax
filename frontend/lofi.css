@@ -1,0 +1,1159 @@
+/* ==========================================================================
+   Calendário — quarto de estudos em pixel art (lo-fi / dreamy)
+   Estilos isolados pelo invólucro .lofi-app e por body[data-pagina].
+   ========================================================================== */
+
+body[data-pagina="calendario"] {
+  background-color: #f7ecdf;
+  background-image:
+    linear-gradient(rgba(217, 138, 166, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154, 127, 209, 0.07) 1px, transparent 1px);
+  background-size: 26px 26px;
+  color: #4a3a63;
+}
+body[data-pagina="calendario"] .topo,
+body[data-pagina="calendario"] .gaveta,
+body[data-pagina="calendario"] .sobreposicao,
+body[data-pagina="calendario"] .tema-decoracao {
+  display: none !important;
+}
+body[data-pagina="calendario"] .conteudo {
+  max-width: none;
+  padding: 0;
+}
+body[data-pagina="calendario"] .mensagens {
+  max-width: 1360px;
+  margin: 12px auto 0;
+  padding: 0 18px;
+}
+
+.lofi-app {
+  --lf-ink: #4a3a63;
+  --lf-ink-soft: #7d6a8c;
+  --lf-muted: #9d8aae;
+  --lf-bg: #f7ecdf;
+  --lf-cream: #fff8ee;
+  --lf-cream-2: #fdf3e8;
+  --lf-border: #e7cfc4;
+  --lf-border-soft: #f0ddcd;
+  --lf-rail: #2f2547;
+  --lf-rail-2: #3b2f57;
+  --lf-rail-3: #52406f;
+  --lf-lilac: #cbb8ea;
+  --lf-lilac-strong: #9a7fd1;
+  --lf-pink: #f3bccb;
+  --lf-pink-strong: #d98aa6;
+  --lf-green: #a8d5a2;
+  --lf-yellow: #f4d992;
+
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 270px;
+  gap: 16px;
+  align-items: start;
+  color: var(--lf-ink);
+  font-family: 'Nunito', 'Roboto', sans-serif;
+}
+.lofi-app h1,
+.lofi-app h2,
+.lofi-app h3 {
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-weight: 600;
+  color: var(--lf-ink);
+}
+.lofi-app img {
+  image-rendering: pixelated;
+  max-width: 100%;
+  height: auto;
+}
+.lofi-app a {
+  color: var(--lf-lilac-strong);
+}
+
+/* ----------------------------- Barra lateral ----------------------------- */
+.lofi-rail {
+  position: sticky;
+  top: 16px;
+  height: calc(100vh - 32px);
+  background: var(--lf-rail);
+  border: 2px solid var(--lf-rail-3);
+  border-radius: 18px;
+  box-shadow: 0 6px 0 rgba(74, 58, 99, 0.22);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  color: #f3e6f5;
+}
+.lofi-marca {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #f8e8d4;
+  padding: 2px 4px;
+}
+.lofi-marca:hover {
+  text-decoration: none;
+}
+.lofi-logo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  background: var(--lf-lilac);
+  border: 2px solid #e2d6f5;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 #1f1830;
+}
+.lofi-marca-texto strong {
+  display: block;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 19px;
+  line-height: 1.05;
+  letter-spacing: 0.4px;
+}
+.lofi-marca-texto small {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  color: #b9a6cf;
+}
+.lofi-usuario {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  background: var(--lf-rail-2);
+  border: 1px solid var(--lf-rail-3);
+}
+.lofi-usuario .avatar {
+  flex: none;
+}
+.lofi-usuario strong {
+  display: block;
+  font-size: 12px;
+  line-height: 1.2;
+  max-width: 125px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lofi-usuario small {
+  display: block;
+  font-size: 10px;
+  color: #b9a6cf;
+}
+.lofi-nav {
+  display: grid;
+  gap: 3px;
+}
+.lofi-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 9px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  color: #d9c9e8;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.lofi-nav-item:hover {
+  background: var(--lf-rail-2);
+  color: #fff8ee;
+  text-decoration: none;
+}
+.lofi-nav-item.ativo {
+  background: var(--lf-lilac);
+  border-color: #e2d6f5;
+  color: #2f2547;
+  font-weight: 700;
+  box-shadow: 0 3px 0 #1f1830;
+}
+.lofi-nav-icone {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+}
+.lofi-nav-item.ativo .lofi-nav-icone svg {
+  fill: #2f2547;
+}
+.lofi-rail-deco {
+  margin-top: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 6px 0;
+}
+.lofi-rail-cantinho {
+  margin-top: auto;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 8px 2px 0;
+  border-top: 1px dashed var(--lf-rail-3);
+}
+.lofi-rail-quote {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 11.5px;
+  line-height: 1.35;
+  text-align: center;
+  color: #d9c9e8;
+}
+.lofi-rail-cantinho img {
+  width: 150px;
+}
+.lofi-rail-deco {
+  margin-top: 0;
+}
+.lofi-deco-lua {
+  width: 56px;
+}
+.lofi-deco-planta {
+  width: 48px;
+}
+.lofi-player {
+  background: var(--lf-rail-2);
+  border: 2px solid var(--lf-rail-3);
+  border-radius: 10px;
+  padding: 8px;
+}
+.lofi-player-topo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.lofi-disco {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--lf-pink);
+  color: #5a3550;
+  font-size: 13px;
+  border: 2px solid #f9d9e2;
+}
+.lofi-player.tocando .lofi-disco {
+  animation: lofi-girar 3s steps(8) infinite;
+}
+.lofi-player-info {
+  flex: 1;
+  min-width: 0;
+}
+.lofi-player-info strong {
+  display: block;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 13px;
+  color: #f8e8d4;
+  line-height: 1.1;
+}
+.lofi-player-info small {
+  display: block;
+  font-size: 9px;
+  color: #b9a6cf;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lofi-play {
+  flex: none;
+  width: 30px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  border: 2px solid #e2d6f5;
+  background: var(--lf-lilac);
+  color: #2f2547;
+  font-size: 11px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #1f1830;
+}
+.lofi-play:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #1f1830;
+}
+.lofi-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 15px;
+  margin-top: 7px;
+  padding-left: 2px;
+}
+.lofi-eq i {
+  display: block;
+  width: 3px;
+  height: 3px;
+  background: var(--lf-pink);
+}
+.lofi-player.tocando .lofi-eq i {
+  animation: lofi-eq 1s steps(4) infinite;
+}
+.lofi-player.tocando .lofi-eq i:nth-child(2) {
+  animation-delay: -0.25s;
+  background: var(--lf-lilac);
+}
+.lofi-player.tocando .lofi-eq i:nth-child(3) {
+  animation-delay: -0.5s;
+}
+.lofi-player.tocando .lofi-eq i:nth-child(4) {
+  animation-delay: -0.15s;
+  background: var(--lf-green);
+}
+.lofi-player.tocando .lofi-eq i:nth-child(5) {
+  animation-delay: -0.65s;
+  background: var(--lf-yellow);
+}
+.lofi-sair button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--lf-rail-3);
+  background: transparent;
+  color: #b9a6cf;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.lofi-sair button:hover {
+  background: var(--lf-rail-2);
+  color: #f8e8d4;
+}
+.lofi-sair svg {
+  fill: currentColor;
+}
+
+@keyframes lofi-eq {
+  0% { height: 3px; }
+  25% { height: 12px; }
+  50% { height: 5px; }
+  75% { height: 15px; }
+  100% { height: 4px; }
+}
+@keyframes lofi-girar {
+  to { transform: rotate(360deg); }
+}
+
+/* -------------------------------- Conteúdo -------------------------------- */
+.lofi-main {
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+.lofi-topo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: var(--lf-cream);
+  border: 2px solid var(--lf-border);
+  border-radius: 18px;
+  box-shadow: 0 4px 0 #e9d4c7;
+  padding: 18px 24px;
+  overflow: hidden;
+}
+.lofi-topo::after {
+  content: '';
+  position: absolute;
+  right: 168px;
+  bottom: 10px;
+  width: 46px;
+  height: 46px;
+  background-image:
+    linear-gradient(var(--lf-lilac) 2px, transparent 2px),
+    linear-gradient(90deg, var(--lf-lilac) 2px, transparent 2px);
+  background-size: 12px 12px;
+  opacity: 0.18;
+  pointer-events: none;
+}
+.lofi-selo {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--lf-pink);
+  border: 2px solid var(--lf-pink-strong);
+  border-radius: 6px;
+  color: #6b3d55;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.lofi-topo h1 {
+  font-size: 46px;
+  line-height: 1.05;
+  margin: 6px 0 2px;
+  color: var(--lf-ink);
+  text-shadow: 2px 2px 0 #e6d6f2;
+}
+.lofi-topo p {
+  margin: 0;
+  color: var(--lf-ink-soft);
+  font-size: 14px;
+}
+.lofi-cantinho {
+  flex: none;
+  width: 192px;
+  filter: drop-shadow(0 3px 0 rgba(74, 58, 99, 0.08));
+}
+
+/* -------------------------------- Calendário -------------------------------- */
+.lofi-calendario {
+  background: var(--lf-cream);
+  border: 2px solid var(--lf-border);
+  border-radius: 18px;
+  box-shadow: 0 4px 0 #e9d4c7;
+  padding: 16px;
+}
+.lofi-cal-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.lofi-mes-navegacao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lofi-mes-seta {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--lf-pink);
+  border: 2px solid var(--lf-pink-strong);
+  border-radius: 8px;
+  color: #6b3d55;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 18px;
+  line-height: 1;
+  box-shadow: 0 3px 0 #d98aa6;
+}
+.lofi-mes-seta:hover {
+  background: #f9d9e2;
+  text-decoration: none;
+}
+.lofi-mes-seta:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #d98aa6;
+}
+.lofi-mes-atual span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--lf-muted);
+}
+.lofi-mes-atual strong {
+  display: block;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 23px;
+  line-height: 1.1;
+  color: var(--lf-ink);
+}
+.lofi-cal-acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lofi-lua-mini {
+  width: 74px;
+  flex: none;
+}
+
+/* Formulário de evento */
+.lofi-app .cal-add-evento {
+  position: relative;
+}
+.lofi-app .cal-botao-evento {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  background: var(--lf-lilac);
+  border: 2px solid var(--lf-lilac-strong);
+  border-radius: 8px;
+  box-shadow: 0 3px 0 var(--lf-lilac-strong);
+  color: #3d2b52;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.lofi-app .cal-botao-evento::-webkit-details-marker {
+  display: none;
+}
+.lofi-app .cal-botao-evento:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--lf-lilac-strong);
+}
+.lofi-app .cal-form-evento {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 30;
+  width: 330px;
+  max-width: calc(100vw - 48px);
+  background: var(--lf-cream);
+  border: 2px solid #d9c3e8;
+  border-radius: 12px;
+  box-shadow: 0 5px 0 rgba(74, 58, 99, 0.16);
+  padding: 14px;
+}
+.lofi-app .cal-form-evento .campo {
+  margin-bottom: 10px;
+}
+.lofi-app .cal-form-evento label.acima {
+  font-size: 11px;
+  color: var(--lf-ink-soft);
+}
+.lofi-app .cal-form-evento input,
+.lofi-app .cal-form-evento select,
+.lofi-app .cal-form-evento textarea {
+  width: 100%;
+  background: #fffdf8;
+  border: 2px solid #e3cfe0;
+  border-radius: 8px;
+  color: var(--lf-ink);
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 13px;
+}
+.lofi-app .cal-form-evento textarea {
+  resize: vertical;
+}
+.lofi-app .cal-form-evento .btn.primario {
+  background: var(--lf-pink);
+  border: 2px solid var(--lf-pink-strong);
+  border-radius: 8px;
+  box-shadow: 0 3px 0 var(--lf-pink-strong);
+  color: #5a3550;
+  font-family: 'Pixelify Sans', monospace;
+  padding: 8px 12px;
+}
+
+/* Grade */
+.lofi-app .cal-grade {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+.lofi-app .cal-cabecalho-dia {
+  text-align: center;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--lf-muted);
+  padding: 3px 0;
+}
+.lofi-app .cal-dia {
+  min-height: 88px;
+  padding: 6px;
+  border: 2px solid var(--lf-border-soft);
+  border-radius: 10px;
+  background: var(--lf-cream-2);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 4px;
+  align-content: start;
+}
+.lofi-app .cal-dia.com-eventos {
+  border-color: #e3cfe0;
+  background: #fbf2f6;
+}
+.lofi-app .cal-dia.fora-do-mes {
+  background: #f6ebdf;
+  border-color: transparent;
+  opacity: 0.55;
+}
+.lofi-app .cal-dia.hoje {
+  border-color: var(--lf-pink-strong);
+  background: #fbe3ea;
+  box-shadow: inset 0 0 0 2px #f9d9e2;
+}
+.lofi-app .cal-num {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 14px;
+  color: #6b5687;
+}
+.lofi-app .cal-dia.hoje .cal-num {
+  background: var(--lf-lilac-strong);
+  color: #fff8ee;
+}
+.lofi-app .cal-marca-prova {
+  color: #e0a83e;
+  font-size: 11px;
+}
+.lofi-app .cal-dia-eventos {
+  display: grid;
+  gap: 3px;
+  align-content: start;
+  overflow: hidden;
+}
+.lofi-app .cal-pilula {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  border-left: 3px solid transparent;
+  font-size: 10.5px;
+  line-height: 1.2;
+  color: #4a3a63;
+  text-decoration: none;
+  overflow: hidden;
+}
+.lofi-app .cal-pilula-titulo {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lofi-app .cal-pilula-hora {
+  font-size: 9px;
+  opacity: 0.8;
+}
+.lofi-app .cal-pilula.tarefa {
+  background: #fbe0e3;
+  border-left-color: #e2555f;
+}
+.lofi-app .cal-pilula.entrega {
+  background: #e0f2e6;
+  border-left-color: #4caf7d;
+}
+.lofi-app .cal-pilula.prova {
+  background: #fbeecd;
+  border-left-color: #e0a83e;
+}
+.lofi-app .cal-pilula.projeto {
+  background: #e3ebfb;
+  border-left-color: #5b8def;
+}
+.lofi-app .cal-pilula.evento {
+  background: #ece4fb;
+  border-left-color: #9b7cf0;
+}
+.lofi-app .cal-mais {
+  font-size: 9px;
+  color: var(--lf-muted);
+  padding-left: 3px;
+}
+
+/* Rodapé do calendário */
+.lofi-rodape {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr 1.15fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+.lofi-mini {
+  background: var(--lf-cream-2);
+  border: 2px solid var(--lf-border-soft);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.lofi-mini-rotulo {
+  display: block;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: var(--lf-lilac-strong);
+}
+.lofi-hoje strong {
+  display: block;
+  margin: 2px 0 1px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 16px;
+  color: var(--lf-ink);
+}
+.lofi-hoje p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--lf-ink-soft);
+  font-style: italic;
+}
+.lofi-mini-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+.lofi-mini-topo small {
+  font-size: 10px;
+  color: var(--lf-muted);
+}
+.lofi-barra {
+  height: 10px;
+  margin: 7px 0 3px;
+  background: #efe0d1;
+  border: 1px solid #e0cab8;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.lofi-barra i {
+  display: block;
+  height: 100%;
+  background: var(--lf-green);
+}
+.lofi-percentual {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 11px;
+  color: var(--lf-ink-soft);
+}
+.lofi-legenda ul {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 8px;
+  font-size: 10.5px;
+  color: var(--lf-ink-soft);
+}
+.lofi-legenda li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lofi-app .ponto {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+  display: inline-block;
+}
+.lofi-app .ponto.tarefa { background: #e2555f; }
+.lofi-app .ponto.entrega { background: #4caf7d; }
+.lofi-app .ponto.prova { background: #e0a83e; }
+.lofi-app .ponto.projeto { background: #5b8def; }
+.lofi-app .ponto.evento { background: #9b7cf0; }
+
+/* ----------------------------- Painel direito ----------------------------- */
+.lofi-aside {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  min-width: 0;
+}
+.lofi-card {
+  background: var(--lf-cream);
+  border: 2px solid var(--lf-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 #e9d4c7;
+  padding: 14px;
+}
+.lofi-card-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.lofi-card-topo h2 {
+  font-size: 18px;
+  line-height: 1.1;
+}
+.lofi-estrela {
+  color: var(--lf-pink-strong);
+  font-size: 15px;
+}
+.lofi-proximas-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lofi-proxima {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 8px 0;
+  border-bottom: 1px dashed #ecd9cc;
+}
+.lofi-proxima:last-child {
+  border-bottom: 0;
+}
+.lofi-proxima .ponto {
+  margin-top: 4px;
+}
+.lofi-proxima-corpo {
+  min-width: 0;
+  flex: 1;
+}
+.lofi-proxima-corpo a,
+.lofi-proxima-corpo strong,
+.lofi-proxima-titulo {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--lf-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lofi-proxima-corpo a:hover {
+  color: var(--lf-pink-strong);
+}
+.lofi-proxima-corpo small {
+  display: block;
+  font-size: 10.5px;
+  color: var(--lf-muted);
+}
+.lofi-proximas-vazio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--lf-ink-soft);
+}
+.lofi-ver {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--lf-lilac-strong);
+}
+.lofi-motivacional {
+  background: var(--lf-rail);
+  border-color: var(--lf-rail-3);
+  color: #f8e8d4;
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 16px 10px 12px;
+  box-shadow: 0 4px 0 rgba(74, 58, 99, 0.3);
+}
+.lofi-motivacional p {
+  margin: 0;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 16px;
+  line-height: 1.35;
+  color: #f8e8d4;
+}
+.lofi-motivacional img {
+  width: 164px;
+  margin-top: 2px;
+}
+.lofi-ilustracao {
+  display: grid;
+  place-items: center;
+  padding: 4px 0 0;
+}
+.lofi-ilustracao img {
+  width: 100%;
+  filter: drop-shadow(0 4px 0 rgba(74, 58, 99, 0.06));
+}
+.lofi-luar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 11px;
+  color: var(--lf-muted);
+  text-align: center;
+}
+.lofi-luar img {
+  width: 96px;
+}
+
+/* ------------------------------ Lista de atividades ------------------------------ */
+#lista-eventos {
+  scroll-margin-top: 14px;
+}
+.lofi-lista-painel {
+  padding: 14px 16px;
+}
+.lofi-lista-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.lofi-lista-topo h2 {
+  font-size: 20px;
+}
+.lofi-lista-topo span {
+  font-size: 11px;
+  color: var(--lf-muted);
+}
+.lofi-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lofi-lista-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed #ecd9cc;
+}
+.lofi-lista-item:last-child {
+  border-bottom: 0;
+}
+.lofi-lista-corpo {
+  flex: 1;
+  min-width: 0;
+}
+.lofi-lista-corpo a,
+.lofi-lista-corpo strong {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--lf-ink);
+}
+.lofi-lista-corpo a:hover {
+  color: var(--lf-pink-strong);
+}
+.lofi-lista-corpo small {
+  display: block;
+  font-size: 11px;
+  color: var(--lf-muted);
+}
+.lofi-etiqueta {
+  flex: none;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.lofi-etiqueta.tarefa { color: #b23c46; background: #fbe0e3; }
+.lofi-etiqueta.entrega { color: #2f7d55; background: #e0f2e6; }
+.lofi-etiqueta.prova { color: #9a6c12; background: #fbeecd; }
+.lofi-etiqueta.projeto { color: #3764b8; background: #e3ebfb; }
+.lofi-etiqueta.evento { color: #6b4bbd; background: #ece4fb; }
+.lofi-lista-vazia {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0 4px;
+}
+.lofi-lista-vazia img {
+  width: 130px;
+  flex: none;
+}
+.lofi-lista-vazia h3 {
+  font-size: 17px;
+  margin-bottom: 2px;
+}
+.lofi-lista-vazia p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--lf-ink-soft);
+  max-width: 420px;
+}
+
+/* -------------------------------- Responsivo -------------------------------- */
+@media (max-width: 1180px) {
+  .lofi-app {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+  .lofi-aside {
+    grid-column: 2;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+  .lofi-ilustracao {
+    display: none;
+  }
+  .lofi-motivacional {
+    grid-column: span 1;
+  }
+}
+@media (max-width: 980px) {
+  .lofi-aside {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lofi-luar {
+    display: none;
+  }
+}
+@media (max-width: 820px) {
+  .lofi-app .cal-grade {
+    min-width: 0;
+  }
+  .lofi-app .cal-dia {
+    min-height: 72px;
+  }
+  .lofi-topo::after {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .lofi-app {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 10px;
+    gap: 12px;
+  }
+  .lofi-rail {
+    position: static;
+    height: auto;
+    overflow: visible;
+    padding: 12px;
+    gap: 9px;
+  }
+  .lofi-usuario,
+  .lofi-rail-cantinho,
+  .lofi-rail-deco,
+  .lofi-sair {
+    display: none;
+  }
+  .lofi-nav {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .lofi-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .lofi-nav-item {
+    flex: none;
+    white-space: nowrap;
+    padding: 6px 8px;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+  .lofi-nav-item.ativo {
+    box-shadow: none;
+  }
+  .lofi-player {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lofi-player-topo {
+    flex: 1;
+  }
+  .lofi-eq {
+    margin-top: 0;
+    flex: none;
+  }
+  .lofi-aside {
+    grid-column: 1;
+    grid-template-columns: 1fr;
+  }
+  .lofi-aside .lofi-ilustracao,
+  .lofi-aside .lofi-luar {
+    display: grid;
+  }
+  .lofi-aside .lofi-ilustracao img {
+    width: 220px;
+  }
+  .lofi-cantinho {
+    width: 128px;
+  }
+  .lofi-topo h1 {
+    font-size: 36px;
+  }
+  .lofi-rodape {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .lofi-topo {
+    padding: 14px;
+  }
+  .lofi-topo h1 {
+    font-size: 31px;
+  }
+  .lofi-cantinho {
+    display: none;
+  }
+  .lofi-calendario {
+    padding: 10px;
+  }
+  .lofi-cal-cabecalho {
+    align-items: flex-start;
+  }
+  .lofi-mes-atual strong {
+    font-size: 19px;
+  }
+  .lofi-lua-mini {
+    display: none;
+  }
+  .lofi-app .cal-grade {
+    gap: 3px;
+  }
+  .lofi-app .cal-cabecalho-dia {
+    font-size: 9px;
+    letter-spacing: 0.2px;
+    padding: 2px 0;
+  }
+  .lofi-app .cal-dia {
+    min-height: 56px;
+    padding: 4px 3px;
+    gap: 3px;
+    border-radius: 8px;
+    border-width: 1px;
+  }
+  .lofi-app .cal-num {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
+  .lofi-app .cal-dia-eventos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .lofi-app .cal-pilula {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border-left: 0;
+    border-radius: 50%;
+  }
+  .lofi-app .cal-pilula-titulo,
+  .lofi-app .cal-pilula-hora,
+  .lofi-app .cal-mais {
+    display: none;
+  }
+  .lofi-app .cal-pilula.tarefa { background: #e2555f; }
+  .lofi-app .cal-pilula.entrega { background: #4caf7d; }
+  .lofi-app .cal-pilula.prova { background: #e0a83e; }
+  .lofi-app .cal-pilula.projeto { background: #5b8def; }
+  .lofi-app .cal-pilula.evento { background: #9b7cf0; }
+  .lofi-lista-vazia {
+    flex-direction: column;
+    text-align: center;
+  }
+  .lofi-lista-vazia img {
+    width: 100px;
+  }
+  .lofi-lista-vazia p {
+    margin: 0 auto;
+  }
+}
