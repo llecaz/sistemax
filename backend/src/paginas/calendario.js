@@ -1,6 +1,7 @@
 /** Página "Calendário do mês": grade mensal, próximas tarefas, progresso e legenda. */
 const { esc, dataBR } = require('../util');
 const { homeDo, avatar } = require('./layout');
+const { decoracao } = require('./decoracoes');
 
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const DIAS_SEMANA_LONGO = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
@@ -265,13 +266,14 @@ function barraLateral({ usuario, professor }) {
     </div>
 
     <div class="lofi-rail-deco" aria-hidden="true">
-      <img class="lofi-deco-lua" src="/img/lofi/lua-estrelas.svg" alt="">
-      <img class="lofi-deco-planta" src="/img/lofi/plantinha.svg" alt="">
+      ${decoracao('moon', { pasta: 'celestial', tamanho: 54, classe: 'lofi-deco-lua' })}
+      ${decoracao('star-orange', { pasta: 'celestial', tamanho: 30 })}
+      ${decoracao('heart-pink', { pasta: 'celestial', tamanho: 26 })}
     </div>
 
     <div class="lofi-player" id="lofi-player">
       <div class="lofi-player-topo">
-        <span class="lofi-disco" aria-hidden="true">♪</span>
+        <span class="lofi-disco" aria-hidden="true">${decoracao('cat-face', { pasta: 'cats', tamanho: 24 })}</span>
         <div class="lofi-player-info">
           <strong>lo-fi study</strong>
           <small id="lofi-player-status">toque para começar</small>
@@ -334,7 +336,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
     </div>
     <div class="lofi-cal-acoes">
       ${professor ? formEvento(materias) : ''}
-      <img class="lofi-lua-mini" src="/img/lofi/lua-estrelas.svg" alt="" width="80">
+      ${decoracao('moon', { pasta: 'celestial', tamanho: 62, classe: 'lofi-lua-mini' })}
     </div>
   </header>`;
 
@@ -376,7 +378,10 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
         ${
           proximas.length
             ? proximas.map((ev) => proximaTarefa(ev, professor)).join('')
-            : `<li class="lofi-proximas-vazio"><img src="/img/lofi/plantinha.svg" alt="" width="52"><span>Nada marcado por aqui ainda.</span></li>`
+            : `<li class="lofi-proximas-vazio">${decoracao('heart-pink', {
+                pasta: 'celestial',
+                tamanho: 40,
+              })}<span>Nada marcado por aqui ainda.</span></li>`
         }
       </ul>
       <a class="lofi-ver" href="#lista-eventos">ver todas as tarefas →</a>
@@ -384,15 +389,23 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
 
     <section class="lofi-card lofi-motivacional">
       <p>Pequenos passos<br>também são grandes<br>conquistas!</p>
-      <img src="/img/lofi/gato-almofada.svg" width="164" alt="Gatinho descansando em uma almofada rosa">
+      ${decoracao('cat-sleeping', {
+        pasta: 'cats',
+        tamanho: 184,
+        alt: 'Gatinho dormindo em uma almofada rosa',
+      })}
     </section>
 
     <div class="lofi-ilustracao">
-      <img src="/img/lofi/gato-livros.svg" alt="Gatinho dormindo em cima de uma pilha de livros" width="100%">
+      ${decoracao('cat-books', {
+        pasta: 'cats',
+        tamanho: '100%',
+        alt: 'Gatinho dormindo em cima de uma pilha de livros',
+      })}
     </div>
 
     <div class="lofi-luar">
-      <img src="/img/lofi/lua-estrelas.svg" alt="" width="110">
+      ${decoracao('moon', { pasta: 'celestial', tamanho: 92 })}
       <span>boa noite de estudos</span>
     </div>
   </aside>`;
@@ -423,7 +436,11 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
         })
         .join('')
     : `<div class="lofi-lista-vazia">
-        <img src="/img/lofi/gato-almofada.svg" alt="Gatinho descansando em uma almofada" width="150">
+        ${decoracao('cat-peeking', {
+          pasta: 'cats',
+          tamanho: 150,
+          alt: 'Gatinho espiando com as patinhas para fora',
+        })}
         <div><h3>Nada marcado neste mês</h3>
         <p>${
           professor
@@ -443,7 +460,30 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
           <h1>Calendário</h1>
           <p>Organize seus estudos e não perca nenhum prazo.</p>
         </div>
-        <img class="lofi-cantinho" src="/img/lofi/cantinho.svg" width="192" alt="Cantinho de estudo com livros, caneca e plantinha">
+        ${decoracao('cat-sitting', {
+          pasta: 'cats',
+          tamanho: 136,
+          classe: 'lofi-cantinho',
+          alt: 'Gatinho sentado com um laço rosa',
+        })}
+        ${decoracao('sparkle-peach', {
+          pasta: 'celestial',
+          tamanho: 34,
+          classe: 'lofi-topo-brilho',
+          top: '20px',
+          right: '196px',
+          opacidade: 0.8,
+          ocultarEm: 'mobile',
+        })}
+        ${decoracao('heart-pink', {
+          pasta: 'celestial',
+          tamanho: 24,
+          classe: 'lofi-topo-coracao',
+          top: '34px',
+          right: '158px',
+          opacidade: 0.85,
+          ocultarEm: 'mobile',
+        })}
       </header>
 
       <section class="lofi-calendario" aria-label="Calendário de ${MESES[mes]} de ${ano}">

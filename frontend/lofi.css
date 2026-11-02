@@ -243,6 +243,10 @@ body[data-pagina="calendario"] .mensagens {
   color: #5a3550;
   font-size: 13px;
   border: 2px solid #f9d9e2;
+  overflow: hidden;
+}
+.lofi-disco .deco {
+  width: 20px;
 }
 .lofi-player.tocando .lofi-disco {
   animation: lofi-girar 3s steps(8) infinite;
@@ -408,7 +412,7 @@ body[data-pagina="calendario"] .mensagens {
 }
 .lofi-cantinho {
   flex: none;
-  width: 192px;
+  width: 136px;
   filter: drop-shadow(0 3px 0 rgba(74, 58, 99, 0.08));
 }
 

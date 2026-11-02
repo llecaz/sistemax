@@ -56,6 +56,41 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 - No celular, a grade mostra a **semana inteira** com pontinhos coloridos por tipo de atividade.
 - O **professor** pode usar **+ Adicionar evento** para marcar provas/projetos/eventos no mês; o aluno apenas visualiza.
 - Ilustrações em SVG pixel art geradas por `scripts/gerar-pixel-art.js` e salvas em `frontend/img/lofi/`.
+- **Biblioteca de decorações** recortada da cartela oficial em pixel art, com PNGs transparentes em `frontend/assets/decorations/`:
+  - `cats/` — gatinhos dormindo, sentado, sobre livros, anjo, espreguiçando, deitado, na manta e espiando.
+  - `celestial/` — lua, estrelas, sparkles e corações.
+  - `details/` — laços, patinhas e asinhas.
+- Componente reutilizável `decoracao(nome, opções)` em `backend/src/paginas/decoracoes.js` (tamanho, posição, margem, opacidade, visibilidade e `alt`).
+- As decorações aparecem na barra lateral, no cabeçalho e nos painéis do calendário, e no painel inicial do aluno/professor (cartão de dica e saudação).
+
+### 🖼️ Biblioteca de decorações (pixel art)
+
+Os recortes foram extraídos da cartela original, mantendo transparência, contorno, cores e proporção. Nenhuma ilustração foi redesenhada. A cartela não tinha plantas, então a pasta `plants/` não foi criada — apenas os elementos realmente presentes.
+
+```
+frontend/assets/decorations/
+├── cats/             # 9 gatinhos
+├── celestial/        # lua, estrelas, sparkles e corações
+└── details/          # laços, patinhas e asinhas
+```
+
+Uso do componente no backend:
+
+```js
+const { decoracao } = require('./decoracoes');
+
+decoracao('cat-sleeping', {
+  pasta: 'cats',
+  tamanho: 160,          // px ou string CSS
+  opacidade: 0.9,
+  top: '12px', right: '10px',  // posicionamento absoluto opcional
+  margem: '8px',
+  ocultarEm: 'mobile',   // 'mobile' | 'tablet' | 'sempre'
+  alt: 'Gatinho dormindo em uma almofada rosa',
+});
+```
+
+O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de visibilidade) e preserva a proporção com `width` + `height: auto`, `image-rendering: pixelated` e `pointer-events: none`.
 
 ### 👩‍🏫 Área do Professor
 - **Início em painel**: entregas para corrigir, matérias com progresso de correções, mini-calendário e próximas tarefas.
@@ -160,12 +195,15 @@ sistemax/
 │       ├── util.js          # Escape HTML, datas, cores, códigos
 │       ├── postgresLocal.js # PostgreSQL local embutido (modo local)
 │       ├── paginas/         # HTML gerado (layout, login, aluno, professor, admin, config)
+│       │   └── decoracoes.js # ⭐ Componente decoracao() da biblioteca pixel art
 │       └── rotas/           # Rotas (auth, aluno, professor, admin, config, arquivos)
 ├── frontend/                # Lado cliente (estáticos servidos pelo Express)
 │   ├── estilo.css           # Tema base (variáveis) + visual Classroom + galeria
 │   ├── temas.css            # ⭐ Identidade visual de cada tema (variáveis CSS)
+│   ├── decoracoes.css       # ⭐ Componente .deco da biblioteca
 │   ├── lofi.css             # ⭐ Visual lo-fi/pixel art da página de calendário
 │   ├── lofi.js              # ⭐ Player lo-fi (Web Audio API)
+│   ├── assets/decorations/  # ⭐ PNGs transparentes (cats, celestial, details)
 │   ├── img/lofi/            # ⭐ Ilustrações pixel art (gatos, livros, plantas, lua)
 │   └── app.js               # Temas, menu, confirmações, seleção de arquivos
 ├── scripts/gerar-pixel-art.js  # Gera os SVGs das ilustrações do calendário

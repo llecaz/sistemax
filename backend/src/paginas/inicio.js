@@ -2,6 +2,7 @@
 const { esc, dataBR, dataHoraBR, decorrido, corDe, iniciais } = require('../util');
 const { classificar } = require('../regras');
 const { TIPOS, chaveDia } = require('./calendario');
+const { decoracao } = require('./decoracoes');
 
 const DIAS_LONGO = [
   'domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado',
@@ -140,7 +141,13 @@ function proximasTarefas(eventos, base) {
 function cartaoDica() {
   return `
   <section class="ini-painel ini-dica">
-    <img src="/img/calendario-cena.png" width="320" height="150" alt="Gatinho dormindo sobre livros ao lado de uma plantinha">
+    ${decoracao('moon', { pasta: 'celestial', tamanho: 44, classe: 'deco--lua' })}
+    ${decoracao('sparkle-purple', { pasta: 'celestial', tamanho: 24, classe: 'deco--estrela' })}
+    ${decoracao('cat-sleeping', {
+      pasta: 'cats',
+      tamanho: 200,
+      alt: 'Gatinho dormindo em uma almofada rosa',
+    })}
     <p>Um passo de cada vez. Organize a semana e deixe espaço para descansar.</p>
   </section>`;
 }
@@ -258,11 +265,30 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
   <header class="ini-cabecalho">
     <div class="ini-saudacao">
       <p class="ini-data">${dataLonga(agora)}</p>
-      <h1>${saudacao()}, ${esc(primeiroNome(usuario.nome))}!</h1>
+      <div class="ini-saudacao-topo">
+        <h1>${saudacao()}, ${esc(primeiroNome(usuario.nome))}!</h1>
+        ${decoracao('cat-face', { pasta: 'cats', tamanho: 42 })}
+      </div>
       <p class="descricao">${
         esc(usuario.turma_nome || 'Sem turma definida')
       } · ${contagens.afazer ? `${contagens.afazer} tarefa${contagens.afazer > 1 ? 's' : ''} para fazer` : 'Tudo em dia por aqui'}</p>
     </div>
+    ${decoracao('sparkle-peach', {
+      pasta: 'celestial',
+      tamanho: 30,
+      top: '4px',
+      right: '356px',
+      opacidade: 0.7,
+      ocultarEm: 'tablet',
+    })}
+    ${decoracao('heart-pink', {
+      pasta: 'celestial',
+      tamanho: 22,
+      top: '42px',
+      right: '390px',
+      opacidade: 0.65,
+      ocultarEm: 'tablet',
+    })}
     <div class="ini-resumo">
       ${statCard(contagens.afazer, 'a fazer', contagens.afazer > 0)}
       ${statCard(contagens.entregues, 'aguardando correção')}
@@ -366,11 +392,30 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos }) {
   <header class="ini-cabecalho">
     <div class="ini-saudacao">
       <p class="ini-data">${dataLonga(agora)}</p>
-      <h1>${saudacao()}, ${esc(primeiroNome(usuario.nome))}!</h1>
+      <div class="ini-saudacao-topo">
+        <h1>${saudacao()}, ${esc(primeiroNome(usuario.nome))}!</h1>
+        ${decoracao('cat-face', { pasta: 'cats', tamanho: 42 })}
+      </div>
       <p class="descricao">${
         pendentes ? `${pendentes} entrega${pendentes > 1 ? 's' : ''} esperando correção` : 'Nenhuma entrega pendente por aqui'
       }</p>
     </div>
+    ${decoracao('sparkle-peach', {
+      pasta: 'celestial',
+      tamanho: 30,
+      top: '4px',
+      right: '356px',
+      opacidade: 0.7,
+      ocultarEm: 'tablet',
+    })}
+    ${decoracao('heart-pink', {
+      pasta: 'celestial',
+      tamanho: 22,
+      top: '42px',
+      right: '390px',
+      opacidade: 0.65,
+      ocultarEm: 'tablet',
+    })}
     <div class="ini-resumo">
       ${statCard(pendentes, 'a corrigir', pendentes > 0)}
       ${statCard(materias.length, 'matérias')}

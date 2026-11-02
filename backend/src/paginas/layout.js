@@ -167,6 +167,7 @@ ${scriptTemas()}
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Pixelify+Sans:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css">
 <link rel="stylesheet" href="/temas.css">
+<link rel="stylesheet" href="/decoracoes.css">
 <link rel="stylesheet" href="/lofi.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='9' fill='%231e8e3e'/><rect x='8' y='13' width='24' height='12' rx='2' fill='white'/></svg>">
 </head>
