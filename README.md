@@ -33,6 +33,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 
 ### 🎓 Área do Aluno
 - **Início em painel**: saudação, resumo (a fazer / aguardando correção / corrigidas), **Minhas tarefas** com abas, **Minhas matérias** com barra de progresso, mini-calendário e próximas tarefas.
+- **Visual lo-fi / dreamy** no painel inicial: mesma paleta creme, lilás e rosa do calendário, tipografia pixel, cartões com sombra dura, ilustrações da biblioteca e cartão de dica escuro.
 - **Página da matéria em painel**: lista de trabalhos + resumo lateral com entregues, progresso e próximo prazo.
 - **Detalhe do trabalho em painel**: descrição, prazo, entrega/correção e envio + resumo lateral (situação, prazo, envio, nota), orientações de entrega e atalhos.
 - Grade de **cards das matérias** da turma (cada matéria com o nome do professor).
@@ -94,6 +95,7 @@ O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de 
 
 ### 👩‍🏫 Área do Professor
 - **Início em painel**: entregas para corrigir, matérias com progresso de correções, mini-calendário e próximas tarefas.
+- **Visual lo-fi / dreamy** também no painel do professor, seguindo o calendário.
 - **Página da matéria em painel**: publicar atividades + resumo lateral (entregas, correções pendentes e próximo prazo).
 - **Tela de correção em painel**: entregas dos alunos + resumo lateral (prazo, alunos, entregues, corrigidas, média e progresso), lista de quem está aguardando e de quem não entregou (com atalho para o aluno).
 - Cards das turmas/matérias que leciona (com entregas aguardando correção).

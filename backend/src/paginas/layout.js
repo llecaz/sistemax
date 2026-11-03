@@ -155,6 +155,8 @@ function decoracaoTema() {
 function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
   // Tema salvo na conta (sessão) — o servidor já renderiza com ele, sem "piscar".
   const tema = temaDe((req.session && req.session.usuario && req.session.usuario.tema) || (usuario && usuario.tema));
+  // O painel inicial usa o mesmo visual lo-fi do calendário.
+  const classeCorpo = /\bini-app\b/.test(corpo) ? ' class="pagina-inicio"' : '';
   return `<!DOCTYPE html>
 <html lang="pt-BR" data-tema="${tema.id}" data-tema-modo="${tema.modo}" data-tema-salvo="${tema.id}">
 <head>
@@ -171,7 +173,7 @@ ${scriptTemas()}
 <link rel="stylesheet" href="/lofi.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='9' fill='%231e8e3e'/><rect x='8' y='13' width='24' height='12' rx='2' fill='white'/></svg>">
 </head>
-<body data-pagina="${ativa}">
+<body data-pagina="${ativa}"${classeCorpo}>
 ${topo(usuario, ativa)}
 ${gaveta(usuario, ativa)}
 <main class="conteudo">

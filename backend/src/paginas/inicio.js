@@ -262,8 +262,10 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
   ).join('');
 
   return `
+  <div class="ini-app">
   <header class="ini-cabecalho">
     <div class="ini-saudacao">
+      <span class="ini-selo">meu cantinho de estudos</span>
       <p class="ini-data">${dataLonga(agora)}</p>
       <div class="ini-saudacao-topo">
         <h1>${saudacao()}, ${esc(primeiroNome(usuario.nome))}!</h1>
@@ -325,6 +327,7 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
       ${proximasTarefas(eventos, '/aluno/calendario')}
       ${cartaoDica()}
     </aside>
+  </div>
   </div>`;
 }
 
@@ -389,8 +392,10 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos }) {
   const totalAtividades = materias.reduce((soma, m) => soma + Number(m.atividades || 0), 0);
 
   return `
+  <div class="ini-app">
   <header class="ini-cabecalho">
     <div class="ini-saudacao">
+      <span class="ini-selo">meu cantinho de estudos</span>
       <p class="ini-data">${dataLonga(agora)}</p>
       <div class="ini-saudacao-topo">
         <h1>${saudacao()}, ${esc(primeiroNome(usuario.nome))}!</h1>
@@ -451,6 +456,7 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos }) {
       ${proximasTarefas(eventos, '/professor/calendario')}
       ${cartaoDica()}
     </aside>
+  </div>
   </div>`;
 }
 
