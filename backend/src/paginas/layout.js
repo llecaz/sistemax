@@ -5,21 +5,9 @@ const { temaDe, scriptTemas } = require('../temas');
 const NOME_SISTEMA = 'Classroom Escolar';
 
 function iconeLogo(tamanho = 30) {
-  return `<svg class="logo-icone" width="${tamanho}" height="${tamanho}" viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges">
-    <rect width="24" height="24" rx="6" fill="#cbb8ea"/>
-    <rect x="4" y="5" width="4" height="6" fill="#f8e8d4"/>
-    <rect x="16" y="5" width="4" height="6" fill="#f8e8d4"/>
-    <rect x="5" y="7" width="2" height="2" fill="#eda1b5"/>
-    <rect x="17" y="7" width="2" height="2" fill="#eda1b5"/>
-    <rect x="6" y="9" width="12" height="10" fill="#f8e8d4"/>
-    <rect x="8" y="10" width="2" height="2" fill="#4a3a63"/>
-    <rect x="14" y="10" width="2" height="2" fill="#4a3a63"/>
-    <rect x="9" y="13" width="6" height="1" fill="#f3bccb"/>
-    <rect x="8" y="15" width="8" height="2" fill="#f3bccb"/>
-    <rect x="6" y="15" width="2" height="1" fill="#eda1b5"/>
-    <rect x="16" y="15" width="2" height="1" fill="#eda1b5"/>
-    <rect x="10" y="18" width="4" height="1" fill="#d98aa6"/>
-  </svg>`;
+  return `<span class="logo-icone" style="width:${tamanho}px;height:${tamanho}px" aria-hidden="true">
+    <img src="/img/cat-icon.png" alt="">
+  </span>`;
 }
 
 /** Avatar circular: mostra a foto ou as iniciais com cor fixa. */
