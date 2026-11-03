@@ -114,6 +114,7 @@ O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de 
 - **Nome**, **email** e **turma conectada** (aluno) / matérias que leciona (professor).
 - Alterar **senha** e **pergunta de segurança**.
 - Escolha do **tema claro/escuro**.
+- Com o tema **Lo-fi Night** ativo, a página usa o mesmo visual do calendário (cartões creme, tipografia pixel, sombras duras e barra superior roxa). A galeria de temas continua pré-visualizando os outros temas normalmente.
 
 ---
 

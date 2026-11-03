@@ -91,8 +91,10 @@ function paginaConfiguracoes({ usuario }) {
   const perguntaAtual = usuario.pergunta_seg || '';
 
   return `
+  <div class="cfg-app">
   <div class="cabecalho-secao">
     <div>
+      <span class="cfg-selo">conta e preferências</span>
       <h1>Configurações</h1>
       <p class="descricao">Seus dados, aparência do site e segurança da conta</p>
     </div>
@@ -182,6 +184,7 @@ function paginaConfiguracoes({ usuario }) {
         <button class="btn secundario" type="submit">Sair da conta</button>
       </form>
     </section>
+  </div>
   </div>`;
 }
 

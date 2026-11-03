@@ -1601,3 +1601,285 @@ body.pagina-inicio .ini-dica p {
     padding: 7px 8px;
   }
 }
+
+/* ==========================================================================
+   Configurações — mesmo visual lo-fi/dreamy do calendário
+   O bloco só vale com o tema Lo-fi Night ativo, para que a galeria de temas
+   continue pré-visualizando os outros temas de verdade.
+   ========================================================================== */
+
+.cfg-selo {
+  display: inline-block;
+  margin-bottom: 5px;
+  padding: 2px 8px;
+  background: #f3bccb;
+  border: 2px solid #d98aa6;
+  border-radius: 6px;
+  color: #6b3d55;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+html[data-tema='lo-fi-night'] body.pagina-config {
+  background-color: #f7ecdf;
+  background-image:
+    linear-gradient(rgba(217, 138, 166, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154, 127, 209, 0.07) 1px, transparent 1px);
+  background-size: 26px 26px;
+  color: #4a3a63;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .conteudo {
+  max-width: 1240px;
+  padding: 18px 16px 56px;
+}
+
+/* Barra superior e gaveta no tom do calendário */
+html[data-tema='lo-fi-night'] body.pagina-config .topo {
+  background: #2f2547;
+  border-bottom: 2px solid #52406f;
+  box-shadow: 0 3px 0 rgba(74, 58, 99, 0.22);
+}
+html[data-tema='lo-fi-night'] body.pagina-config .marca {
+  color: #f8e8d4;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 19px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .marca:hover {
+  background: #3b2f57;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .icone-botao {
+  color: #d9c9e8;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .icone-botao:hover {
+  background: #3b2f57;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .avatar-link:hover {
+  border-color: #cbb8ea;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta {
+  background: #2f2547;
+  color: #f3e6f5;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta .marca {
+  color: #f8e8d4;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta .marca:hover {
+  background: #3b2f57;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta-usuario {
+  border-color: #52406f;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta-usuario strong {
+  color: #f8e8d4;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta-usuario small {
+  color: #b9a6cf;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta-item {
+  color: #d9c9e8;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta-item:hover {
+  background: #3b2f57;
+  color: #fff8ee;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta-item.ativo {
+  background: #cbb8ea;
+  color: #2f2547;
+  font-weight: 700;
+  border-radius: 0 10px 10px 0;
+  margin-right: 10px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .gaveta-rodape {
+  border-top-color: #52406f;
+}
+html[data-tema='lo-fi-night'] body.pagina-config #btn-fechar {
+  color: #d9c9e8;
+}
+
+/* Paleta local — a página é sempre clara, mesmo no tema escuro */
+html[data-tema='lo-fi-night'] .cfg-app {
+  --superficie: #fff8ee;
+  --superficie-2: #fdf3e8;
+  --superficie-3: #f3e6f5;
+  --texto: #4a3a63;
+  --texto-suave: #7d6a8c;
+  --borda: #e7cfc4;
+  --borda-suave: #f0ddcd;
+  --azul: #9a7fd1;
+  --azul-hover: #7d63b8;
+  --azul-texto: #fff8ee;
+  --azul-claro: #ede4fa;
+  --vermelho: #b23c46;
+  --vermelho-fundo: #fbe0e3;
+  color: var(--texto);
+  font-family: 'Nunito', 'Roboto', sans-serif;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .cfg-app h1,
+html[data-tema='lo-fi-night'] body.pagina-config .cfg-app h2,
+html[data-tema='lo-fi-night'] body.pagina-config .cfg-app h3 {
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+/* Cabeçalho como o topo do calendário */
+html[data-tema='lo-fi-night'] body.pagina-config .cabecalho-secao {
+  background: #fff8ee;
+  border: 2px solid #e7cfc4;
+  border-radius: 18px;
+  box-shadow: 0 4px 0 #e9d4c7;
+  padding: 18px 22px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .cabecalho-secao h1 {
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.05;
+  text-shadow: 2px 2px 0 #e6d6f2;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .cabecalho-secao .descricao {
+  color: var(--texto-suave);
+}
+
+/* Cartões */
+html[data-tema='lo-fi-night'] body.pagina-config .grade-config {
+  gap: 16px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .cartao-config {
+  background: #fff8ee;
+  border: 2px solid #e7cfc4;
+  border-radius: 16px;
+  box-shadow: 0 4px 0 #e9d4c7;
+  padding: 20px 22px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .cartao-config h2 {
+  font-size: 19px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .subtitulo-config {
+  border-top: 2px dashed #ecd9cc;
+  font-size: 15px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .descricao,
+html[data-tema='lo-fi-night'] body.pagina-config .perfil-acoes small,
+html[data-tema='lo-fi-night'] body.pagina-config .tema-descricao,
+html[data-tema='lo-fi-night'] body.pagina-config .grupo-tema-titulo,
+html[data-tema='lo-fi-night'] body.pagina-config .barra-tema-texto {
+  color: var(--texto-suave);
+}
+html[data-tema='lo-fi-night'] body.pagina-config .grupo-tema-titulo {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .foto-grande .avatar {
+  border: 3px solid #f3bccb;
+  box-shadow: 0 4px 0 #e9d4c7;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .lista-info > div {
+  border-bottom: 1px dashed #ecd9cc;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .lista-info dd {
+  color: var(--texto);
+}
+
+/* Formulários */
+html[data-tema='lo-fi-night'] body.pagina-config .campo input,
+html[data-tema='lo-fi-night'] body.pagina-config .campo textarea,
+html[data-tema='lo-fi-night'] body.pagina-config .campo select {
+  background: #fffdf8;
+  border: 2px solid #e3cfe0;
+  border-radius: 8px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .campo input:focus,
+html[data-tema='lo-fi-night'] body.pagina-config .campo textarea:focus,
+html[data-tema='lo-fi-night'] body.pagina-config .campo select:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 2px #ede4fa;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .btn {
+  border-radius: 9px;
+  font-family: 'Pixelify Sans', monospace;
+  font-weight: 600;
+  font-size: 13px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .btn.primario {
+  background: #f3bccb;
+  border: 2px solid #d98aa6;
+  box-shadow: 0 3px 0 #d98aa6;
+  color: #5a3550;
+  padding: 7px 16px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .btn.primario:hover {
+  background: #f9d9e2;
+  box-shadow: 0 3px 0 #d98aa6;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .btn.secundario {
+  background: #fdf3e8;
+  border: 2px solid #d9c3e8;
+  box-shadow: 0 3px 0 #e3cfe0;
+  color: #7d63b8;
+  padding: 7px 16px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .btn.secundario:hover {
+  background: #f7ecdf;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .btn.texto,
+html[data-tema='lo-fi-night'] body.pagina-config .btn.text {
+  color: #9a7fd1;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .btn.texto:hover,
+html[data-tema='lo-fi-night'] body.pagina-config .btn.text:hover {
+  background: #ede4fa;
+}
+
+/* Galeria de temas */
+html[data-tema='lo-fi-night'] body.pagina-config .tema-card {
+  background: #fdf3e8;
+  border: 2px solid #f0ddcd;
+  border-radius: 12px;
+  box-shadow: 0 3px 0 #e9d4c7;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .tema-card:hover {
+  border-color: #d98aa6;
+  box-shadow: 0 5px 0 #e9d4c7;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .tema-card.selecionado {
+  border-color: #d98aa6;
+  box-shadow: 0 0 0 3px #f9d9e2, 0 3px 0 #d98aa6;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .tema-card-topo strong {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 14px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .selo-tema {
+  background: #9a7fd1;
+  color: #fff8ee;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 10px;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .selo-padrao {
+  background: #f3e6f5;
+  color: #7d6a8c;
+}
+html[data-tema='lo-fi-night'] body.pagina-config .barra-tema {
+  background: #fdf3e8;
+  border: 2px dashed #ecd9cc;
+  border-radius: 12px;
+}
+
+@media (max-width: 760px) {
+  html[data-tema='lo-fi-night'] body.pagina-config .conteudo {
+    padding: 12px 10px 40px;
+  }
+  html[data-tema='lo-fi-night'] body.pagina-config .cabecalho-secao {
+    padding: 16px;
+  }
+  html[data-tema='lo-fi-night'] body.pagina-config .cartao-config {
+    padding: 16px;
+  }
+  html[data-tema='lo-fi-night'] body.pagina-config .cartao-temas {
+    padding: 16px 12px;
+  }
+}

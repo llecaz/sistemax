@@ -150,8 +150,12 @@ function decoracaoTema() {
 function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
   // Tema salvo na conta (sessão) — o servidor já renderiza com ele, sem "piscar".
   const tema = temaDe((req.session && req.session.usuario && req.session.usuario.tema) || (usuario && usuario.tema));
-  // O painel inicial usa o mesmo visual lo-fi do calendário.
-  const classeCorpo = /\bini-app\b/.test(corpo) ? ' class="pagina-inicio"' : '';
+  // O painel inicial e as configurações usam o mesmo visual lo-fi do calendário.
+  const classeCorpo = /\bini-app\b/.test(corpo)
+    ? ' class="pagina-inicio"'
+    : /\bcfg-app\b/.test(corpo)
+      ? ' class="pagina-config"'
+      : '';
   return `<!DOCTYPE html>
 <html lang="pt-BR" data-tema="${tema.id}" data-tema-modo="${tema.modo}" data-tema-salvo="${tema.id}">
 <head>
