@@ -5,13 +5,20 @@ const { temaDe, scriptTemas } = require('../temas');
 const NOME_SISTEMA = 'Classroom Escolar';
 
 function iconeLogo(tamanho = 30) {
-  return `<svg class="logo-icone" width="${tamanho}" height="${tamanho}" viewBox="0 0 40 40" aria-hidden="true">
-    <rect x="2" y="7" width="36" height="27" rx="5" fill="#1e8e3e"/>
-    <rect x="8" y="13" width="24" height="12" rx="2" fill="#ffffff"/>
-    <rect x="18" y="26" width="4" height="5" fill="#ffffff"/>
-    <rect x="14" y="31" width="12" height="2.5" rx="1.2" fill="#ffffff"/>
-    <circle cx="14" cy="19" r="3.2" fill="#fbbc04"/>
-    <circle cx="26" cy="19" r="3.2" fill="#fbbc04"/>
+  return `<svg class="logo-icone" width="${tamanho}" height="${tamanho}" viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges">
+    <rect width="24" height="24" rx="6" fill="#cbb8ea"/>
+    <rect x="4" y="5" width="4" height="6" fill="#f8e8d4"/>
+    <rect x="16" y="5" width="4" height="6" fill="#f8e8d4"/>
+    <rect x="5" y="7" width="2" height="2" fill="#eda1b5"/>
+    <rect x="17" y="7" width="2" height="2" fill="#eda1b5"/>
+    <rect x="6" y="9" width="12" height="10" fill="#f8e8d4"/>
+    <rect x="8" y="10" width="2" height="2" fill="#4a3a63"/>
+    <rect x="14" y="10" width="2" height="2" fill="#4a3a63"/>
+    <rect x="9" y="13" width="6" height="1" fill="#f3bccb"/>
+    <rect x="8" y="15" width="8" height="2" fill="#f3bccb"/>
+    <rect x="6" y="15" width="2" height="1" fill="#eda1b5"/>
+    <rect x="16" y="15" width="2" height="1" fill="#eda1b5"/>
+    <rect x="10" y="18" width="4" height="1" fill="#d98aa6"/>
   </svg>`;
 }
 
@@ -171,7 +178,8 @@ ${scriptTemas()}
 <link rel="stylesheet" href="/temas.css">
 <link rel="stylesheet" href="/decoracoes.css">
 <link rel="stylesheet" href="/lofi.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='9' fill='%231e8e3e'/><rect x='8' y='13' width='24' height='12' rx='2' fill='white'/></svg>">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
 </head>
 <body data-pagina="${ativa}"${classeCorpo}>
 ${topo(usuario, ativa)}
