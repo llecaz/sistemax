@@ -6,9 +6,11 @@
  * preservando transparência, contorno e proporção.
  *
  * Opções:
- * - pasta: 'cats' | 'celestial' | 'details'
+ * - pasta: 'cats' | 'plants' | 'stationery' | 'celestial' |
+ *   'accessories' | 'ui' | 'details'
  * - tamanho: número (px) ou string CSS
  * - opacidade: 0 a 1
+ * - rotacao: graus (ex.: -12) para inclinar sem distorcer
  * - classe / estilo: ajustes livres
  * - top/right/bottom/left + margem: posicionamento absoluto
  * - ocultarEm: 'mobile' | 'tablet' | 'sempre'
@@ -16,13 +18,14 @@
  */
 const { esc } = require('../util');
 
-const PASTAS = ['cats', 'celestial', 'details'];
+const PASTAS = ['cats', 'plants', 'stationery', 'celestial', 'accessories', 'ui', 'details'];
 
 function decoracao(nome, opcoes = {}) {
   const {
     pasta = 'details',
     tamanho = 64,
     opacidade = 1,
+    rotacao,
     classe = '',
     estilo = '',
     alt = '',
@@ -47,6 +50,7 @@ function decoracao(nome, opcoes = {}) {
   if (margem != null) estilos.push(`--deco-margem:${margem}`);
   if (tamanho != null) estilos.push(`--deco-w:${typeof tamanho === 'number' ? `${tamanho}px` : tamanho}`);
   if (opacidade !== 1) estilos.push(`--deco-op:${opacidade}`);
+  if (rotacao != null) estilos.push(`--deco-rot:${typeof rotacao === 'number' ? `${rotacao}deg` : rotacao}`);
   if (ocultarEm === 'mobile') classes.push('deco--oculta-mobile');
   if (ocultarEm === 'tablet') classes.push('deco--oculta-tablet');
   if (ocultarEm === 'sempre') classes.push('deco--oculto');

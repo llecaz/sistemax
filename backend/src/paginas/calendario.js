@@ -262,18 +262,21 @@ function barraLateral({ usuario, professor }) {
 
     <div class="lofi-rail-cantinho" aria-hidden="true">
       <span class="lofi-rail-quote">um passo<br>de cada vez</span>
-      <img src="/img/lofi/estante.svg" alt="" width="150">
+      <div class="lofi-rail-estante">
+        ${decoracao('nuvia-bookshelf', { pasta: 'stationery', tamanho: 140 })}
+        ${decoracao('nuvia-plant-small-pot', { pasta: 'plants', tamanho: 40, classe: 'lofi-rail-planta' })}
+      </div>
     </div>
 
     <div class="lofi-rail-deco" aria-hidden="true">
-      ${decoracao('moon', { pasta: 'celestial', tamanho: 54, classe: 'lofi-deco-lua' })}
-      ${decoracao('star-orange', { pasta: 'celestial', tamanho: 30 })}
-      ${decoracao('heart-pink', { pasta: 'celestial', tamanho: 26 })}
+      ${decoracao('nuvia-moon', { pasta: 'celestial', tamanho: 54, classe: 'lofi-deco-lua' })}
+      ${decoracao('nuvia-star-yellow', { pasta: 'celestial', tamanho: 30 })}
+      ${decoracao('nuvia-heart-pink', { pasta: 'celestial', tamanho: 26 })}
     </div>
 
     <div class="lofi-player" id="lofi-player">
       <div class="lofi-player-topo">
-        <span class="lofi-disco" aria-hidden="true">${decoracao('cat-face', { pasta: 'cats', tamanho: 24 })}</span>
+        <span class="lofi-disco" aria-hidden="true">${decoracao('nuvia-cat-peeking', { pasta: 'cats', tamanho: 24 })}</span>
         <div class="lofi-player-info">
           <strong>lo-fi study</strong>
           <small id="lofi-player-status">toque para começar</small>
@@ -336,7 +339,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
     </div>
     <div class="lofi-cal-acoes">
       ${professor ? formEvento(materias) : ''}
-      ${decoracao('moon', { pasta: 'celestial', tamanho: 62, classe: 'lofi-lua-mini' })}
+      ${decoracao('nuvia-moon', { pasta: 'celestial', tamanho: 62, classe: 'lofi-lua-mini' })}
     </div>
   </header>`;
 
@@ -378,7 +381,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
         ${
           proximas.length
             ? proximas.map((ev) => proximaTarefa(ev, professor)).join('')
-            : `<li class="lofi-proximas-vazio">${decoracao('heart-pink', {
+            : `<li class="lofi-proximas-vazio">${decoracao('nuvia-heart-pink', {
                 pasta: 'celestial',
                 tamanho: 40,
               })}<span>Nada marcado por aqui ainda.</span></li>`
@@ -389,23 +392,40 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
 
     <section class="lofi-card lofi-motivacional">
       <p>Pequenos passos<br>também são grandes<br>conquistas!</p>
-      ${decoracao('cat-sleeping', {
+      ${decoracao('nuvia-cat-sleeping-pillow', {
         pasta: 'cats',
         tamanho: 184,
         alt: 'Gatinho dormindo em uma almofada rosa',
       })}
+      ${decoracao('nuvia-plant-small-pot', {
+        pasta: 'plants',
+        tamanho: 44,
+        classe: 'lofi-motivacional-planta',
+      })}
+      ${decoracao('nuvia-star-yellow-small', {
+        pasta: 'celestial',
+        tamanho: 24,
+        classe: 'lofi-motivacional-estrela',
+      })}
     </section>
 
-    <div class="lofi-ilustracao">
-      ${decoracao('cat-books', {
-        pasta: 'cats',
+    <div class="lofi-ilustracao lofi-ilustracao--nuvia">
+      ${decoracao('nuvia-books-stack', {
+        pasta: 'stationery',
         tamanho: '100%',
-        alt: 'Gatinho dormindo em cima de uma pilha de livros',
+        classe: 'lofi-livros',
+        alt: 'Pilha de livros lilás',
+      })}
+      ${decoracao('nuvia-cat-peeking', {
+        pasta: 'cats',
+        tamanho: 126,
+        classe: 'lofi-gato-livros',
+        alt: 'Gatinho espiando em cima dos livros',
       })}
     </div>
 
     <div class="lofi-luar">
-      ${decoracao('moon', { pasta: 'celestial', tamanho: 92 })}
+      ${decoracao('nuvia-moon', { pasta: 'celestial', tamanho: 92 })}
       <span>boa noite de estudos</span>
     </div>
   </aside>`;
@@ -436,7 +456,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
         })
         .join('')
     : `<div class="lofi-lista-vazia">
-        ${decoracao('cat-peeking', {
+        ${decoracao('nuvia-cat-peeking', {
           pasta: 'cats',
           tamanho: 150,
           alt: 'Gatinho espiando com as patinhas para fora',
@@ -460,13 +480,13 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
           <h1>Calendário</h1>
           <p>Organize seus estudos e não perca nenhum prazo.</p>
         </div>
-        ${decoracao('cat-sitting', {
+        ${decoracao('nuvia-cat-bow-sitting', {
           pasta: 'cats',
           tamanho: 136,
           classe: 'lofi-cantinho',
           alt: 'Gatinho sentado com um laço rosa',
         })}
-        ${decoracao('sparkle-peach', {
+        ${decoracao('nuvia-sparkle-orange', {
           pasta: 'celestial',
           tamanho: 34,
           classe: 'lofi-topo-brilho',
@@ -475,7 +495,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
           opacidade: 0.8,
           ocultarEm: 'mobile',
         })}
-        ${decoracao('heart-pink', {
+        ${decoracao('nuvia-heart-pink', {
           pasta: 'celestial',
           tamanho: 24,
           classe: 'lofi-topo-coracao',
@@ -499,6 +519,14 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
         </header>
         <ul class="lofi-lista">${listaCompleta}</ul>
       </section>
+
+      <div class="lofi-canto" aria-hidden="true">
+        ${decoracao('nuvia-plant-hanging', { pasta: 'plants', tamanho: 116, classe: 'lofi-canto-planta' })}
+        ${decoracao('nuvia-books-stack', { pasta: 'stationery', tamanho: 180, classe: 'lofi-canto-livros' })}
+        ${decoracao('nuvia-cat-sleeping-pillow', { pasta: 'cats', tamanho: 132, classe: 'lofi-canto-gato' })}
+        ${decoracao('nuvia-moon', { pasta: 'celestial', tamanho: 42, classe: 'lofi-canto-lua' })}
+        ${decoracao('nuvia-star-yellow-small', { pasta: 'celestial', tamanho: 28, classe: 'lofi-canto-estrela' })}
+      </div>
     </main>
 
     ${lateral}

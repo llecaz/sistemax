@@ -141,12 +141,18 @@ function proximasTarefas(eventos, base) {
 function cartaoDica() {
   return `
   <section class="ini-painel ini-dica">
-    ${decoracao('moon', { pasta: 'celestial', tamanho: 44, classe: 'deco--lua' })}
-    ${decoracao('sparkle-purple', { pasta: 'celestial', tamanho: 24, classe: 'deco--estrela' })}
-    ${decoracao('cat-sleeping', {
+    ${decoracao('nuvia-moon', { pasta: 'celestial', tamanho: 44, classe: 'deco--lua' })}
+    ${decoracao('nuvia-sparkle-purple', { pasta: 'celestial', tamanho: 24, classe: 'deco--estrela' })}
+    ${decoracao('nuvia-cat-sleeping-pillow', {
       pasta: 'cats',
       tamanho: 200,
       alt: 'Gatinho dormindo em uma almofada rosa',
+    })}
+    ${decoracao('nuvia-plant-small-pot', {
+      pasta: 'plants',
+      tamanho: 52,
+      classe: 'ini-dica-planta',
+      opacidade: 0.9,
     })}
     <p>Um passo de cada vez. Organize a semana e deixe espaço para descansar.</p>
   </section>`;
@@ -269,13 +275,13 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
       <p class="ini-data">${dataLonga(agora)}</p>
       <div class="ini-saudacao-topo">
         <h1>${saudacao()}, ${esc(primeiroNome(usuario.nome))}!</h1>
-        ${decoracao('cat-face', { pasta: 'cats', tamanho: 42 })}
+        ${decoracao('nuvia-cat-peeking', { pasta: 'cats', tamanho: 42 })}
       </div>
       <p class="descricao">${
         esc(usuario.turma_nome || 'Sem turma definida')
       } · ${contagens.afazer ? `${contagens.afazer} tarefa${contagens.afazer > 1 ? 's' : ''} para fazer` : 'Tudo em dia por aqui'}</p>
     </div>
-    ${decoracao('sparkle-peach', {
+    ${decoracao('nuvia-sparkle-orange-small', {
       pasta: 'celestial',
       tamanho: 30,
       top: '4px',
@@ -283,7 +289,7 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
       opacidade: 0.7,
       ocultarEm: 'tablet',
     })}
-    ${decoracao('heart-pink', {
+    ${decoracao('nuvia-heart-pink', {
       pasta: 'celestial',
       tamanho: 22,
       top: '42px',
@@ -302,7 +308,10 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
     <div class="ini-principal">
       <section class="ini-painel" id="tarefas">
         <header class="ini-painel-topo">
-          <h2>Minhas tarefas</h2>
+          <div class="ini-painel-titulo">
+            ${decoracao('nuvia-plant-small-pot', { pasta: 'plants', tamanho: 26, classe: 'ini-titulo-planta' })}
+            <h2>Minhas tarefas</h2>
+          </div>
           <a class="ini-link-suave" href="/aluno/calendario">Calendário do mês</a>
         </header>
         <nav class="abas" role="tablist">${abas}</nav>
@@ -311,7 +320,10 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
 
       <section class="ini-painel" id="materias">
         <header class="ini-painel-topo">
-          <h2>Minhas matérias</h2>
+          <div class="ini-painel-titulo">
+            ${decoracao('nuvia-plant-small-pot', { pasta: 'plants', tamanho: 26, classe: 'ini-titulo-planta' })}
+            <h2>Minhas matérias</h2>
+          </div>
           <span class="descricao">${materias.length} matéria${materias.length === 1 ? '' : 's'}</span>
         </header>
         <ul class="ini-materias">${
@@ -399,13 +411,13 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos }) {
       <p class="ini-data">${dataLonga(agora)}</p>
       <div class="ini-saudacao-topo">
         <h1>${saudacao()}, ${esc(primeiroNome(usuario.nome))}!</h1>
-        ${decoracao('cat-face', { pasta: 'cats', tamanho: 42 })}
+        ${decoracao('nuvia-cat-peeking', { pasta: 'cats', tamanho: 42 })}
       </div>
       <p class="descricao">${
         pendentes ? `${pendentes} entrega${pendentes > 1 ? 's' : ''} esperando correção` : 'Nenhuma entrega pendente por aqui'
       }</p>
     </div>
-    ${decoracao('sparkle-peach', {
+    ${decoracao('nuvia-sparkle-orange-small', {
       pasta: 'celestial',
       tamanho: 30,
       top: '4px',
@@ -413,7 +425,7 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos }) {
       opacidade: 0.7,
       ocultarEm: 'tablet',
     })}
-    ${decoracao('heart-pink', {
+    ${decoracao('nuvia-heart-pink', {
       pasta: 'celestial',
       tamanho: 22,
       top: '42px',
@@ -432,7 +444,10 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos }) {
     <div class="ini-principal">
       <section class="ini-painel" id="correcoes">
         <header class="ini-painel-topo">
-          <h2>Entregas para corrigir</h2>
+          <div class="ini-painel-titulo">
+            ${decoracao('nuvia-plant-small-pot', { pasta: 'plants', tamanho: 26, classe: 'ini-titulo-planta' })}
+            <h2>Entregas para corrigir</h2>
+          </div>
           <a class="ini-link-suave" href="/professor/calendario">Calendário do mês</a>
         </header>
         <ul class="ini-tarefas">${listaCorrecoes(entregas)}</ul>
@@ -440,7 +455,10 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos }) {
 
       <section class="ini-painel" id="materias">
         <header class="ini-painel-topo">
-          <h2>Minhas matérias</h2>
+          <div class="ini-painel-titulo">
+            ${decoracao('nuvia-plant-small-pot', { pasta: 'plants', tamanho: 26, classe: 'ini-titulo-planta' })}
+            <h2>Minhas matérias</h2>
+          </div>
           <span class="descricao">${materias.length} vínculo${materias.length === 1 ? '' : 's'} · ${totalEntregas} entrega${totalEntregas === 1 ? '' : 's'}</span>
         </header>
         <ul class="ini-materias">${

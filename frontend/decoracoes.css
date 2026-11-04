@@ -10,6 +10,8 @@
   max-width: 100%;
   margin: var(--deco-margem, 0);
   opacity: var(--deco-op, 1);
+  transform: rotate(var(--deco-rot, 0deg));
+  transform-origin: center;
   image-rendering: pixelated;
   pointer-events: none;
   user-select: none;
@@ -119,5 +121,360 @@
   }
   .ini-saudacao .deco {
     width: 34px;
+  }
+}
+
+/* ==========================================================================
+   Nuvia — apresentação do login, dashboard e calendário
+   Todos os elementos são recortes de frontend/assets/source/nuvia-assets-sheet.png
+   ========================================================================== */
+
+/* ------------------------------- Login -------------------------------- */
+body.tela-login {
+  position: relative;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(203, 184, 234, 0.5), transparent 42%),
+    radial-gradient(circle at 88% 92%, rgba(243, 188, 203, 0.45), transparent 44%),
+    #f3e6f5;
+}
+
+.login-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.04fr 0.96fr;
+  width: min(1160px, 100%);
+  border-radius: 28px;
+  background: #fff8ee;
+  box-shadow: 0 26px 70px rgba(74, 58, 99, 0.28);
+}
+
+/* Cena da mesa de estudos (lado esquerdo) */
+.login-cena {
+  position: relative;
+  min-height: 650px;
+  overflow: hidden;
+  border-radius: 28px 0 0 28px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.16) 0 1px, transparent 1px 38px),
+    linear-gradient(180deg, #d9c4ec 0%, #e6d4f2 52%, #f3dbe7 100%);
+}
+.login-cena-chao {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34%;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(140, 92, 122, 0.1) 0 2px, transparent 2px 78px),
+    linear-gradient(180deg, #edd0da 0%, #dcb2c4 100%);
+  border-top: 5px solid #c99db6;
+}
+.login-cena > .deco {
+  position: absolute;
+  z-index: 1;
+  filter: drop-shadow(0 4px 3px rgba(74, 58, 99, 0.12));
+}
+.login-cena-janela { top: 34px; left: 42px; width: 252px; }
+.login-cena-pendente { top: 6px; right: 24px; width: 106px; }
+.login-cena-quadro { top: 178px; right: 40px; width: 86px; }
+.login-cena-estante { top: 304px; right: 20px; width: 158px; }
+.login-cena-flores { bottom: 132px; left: 24px; width: 82px; }
+.login-cena-notebook { bottom: 94px; left: 118px; width: 166px; }
+.login-cena-livros { bottom: 82px; left: 306px; width: 148px; }
+.login-cena-gato { bottom: 158px; left: 286px; width: 174px; }
+.login-cena-caneca { bottom: 84px; left: 262px; width: 58px; }
+.login-cena-almofada { bottom: 44px; right: 22px; width: 108px; }
+.login-cena-planta { bottom: 26px; left: 18px; width: 86px; }
+.login-cena-lua { top: 48px; right: 206px; width: 40px; opacity: 0.92; }
+.login-cena-brilho { opacity: 0.9; }
+.login-cena-brilho--1 { top: 30px; right: 148px; }
+.login-cena-brilho--2 { top: 232px; left: 332px; }
+.login-cena-brilho--3 { bottom: 232px; right: 84px; }
+.login-cena-brilho--4 { top: 150px; left: 40px; }
+
+/* Formulário (lado direito) — paleta creme/lilás fixa, como a cena */
+.login-shell > .login-cartao {
+  --superficie: #fff8ee;
+  --superficie-2: #fdf3e8;
+  --superficie-3: #f3e6f5;
+  --texto: #4a3a63;
+  --texto-suave: #7d6a8c;
+  --borda: #e3cfe0;
+  --borda-suave: #f0ddcd;
+  --azul: #9a7fd1;
+  --azul-hover: #7d63b8;
+  --azul-texto: #fff8ee;
+  --azul-claro: #ede4fa;
+  position: relative;
+  width: auto;
+  max-width: none;
+  padding: 46px 54px 42px;
+  border-radius: 0 28px 28px 0;
+  background: #fff8ee;
+  box-shadow: none;
+  color: var(--texto);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.login-hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.login-hero-gato {
+  display: flex;
+  justify-content: center;
+}
+.login-hero-gato .deco {
+  width: 82px;
+  filter: drop-shadow(0 3px 0 rgba(74, 58, 99, 0.12));
+}
+.login-nome {
+  margin: 0 0 2px;
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-size: clamp(44px, 5vw, 62px);
+  line-height: 1.05;
+  letter-spacing: 1px;
+  color: #7d63b8;
+  text-shadow: 3px 3px 0 #e7d7f4;
+}
+.login-bemvindo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 2px 0 0;
+  font-family: 'Nunito', 'Roboto', sans-serif;
+  font-size: 15px;
+  color: var(--texto-suave);
+}
+.login-hero-coracao {
+  width: 15px;
+}
+
+.login-cartao h1 {
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--texto);
+  margin-top: 4px;
+}
+.login-cartao .subtitulo {
+  margin: 4px 0 18px;
+}
+.login-cartao .form-login {
+  gap: 14px;
+}
+.login-cartao .campo input {
+  background: #fffdf8;
+  border-radius: 10px;
+}
+.login-cartao .btn.primario.grande {
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  background: #9a7fd1;
+  box-shadow: 0 3px 0 #7d63b8;
+}
+.login-cartao .btn.primario.grande:hover {
+  background: #8a6cc7;
+}
+.login-cartao .rodape-form {
+  margin-top: 10px;
+}
+.login-cartao .link,
+.login-cartao .subtitulo strong {
+  color: #7d63b8;
+}
+
+/* Estrelinhas ao redor do formulário */
+.login-brilho {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.9;
+}
+.login-brilho--1 { top: 112px; left: 30px; }
+.login-brilho--2 { top: 47%; right: 26px; }
+.login-brilho--3 { bottom: 66px; left: 36px; }
+.login-brilho--4 { bottom: 92px; right: 24px; }
+
+/* Laços nos cantos do cartão */
+.login-laco {
+  position: absolute;
+  z-index: 4;
+  filter: drop-shadow(0 5px 5px rgba(74, 58, 99, 0.18));
+}
+.login-laco--tl { top: -20px; left: -20px; }
+.login-laco--tr { top: -20px; right: -20px; }
+.login-laco--bl { bottom: -16px; left: -16px; }
+.login-laco--br { bottom: -16px; right: -16px; }
+
+@media (max-width: 1080px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+    width: min(470px, 100%);
+  }
+  .login-cena {
+    display: none;
+  }
+  .login-shell > .login-cartao {
+    border-radius: 28px;
+    padding: 40px 34px 34px;
+  }
+}
+
+@media (max-width: 520px) {
+  body.tela-login {
+    padding: 16px 10px;
+  }
+  .login-shell > .login-cartao {
+    padding: 32px 22px 28px;
+  }
+  .login-hero-gato .deco {
+    width: 66px;
+  }
+  .login-brilho--2,
+  .login-brilho--4 {
+    display: none;
+  }
+  .login-laco--bl,
+  .login-laco--br {
+    display: none;
+  }
+}
+
+/* ------------------------------ Dashboard ------------------------------ */
+.ini-painel-titulo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.ini-titulo-planta {
+  flex: none;
+  width: 26px;
+  margin-top: -4px;
+  opacity: 0.95;
+}
+.ini-dica {
+  position: relative;
+}
+.ini-dica .ini-dica-planta {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  width: 52px;
+  margin: 0;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+@media (max-width: 760px) {
+  .ini-titulo-planta {
+    width: 22px;
+  }
+  .ini-dica .ini-dica-planta {
+    display: none;
+  }
+}
+
+/* ------------------------------ Calendário ----------------------------- */
+.lofi-rail-estante {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 150px;
+}
+.lofi-rail-cantinho .lofi-rail-estante > img:first-child {
+  width: 140px;
+}
+.lofi-rail-cantinho .lofi-rail-estante .lofi-rail-planta {
+  position: absolute;
+  right: -2px;
+  bottom: 2px;
+  width: 40px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+}
+
+.lofi-motivacional {
+  position: relative;
+  overflow: hidden;
+}
+.lofi-motivacional .deco {
+  width: var(--deco-w, 164px);
+}
+.lofi-motivacional .lofi-motivacional-planta {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  width: 44px;
+  opacity: 0.92;
+}
+.lofi-motivacional .lofi-motivacional-estrela {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 24px;
+  opacity: 0.9;
+}
+
+.lofi-ilustracao--nuvia {
+  position: relative;
+  padding: 0 6px 2px;
+}
+.lofi-ilustracao--nuvia .lofi-livros {
+  width: 100%;
+  margin-top: 64px;
+}
+.lofi-ilustracao--nuvia .lofi-gato-livros {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 126px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 4px 0 rgba(74, 58, 99, 0.08));
+}
+
+.lofi-canto {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 8px 10px 0;
+  opacity: 0.92;
+}
+.lofi-canto .deco {
+  flex: none;
+  filter: drop-shadow(0 4px 0 rgba(74, 58, 99, 0.07));
+}
+.lofi-canto-planta { width: 116px; }
+.lofi-canto-livros { width: 180px; margin-bottom: 2px; }
+.lofi-canto-gato { width: 132px; margin-left: -18px; }
+.lofi-canto-lua { width: 42px; opacity: 0.8; }
+.lofi-canto-estrela { width: 28px; opacity: 0.9; }
+
+@media (max-width: 900px) {
+  .lofi-canto {
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .lofi-canto-planta { width: 92px; }
+  .lofi-canto-livros { width: 140px; }
+  .lofi-canto-gato { width: 104px; }
+}
+
+@media (max-width: 620px) {
+  .lofi-canto {
+    display: none;
   }
 }

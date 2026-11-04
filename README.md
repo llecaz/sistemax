@@ -57,33 +57,42 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 - No celular, a grade mostra a **semana inteira** com pontinhos coloridos por tipo de atividade.
 - O **professor** pode usar **+ Adicionar evento** para marcar provas/projetos/eventos no mês; o aluno apenas visualiza.
 - Ilustrações em SVG pixel art geradas por `scripts/gerar-pixel-art.js` e salvas em `frontend/img/lofi/`.
-- **Biblioteca de decorações** recortada da cartela oficial em pixel art, com PNGs transparentes em `frontend/assets/decorations/`:
-  - `cats/` — gatinhos dormindo, sentado, sobre livros, anjo, espreguiçando, deitado, na manta e espiando.
-  - `celestial/` — lua, estrelas, sparkles e corações.
-  - `details/` — laços, patinhas e asinhas.
-- Componente reutilizável `decoracao(nome, opções)` em `backend/src/paginas/decoracoes.js` (tamanho, posição, margem, opacidade, visibilidade e `alt`).
-- As decorações aparecem na barra lateral, no cabeçalho e nos painéis do calendário, e no painel inicial do aluno/professor (cartão de dica e saudação).
+- **Biblioteca de decorações Nuvia** recortada da cartela oficial em pixel art, com PNGs transparentes em `frontend/assets/decorations/`:
+  - `cats/` — gatinhos com laço, dormindo na almofada, no sofá, com auréola e espiando.
+  - `plants/` — plantas penduradas, vasos com flores e plantinhas.
+  - `stationery/` — livros, estante, notebook, caderno, bloco e lápis.
+  - `celestial/` — lua, estrelas, brilhos e corações.
+  - `accessories/` — laços, almofada, caneca, fones, envelope, patinhas, quadro e janela.
+  - `ui/` — ícones e componentes de interface (barras, cartão, balão de fala).
+- Componente reutilizável `decoracao(nome, opções)` em `backend/src/paginas/decoracoes.js` (tamanho, posição, margem, opacidade, rotação, visibilidade e `alt`).
+- Login, painel do aluno/professor e calendário usam a biblioteca Nuvia (cenas, gatinhos, plantas, laços, luas e estrelas).
 
-### 🖼️ Biblioteca de decorações (pixel art)
+### 🖼️ Biblioteca de decorações (Nuvia Pixel Art)
 
-Os recortes foram extraídos da cartela original, mantendo transparência, contorno, cores e proporção. Nenhuma ilustração foi redesenhada. A cartela não tinha plantas, então a pasta `plants/` não foi criada — apenas os elementos realmente presentes.
+Os recortes foram extraídos da cartela oficial (`frontend/assets/source/nuvia-assets-sheet.png`), mantendo transparência real, contorno, sombras, cores e proporção. Nenhuma ilustração foi redesenhada. Os novos arquivos usam o prefixo `nuvia-` e convivem com a biblioteca anterior, que continua intacta.
 
 ```
 frontend/assets/decorations/
-├── cats/             # 9 gatinhos
-├── celestial/        # lua, estrelas, sparkles e corações
-└── details/          # laços, patinhas e asinhas
+├── cats/             # 6 gatinhos
+├── plants/           # 4 plantas
+├── stationery/       # 7 itens de papelaria
+├── celestial/        # 23 luas, estrelas, brilhos e corações
+├── accessories/      # 10 acessórios
+└── ui/               # 11 ícones e componentes
 ```
+
+Inventário completo e usos em `frontend/assets/decorations/README.md`.
 
 Uso do componente no backend:
 
 ```js
 const { decoracao } = require('./decoracoes');
 
-decoracao('cat-sleeping', {
+decoracao('nuvia-cat-sleeping-pillow', {
   pasta: 'cats',
   tamanho: 160,          // px ou string CSS
   opacidade: 0.9,
+  rotacao: -10,          // graus, sem distorcer
   top: '12px', right: '10px',  // posicionamento absoluto opcional
   margem: '8px',
   ocultarEm: 'mobile',   // 'mobile' | 'tablet' | 'sempre'
@@ -206,7 +215,8 @@ sistemax/
 │   ├── decoracoes.css       # ⭐ Componente .deco da biblioteca
 │   ├── lofi.css             # ⭐ Visual lo-fi/pixel art da página de calendário
 │   ├── lofi.js              # ⭐ Player lo-fi (Web Audio API)
-│   ├── assets/decorations/  # ⭐ PNGs transparentes (cats, celestial, details)
+│   ├── assets/decorations/  # ⭐ PNGs transparentes Nuvia (cats, plants, stationery, celestial, accessories, ui)
+│   ├── assets/source/       # ⭐ Cartela original nuvia-assets-sheet.png
 │   ├── img/lofi/            # ⭐ Ilustrações pixel art (gatos, livros, plantas, lua)
 │   └── app.js               # Temas, menu, confirmações, seleção de arquivos
 ├── scripts/gerar-pixel-art.js  # Gera os SVGs das ilustrações do calendário
