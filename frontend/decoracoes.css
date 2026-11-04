@@ -132,87 +132,139 @@
 /* ------------------------------- Login -------------------------------- */
 body.tela-login {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at 12% 8%, rgba(203, 184, 234, 0.5), transparent 42%),
-    radial-gradient(circle at 88% 92%, rgba(243, 188, 203, 0.45), transparent 44%),
-    #f3e6f5;
+  padding: 26px 22px 18px;
+  background-color: #f4d9e9;
+  background-image:
+    repeating-conic-gradient(rgba(255, 255, 255, 0.24) 0 25%, rgba(255, 255, 255, 0) 0 50%);
+  background-size: 28px 28px;
 }
 
+.login-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(1200px, 100%);
+  margin-block: auto;
+}
+
+/* Moldura externa: borda dupla delicada em rosa/lilás */
 .login-shell {
   position: relative;
   display: grid;
   grid-template-columns: 1.04fr 0.96fr;
-  width: min(1160px, 100%);
-  border-radius: 28px;
-  background: #fff8ee;
-  box-shadow: 0 26px 70px rgba(74, 58, 99, 0.28);
+  width: 100%;
+  border: 2px solid #e2c9e1;
+  border-radius: 22px;
+  background: #fff8ef;
+  box-shadow:
+    0 0 0 5px rgba(255, 248, 239, 0.72),
+    0 0 0 6px #edd8ea,
+    0 24px 54px rgba(99, 71, 127, 0.18);
 }
 
-/* Cena da mesa de estudos (lado esquerdo) */
+/* ---------- Cena da mesa de estudos (esquerda) ---------- */
 .login-cena {
   position: relative;
-  min-height: 650px;
+  min-height: 660px;
   overflow: hidden;
-  border-radius: 28px 0 0 28px;
-  background:
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.16) 0 1px, transparent 1px 38px),
-    linear-gradient(180deg, #d9c4ec 0%, #e6d4f2 52%, #f3dbe7 100%);
+  border-radius: 20px 0 0 20px;
+  background-color: #ddc8ef;
+  background-image:
+    repeating-conic-gradient(rgba(255, 255, 255, 0.16) 0 25%, rgba(255, 255, 255, 0) 0 50%);
+  background-size: 30px 30px;
 }
 .login-cena-chao {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 34%;
+  height: 31%;
   z-index: 0;
-  background:
-    repeating-linear-gradient(90deg, rgba(140, 92, 122, 0.1) 0 2px, transparent 2px 78px),
-    linear-gradient(180deg, #edd0da 0%, #dcb2c4 100%);
-  border-top: 5px solid #c99db6;
+  background-color: #e8c2d5;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(140, 92, 122, 0.09) 0 2px, transparent 2px 86px);
+  border-top: 4px solid #cf9fbb;
 }
 .login-cena > .deco {
   position: absolute;
   z-index: 1;
   filter: drop-shadow(0 4px 3px rgba(74, 58, 99, 0.12));
 }
-.login-cena-janela { top: 34px; left: 42px; width: 252px; }
-.login-cena-pendente { top: 6px; right: 24px; width: 106px; }
-.login-cena-quadro { top: 178px; right: 40px; width: 86px; }
-.login-cena-estante { top: 304px; right: 20px; width: 158px; }
-.login-cena-flores { bottom: 132px; left: 24px; width: 82px; }
-.login-cena-notebook { bottom: 94px; left: 118px; width: 166px; }
-.login-cena-livros { bottom: 82px; left: 306px; width: 148px; }
-.login-cena-gato { bottom: 158px; left: 286px; width: 174px; }
-.login-cena-caneca { bottom: 84px; left: 262px; width: 58px; }
-.login-cena-almofada { bottom: 44px; right: 22px; width: 108px; }
-.login-cena-planta { bottom: 26px; left: 18px; width: 86px; }
-.login-cena-lua { top: 48px; right: 206px; width: 40px; opacity: 0.92; }
+.login-cena-janela { top: 26px; left: 7%; }
+.login-cena-pendente { top: 2px; left: 56%; }
+.login-cena-quadro { top: 138px; right: 5%; }
+.login-cena-estante { top: 292px; right: 5%; }
+.login-cena-flores { bottom: 150px; left: 2%; }
+.login-cena-notebook { bottom: 168px; left: 19%; }
+.login-cena-livros { bottom: 162px; left: 54%; }
+.login-cena-gato { bottom: 205px; left: 51%; z-index: 2; }
+.login-cena-caneca { bottom: 150px; left: 74%; }
+.login-cena-plantinha { right: 3%; bottom: 150px; }
+.login-cena-planta { bottom: 8px; left: 0; }
 .login-cena-brilho { opacity: 0.9; }
-.login-cena-brilho--1 { top: 30px; right: 148px; }
-.login-cena-brilho--2 { top: 232px; left: 332px; }
-.login-cena-brilho--3 { bottom: 232px; right: 84px; }
-.login-cena-brilho--4 { top: 150px; left: 40px; }
+.login-cena-brilho--1 { top: 24px; right: 20px; }
+.login-cena-brilho--2 { top: 238px; left: 47%; }
+.login-cena-brilho--3 { bottom: 284px; right: 26px; }
 
-/* Formulário (lado direito) — paleta creme/lilás fixa, como a cena */
+/* Cartão de apresentação sobre a mesa */
+.login-cena-placa {
+  position: absolute;
+  z-index: 3;
+  left: 21%;
+  right: 5%;
+  bottom: 12px;
+  padding: 13px 20px 14px;
+  text-align: center;
+  background: #fdf1f6;
+  border: 2px solid #d9b6d5;
+  border-radius: 14px;
+  box-shadow: 0 4px 0 rgba(99, 71, 127, 0.1);
+  color: #63477f;
+}
+.login-cena-placa-titulo {
+  margin: 0;
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-size: 18px;
+  color: #7c5a9e;
+}
+.login-cena-placa-texto {
+  max-width: 94%;
+  margin: 4px auto 0;
+  font-family: 'Nunito', 'Roboto', sans-serif;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #7d6a8c;
+}
+.login-cena-placa-brilho { position: absolute; opacity: 0.9; }
+.login-cena-placa-brilho--1 { top: -10px; left: 10px; }
+.login-cena-placa-brilho--2 { right: 12px; bottom: -9px; }
+
+/* ---------- Formulário (direita) — paleta creme/lilás fixa ---------- */
 .login-shell > .login-cartao {
-  --superficie: #fff8ee;
+  --superficie: #fff8ef;
   --superficie-2: #fdf3e8;
   --superficie-3: #f3e6f5;
-  --texto: #4a3a63;
+  --texto: #63477f;
   --texto-suave: #7d6a8c;
   --borda: #e3cfe0;
   --borda-suave: #f0ddcd;
-  --azul: #9a7fd1;
-  --azul-hover: #7d63b8;
-  --azul-texto: #fff8ee;
+  --azul: #a783d0;
+  --azul-hover: #8f6cbb;
+  --azul-texto: #fff8ef;
   --azul-claro: #ede4fa;
   position: relative;
   width: auto;
   max-width: none;
-  padding: 46px 54px 42px;
-  border-radius: 0 28px 28px 0;
-  background: #fff8ee;
+  padding: 42px 56px 36px;
+  border-left: 1px solid #f1dfe9;
+  border-radius: 0 20px 20px 0;
+  background: #fff8ef;
   box-shadow: none;
   color: var(--texto);
   display: flex;
@@ -224,34 +276,47 @@ body.tela-login {
 .login-hero {
   position: relative;
   z-index: 1;
+  margin-bottom: 10px;
   text-align: center;
-  margin-bottom: 14px;
 }
 .login-hero-gato {
   display: flex;
   justify-content: center;
 }
 .login-hero-gato .deco {
-  width: 82px;
+  width: 86px;
   filter: drop-shadow(0 3px 0 rgba(74, 58, 99, 0.12));
 }
+.login-hero-brilho {
+  position: absolute;
+  z-index: 0;
+  opacity: 0.9;
+}
+.login-hero-brilho--esq {
+  top: 24px;
+  left: calc(50% - 112px);
+}
+.login-hero-brilho--dir {
+  top: 42px;
+  right: calc(50% - 114px);
+}
 .login-nome {
-  margin: 0 0 2px;
+  margin: 2px 0 0;
   font-family: 'Pixelify Sans', 'Courier New', monospace;
-  font-size: clamp(44px, 5vw, 62px);
-  line-height: 1.05;
+  font-size: clamp(50px, 5.2vw, 70px);
+  line-height: 1;
   letter-spacing: 1px;
-  color: #7d63b8;
-  text-shadow: 3px 3px 0 #e7d7f4;
+  color: #9c7acb;
+  text-shadow: 3px 3px 0 #e8d8f5;
 }
 .login-bemvindo {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  margin: 2px 0 0;
+  margin: 9px 0 0;
   font-family: 'Nunito', 'Roboto', sans-serif;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--texto-suave);
 }
 .login-hero-coracao {
@@ -259,40 +324,204 @@ body.tela-login {
 }
 
 .login-cartao h1 {
+  margin-top: 2px;
   font-family: 'Pixelify Sans', 'Courier New', monospace;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
   color: var(--texto);
-  margin-top: 4px;
 }
 .login-cartao .subtitulo {
   margin: 4px 0 18px;
+  font-size: 14.5px;
 }
 .login-cartao .form-login {
-  gap: 14px;
+  gap: 15px;
 }
-.login-cartao .campo input {
-  background: #fffdf8;
-  border-radius: 10px;
-}
-.login-cartao .btn.primario.grande {
+
+/* Campos com ícone */
+.login-cartao .campo--icone input {
+  height: 58px;
+  padding: 20px 54px 8px;
+  border: 1.5px solid #d9c3e7;
   border-radius: 12px;
-  padding: 12px 18px;
-  font-family: 'Pixelify Sans', 'Courier New', monospace;
-  font-size: 16px;
-  letter-spacing: 0.4px;
-  background: #9a7fd1;
-  box-shadow: 0 3px 0 #7d63b8;
+  background: #fffaf3;
+  font-size: 15.5px;
 }
-.login-cartao .btn.primario.grande:hover {
-  background: #8a6cc7;
+.login-cartao .campo--icone label {
+  left: 52px;
+  top: 18px;
 }
-.login-cartao .rodape-form {
-  margin-top: 10px;
+.login-cartao .campo--icone input:focus + label,
+.login-cartao .campo--icone input:not(:placeholder-shown) + label {
+  top: 7px;
+  font-size: 10.5px;
+}
+.login-cartao .campo input:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 2px rgba(167, 131, 208, 0.18);
+}
+.campo-icone {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 17px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: var(--azul);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+.campo-icone-img {
+  width: 23px;
+  opacity: 0.9;
+}
+.campo-icone-svg {
+  width: 20px;
+  height: 20px;
+}
+.campo-olho {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--azul);
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+.campo-olho:hover {
+  background: #f3e6f5;
+}
+.campo-olho:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 1px;
+}
+.campo-olho svg {
+  width: 20px;
+  height: 20px;
+}
+.campo-olho-risco {
+  position: absolute;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0;
+  transform: rotate(-40deg);
+}
+.campo-olho--aberto .campo-olho-risco {
+  opacity: 1;
+}
+
+/* Checkbox em rosa pastel */
+.login-cartao .linha-opcoes {
+  margin-top: -1px;
+  font-size: 14.5px;
+}
+.login-cartao .checkbox {
+  gap: 9px;
+  color: #6f5a86;
+}
+.login-cartao .checkbox input {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  border: 2px solid #d3b7e0;
+  border-radius: 5px;
+  background: #fffaf3;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.login-cartao .checkbox input:checked {
+  border-color: #cf93b6;
+  background: #e6b3ce;
+}
+.login-cartao .checkbox input:checked::before {
+  content: '';
+  width: 9px;
+  height: 5px;
+  border-bottom: 2px solid #fff;
+  border-left: 2px solid #fff;
+  transform: rotate(-45deg) translate(0, -1px);
 }
 .login-cartao .link,
 .login-cartao .subtitulo strong {
-  color: #7d63b8;
+  color: #8f6cbb;
+}
+.login-cartao .link {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.login-cartao .link:hover {
+  color: #6f4f9b;
+}
+
+/* Botão com patinha */
+.login-cartao .btn.primario.grande.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 18px;
+  border-radius: 14px;
+  background: #a783d0;
+  box-shadow: 0 4px 0 #8a68b4;
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-size: 19px;
+  letter-spacing: 0.5px;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.login-cartao .btn.primario.grande.login-btn:hover {
+  background: #b493db;
+  box-shadow: 0 5px 0 #8a68b4;
+  transform: translateY(-1px);
+}
+.login-cartao .btn.primario.grande.login-btn:active {
+  box-shadow: 0 2px 0 #8a68b4;
+  transform: translateY(2px);
+}
+.login-btn-pata {
+  display: inline-flex;
+}
+.login-btn-pata .deco {
+  width: 24px;
+  filter: brightness(0) invert(1);
+  opacity: 1;
+}
+
+/* Separador com laço */
+.login-separador {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 13px 0 11px;
+}
+.login-separador-linha {
+  flex: 1;
+  height: 1px;
+  background: #dcc8e6;
+}
+.login-separador-laco {
+  flex: none;
+}
+.login-cartao .rodape-form {
+  margin-top: 0;
+  font-size: 14.5px;
+  color: #6f5a86;
 }
 
 /* Estrelinhas ao redor do formulário */
@@ -301,45 +530,202 @@ body.tela-login {
   z-index: 1;
   opacity: 0.9;
 }
-.login-brilho--1 { top: 112px; left: 30px; }
-.login-brilho--2 { top: 47%; right: 26px; }
-.login-brilho--3 { bottom: 66px; left: 36px; }
-.login-brilho--4 { bottom: 92px; right: 24px; }
+.login-brilho--1 { top: 104px; left: 30px; }
+.login-brilho--2 { top: 46%; right: 22px; }
+.login-brilho--3 { bottom: 78px; left: 34px; }
+.login-brilho--4 { bottom: 74px; right: 30px; }
 
-/* Laços nos cantos do cartão */
+/* Laços nos quatro cantos da moldura */
 .login-laco {
   position: absolute;
-  z-index: 4;
-  filter: drop-shadow(0 5px 5px rgba(74, 58, 99, 0.18));
+  z-index: 5;
+  filter: drop-shadow(0 5px 4px rgba(74, 58, 99, 0.2));
 }
-.login-laco--tl { top: -20px; left: -20px; }
-.login-laco--tr { top: -20px; right: -20px; }
-.login-laco--bl { bottom: -16px; left: -16px; }
-.login-laco--br { bottom: -16px; right: -16px; }
+.login-laco--tl { top: -28px; left: -26px; }
+.login-laco--tr { top: -28px; right: -26px; }
+.login-laco--bl { bottom: -24px; left: -22px; }
+.login-laco--br { bottom: -24px; right: -22px; }
 
+.login-moldura-brilho {
+  position: absolute;
+  z-index: 4;
+  opacity: 0.85;
+}
+.login-moldura-brilho--1 { top: 64px; right: 12px; }
+.login-moldura-brilho--2 { bottom: 44px; right: 12px; }
+
+/* Rodapé decorativo */
+.login-rodape {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 2px 16px 4px;
+}
+.login-rodape-linha {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #cbb2d8);
+}
+.login-rodape-linha:last-child {
+  background: linear-gradient(90deg, #cbb2d8, transparent);
+}
+.login-rodape-pata {
+  flex: none;
+  display: inline-flex;
+  opacity: 0.68;
+}
+.login-rodape-pata .deco {
+  width: 20px;
+}
+.login-rodape-frase {
+  margin: 0;
+  font-family: 'Nunito', 'Roboto', sans-serif;
+  font-size: 15px;
+  color: #8a709c;
+  white-space: nowrap;
+}
+.login-rodape-frase span {
+  color: #b07fa5;
+}
+
+.login-shell > .login-cartao .alternar-tema {
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  opacity: 0.55;
+}
+.login-shell > .login-cartao .alternar-tema:hover,
+.login-shell > .login-cartao .alternar-tema:focus-visible {
+  background: #f3e6f5;
+  opacity: 1;
+}
+
+/* ---------- Painéis empilhados (tablet) ---------- */
 @media (max-width: 1080px) {
+  .login-pagina {
+    width: min(560px, 100%);
+  }
   .login-shell {
     grid-template-columns: 1fr;
-    width: min(470px, 100%);
   }
   .login-cena {
+    min-height: 240px;
+    border-radius: 20px 20px 0 0;
+  }
+  .login-cena-chao {
     display: none;
   }
   .login-shell > .login-cartao {
-    border-radius: 28px;
-    padding: 40px 34px 34px;
+    padding: 36px 34px 32px;
+    border-top: 1px solid #f1dfe9;
+    border-left: 0;
+    border-radius: 0 0 20px 20px;
+  }
+  .login-cena-placa,
+  .login-cena-notebook,
+  .login-cena-livros,
+  .login-cena-gato,
+  .login-cena-caneca,
+  .login-cena-plantinha,
+  .login-cena-planta,
+  .login-cena-flores,
+  .login-cena-estante {
+    display: none;
+  }
+  .login-cena-janela {
+    top: 10px;
+    left: 7%;
+    width: 32%;
+  }
+  .login-cena-pendente {
+    top: -6px;
+    left: 48%;
+    width: 16%;
+  }
+  .login-cena-quadro {
+    top: 48px;
+    right: 9%;
+    width: 12%;
+  }
+  .login-cena-brilho--1 { top: 16px; right: 16px; }
+  .login-cena-brilho--2 { top: 196px; left: 42%; }
+  .login-cena-brilho--3 { right: 12px; bottom: 16px; }
+}
+
+/* ---------- Telas pequenas ---------- */
+@media (max-width: 640px) {
+  body.tela-login {
+    padding: 14px 10px 12px;
+  }
+  .login-pagina {
+    gap: 10px;
+  }
+  .login-shell {
+    border-radius: 18px;
+    box-shadow:
+      0 0 0 4px rgba(255, 248, 239, 0.72),
+      0 0 0 5px #edd8ea,
+      0 18px 40px rgba(99, 71, 127, 0.16);
+  }
+  .login-cena {
+    min-height: 240px;
+    border-radius: 16px 16px 0 0;
+  }
+  .login-cena-janela { width: 34%; }
+  .login-cena-quadro { display: none; }
+  .login-cena-pendente { left: 54%; width: 15%; }
+  .login-shell > .login-cartao {
+    padding: 30px 22px 28px;
+    border-radius: 0 0 16px 16px;
+  }
+  .login-hero-gato .deco {
+    width: 70px;
+  }
+  .login-nome {
+    font-size: 48px;
+  }
+  .login-laco {
+    width: 46px;
+  }
+  .login-laco--bl,
+  .login-laco--br,
+  .login-moldura-brilho--2 {
+    display: none;
+  }
+  .login-rodape {
+    padding-inline: 8px;
+  }
+  .login-rodape-frase {
+    font-size: 12px;
+    white-space: normal;
+    text-align: center;
   }
 }
 
 @media (max-width: 520px) {
-  body.tela-login {
-    padding: 16px 10px;
+  .login-cena {
+    display: none;
   }
   .login-shell > .login-cartao {
-    padding: 32px 22px 28px;
+    padding: 30px 20px 26px;
+    border-top: 0;
+    border-radius: 16px;
   }
   .login-hero-gato .deco {
     width: 66px;
+  }
+  .login-cartao .linha-opcoes {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .login-cartao .linha-opcoes .link {
+    margin-left: auto;
+    font-size: 13.5px;
   }
   .login-brilho--2,
   .login-brilho--4 {
