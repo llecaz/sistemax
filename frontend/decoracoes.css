@@ -130,6 +130,9 @@
    ========================================================================== */
 
 /* ------------------------------- Login -------------------------------- */
+html[data-login-modo='claro'] {
+  background-color: #f4d9e9;
+}
 body.tela-login {
   position: relative;
   display: flex;
@@ -140,9 +143,7 @@ body.tela-login {
   overflow-x: hidden;
   padding: 26px 22px 18px;
   background-color: #f4d9e9;
-  background-image:
-    repeating-conic-gradient(rgba(255, 255, 255, 0.24) 0 25%, rgba(255, 255, 255, 0) 0 50%);
-  background-size: 28px 28px;
+  background-image: none;
 }
 
 .login-pagina {
@@ -175,9 +176,7 @@ body.tela-login {
   overflow: hidden;
   border-radius: 20px 0 0 20px;
   background-color: #ddc8ef;
-  background-image:
-    repeating-conic-gradient(rgba(255, 255, 255, 0.16) 0 25%, rgba(255, 255, 255, 0) 0 50%);
-  background-size: 30px 30px;
+  background-image: none;
 }
 .login-cena-chao {
   position: absolute;
@@ -324,7 +323,7 @@ body.tela-login {
 }
 
 .login-cartao h1 {
-  margin-top: 2px;
+  margin-top: 14px;
   font-family: 'Pixelify Sans', 'Courier New', monospace;
   font-size: 28px;
   font-weight: 600;
@@ -498,9 +497,57 @@ body.tela-login {
   display: inline-flex;
 }
 .login-btn-pata .deco {
-  width: 24px;
-  filter: brightness(0) invert(1);
+  width: 25px;
   opacity: 1;
+}
+
+/* Login social */
+.login-sociais {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.login-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1.5px solid #d9c3e7;
+  border-radius: 12px;
+  background: #fffaf3;
+  color: #63477f;
+  font-family: 'Nunito', 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 2px 0 rgba(99, 71, 127, 0.08);
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.login-social:hover {
+  border-color: #bfa3db;
+  background: #f8eef8;
+  box-shadow: 0 3px 0 rgba(99, 71, 127, 0.1);
+  transform: translateY(-1px);
+}
+.login-social:active {
+  box-shadow: none;
+  transform: translateY(1px);
+}
+.login-social:focus-visible {
+  outline: 2px solid #a783d0;
+  outline-offset: 2px;
+}
+.login-social-icone {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+}
+.login-social-icone svg {
+  display: block;
 }
 
 /* Separador com laço */
@@ -599,6 +646,197 @@ body.tela-login {
 .login-shell > .login-cartao .alternar-tema:hover,
 .login-shell > .login-cartao .alternar-tema:focus-visible {
   background: #f3e6f5;
+  opacity: 1;
+}
+
+/* O estado do botão segue o modo local do login, não o tema salvo. */
+html[data-login-modo='claro'] body.tela-login .alternar-tema .sol {
+  display: none;
+}
+html[data-login-modo='claro'] body.tela-login .alternar-tema .lua {
+  display: grid;
+}
+html[data-login-modo='escuro'] body.tela-login .alternar-tema .sol {
+  display: grid;
+}
+html[data-login-modo='escuro'] body.tela-login .alternar-tema .lua {
+  display: none;
+}
+
+/* ---------- Modo escuro local do login (paleta Lo-fi Night) ---------- */
+html[data-login-modo='escuro'] {
+  background-color: #1a1830;
+}
+html[data-login-modo='escuro'] body.tela-login {
+  background-color: #1a1830;
+  background-image: none;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-shell {
+  border-color: #4a3f78;
+  background: #232042;
+  box-shadow:
+    0 0 0 5px rgba(35, 32, 66, 0.92),
+    0 0 0 6px #3a3568,
+    0 24px 54px rgba(10, 8, 24, 0.58);
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-cena {
+  background-color: #2b2750;
+  background-image: none;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cena-chao {
+  background-color: #332d55;
+  border-top-color: #5a4a8c;
+  background-image: none;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cena > .deco {
+  filter: drop-shadow(0 4px 4px rgba(8, 6, 20, 0.32));
+}
+html[data-login-modo='escuro'] body.tela-login .login-cena-placa {
+  border-color: #5b4a8c;
+  background: #2b2750;
+  box-shadow: 0 4px 0 rgba(10, 8, 24, 0.4);
+  color: #e9e6ff;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cena-placa-titulo {
+  color: #cbbaff;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cena-placa-texto {
+  color: #b6acd8;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-shell > .login-cartao {
+  --superficie: #232042;
+  --superficie-2: #2b2750;
+  --superficie-3: #353060;
+  --texto: #e9e6ff;
+  --texto-suave: #a6a0d0;
+  --borda: #3a3568;
+  --borda-suave: rgba(255, 255, 255, 0.07);
+  --azul: #a78bfa;
+  --azul-hover: #bcaaff;
+  --azul-texto: #17142c;
+  --azul-claro: rgba(167, 139, 250, 0.18);
+  border-left-color: #3a3568;
+  background: #232042;
+  color: var(--texto);
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-nome {
+  color: #c9b8ff;
+  text-shadow: 3px 3px 0 #3a3568;
+}
+html[data-login-modo='escuro'] body.tela-login .login-bemvindo {
+  color: #b6acd8;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao h1 {
+  color: #f1edff;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .subtitulo {
+  color: #a6a0d0;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-cartao .campo--icone input {
+  border-color: #4a3f78;
+  background: #2b2750;
+  color: #f1edff;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .campo--icone label {
+  color: #aaa2cf;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .campo input:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.24);
+}
+html[data-login-modo='escuro'] body.tela-login .campo-icone,
+html[data-login-modo='escuro'] body.tela-login .campo-olho {
+  color: #c4b2ff;
+}
+html[data-login-modo='escuro'] body.tela-login .campo-olho:hover {
+  background: #353060;
+}
+html[data-login-modo='escuro'] body.tela-login .campo-icone-img {
+  opacity: 1;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-cartao .checkbox {
+  color: #b6acd8;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .checkbox input {
+  border-color: #5a4a8c;
+  background: #2b2750;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .checkbox input:checked {
+  border-color: #ffb4d9;
+  background: #b76791;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-cartao .link {
+  color: #cbbaff;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .link:hover {
+  color: #e7ddff;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-cartao .btn.primario.grande.login-btn {
+  background: #5a4196;
+  box-shadow: 0 4px 0 #38265f;
+  color: #fff8ef;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .btn.primario.grande.login-btn:hover {
+  background: #6d52ad;
+  box-shadow: 0 5px 0 #38265f;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .btn.primario.grande.login-btn:active {
+  box-shadow: 0 2px 0 #38265f;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-social {
+  border-color: #4a3f78;
+  background: #2b2750;
+  color: #e9e6ff;
+  box-shadow: 0 2px 0 rgba(10, 8, 24, 0.38);
+}
+html[data-login-modo='escuro'] body.tela-login .login-social:hover {
+  border-color: #7c62c4;
+  background: #353060;
+  box-shadow: 0 3px 0 rgba(10, 8, 24, 0.42);
+}
+html[data-login-modo='escuro'] body.tela-login .login-social:focus-visible {
+  outline-color: #c4b2ff;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-separador-linha {
+  background: #4a3f78;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cartao .rodape-form {
+  color: #b6acd8;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-rodape-linha {
+  background: linear-gradient(90deg, transparent, #5a4a8c);
+}
+html[data-login-modo='escuro'] body.tela-login .login-rodape-linha:last-child {
+  background: linear-gradient(90deg, #5a4a8c, transparent);
+}
+html[data-login-modo='escuro'] body.tela-login .login-rodape-frase {
+  color: #b6acd8;
+}
+html[data-login-modo='escuro'] body.tela-login .login-rodape-frase span {
+  color: #e9a8c8;
+}
+html[data-login-modo='escuro'] body.tela-login .login-rodape-pata {
+  opacity: 0.8;
+}
+
+html[data-login-modo='escuro'] body.tela-login .login-shell > .login-cartao .alternar-tema {
+  color: #c4b2ff;
+  opacity: 0.85;
+}
+html[data-login-modo='escuro'] body.tela-login .login-shell > .login-cartao .alternar-tema:hover,
+html[data-login-modo='escuro'] body.tela-login .login-shell > .login-cartao .alternar-tema:focus-visible {
+  background: #353060;
   opacity: 1;
 }
 

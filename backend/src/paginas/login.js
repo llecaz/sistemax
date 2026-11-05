@@ -9,6 +9,10 @@ const SVG_CADEADO = `<svg class="campo-icone-svg" viewBox="0 0 24 24" width="20"
 
 const SVG_OLHO = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>`;
 
+const SVG_GOOGLE = `<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.3 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>`;
+
+const SVG_GITHUB = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-1.8c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.6-1.3-1.6-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.7.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>`;
+
 function campo(id, tipo, rotulo, extra = '') {
   const ehEmail = tipo === 'email';
   const ehSenha = tipo === 'password';
@@ -31,9 +35,22 @@ function campo(id, tipo, rotulo, extra = '') {
 
 function botao(texto) {
   return `<button class="btn primario grande login-btn" type="submit">
-    <span class="login-btn-pata" aria-hidden="true">${decoracao('nuvia-paw-print', { pasta: 'accessories', tamanho: 21 })}</span>
+    <span class="login-btn-pata" aria-hidden="true">${decoracao('nuvia-paw-print-white', { pasta: 'accessories', tamanho: 25 })}</span>
     <span>${texto}</span>
   </button>`;
+}
+
+function botoesSociais() {
+  return `<div class="login-sociais" aria-label="Outras formas de entrar">
+    <a class="login-social" href="/entrar/google" aria-label="Entrar com Google">
+      <span class="login-social-icone" aria-hidden="true">${SVG_GOOGLE}</span>
+      <span>Google</span>
+    </a>
+    <a class="login-social" href="/entrar/github" aria-label="Entrar com GitHub">
+      <span class="login-social-icone" aria-hidden="true">${SVG_GITHUB}</span>
+      <span>GitHub</span>
+    </a>
+  </div>`;
 }
 
 function separadorCadastro() {
@@ -56,6 +73,7 @@ function modoEntrar() {
       <a class="link" href="/recuperar">Esqueceu sua senha?</a>
     </div>
     ${botao('Entrar')}
+    ${botoesSociais()}
     ${separadorCadastro()}
     <p class="rodape-form">Ainda não tem uma conta? <a class="link" href="/cadastro">Cadastre-se</a></p>
   </form>`;
@@ -177,6 +195,14 @@ ${scriptTemas()}
     document.documentElement.setAttribute('data-tema', t);
     document.documentElement.setAttribute('data-tema-modo', mapa[t] ? mapa[t].modo : 'claro');
     try { localStorage.setItem('tema', t); } catch (e) {}
+
+    // Modo escuro apenas do login: não troca o tema salvo na conta.
+    var modoLogin = null;
+    try { modoLogin = localStorage.getItem('nuvia-login-modo'); } catch (e) {}
+    if (modoLogin !== 'claro' && modoLogin !== 'escuro') {
+      modoLogin = mapa[t] && mapa[t].modo === 'escuro' ? 'escuro' : 'claro';
+    }
+    document.documentElement.setAttribute('data-login-modo', modoLogin);
   })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -192,7 +218,7 @@ ${scriptTemas()}
     <main class="login-shell">
       ${cenaLogin()}
       <section class="login-cartao">
-        <button class="alternar-tema" id="btn-tema" type="button" title="Alternar tema">
+        <button class="alternar-tema" id="btn-tema" type="button" title="Ativar modo escuro" aria-label="Ativar modo escuro" aria-pressed="false">
           <span class="tema-icone sol">
             <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10m0-5v2m0 16v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M2 12h2m16 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
           </span>
@@ -239,6 +265,30 @@ ${scriptTemas()}
     </footer>
   </div>
   <script src="/app.js"></script>
+  <script>
+    /* Lua/sol: alterna apenas o visual do login, sem trocar o tema do sistema. */
+    (function () {
+      var raiz = document.documentElement;
+      var botao = document.getElementById('btn-tema');
+      if (!botao) return;
+      function atualizar() {
+        var escuro = raiz.getAttribute('data-login-modo') === 'escuro';
+        var rotulo = escuro ? 'Ativar modo claro' : 'Ativar modo escuro';
+        botao.setAttribute('aria-pressed', String(escuro));
+        botao.setAttribute('aria-label', rotulo);
+        botao.setAttribute('title', rotulo);
+      }
+      atualizar();
+      botao.addEventListener('click', function (evento) {
+        evento.preventDefault();
+        evento.stopPropagation();
+        var escuro = raiz.getAttribute('data-login-modo') !== 'escuro';
+        raiz.setAttribute('data-login-modo', escuro ? 'escuro' : 'claro');
+        try { localStorage.setItem('nuvia-login-modo', escuro ? 'escuro' : 'claro'); } catch (e) {}
+        atualizar();
+      });
+    })();
+  </script>
   <script>
     (function () {
       var botao = document.querySelector('[data-ver-senha]');

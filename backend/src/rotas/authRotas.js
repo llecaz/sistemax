@@ -84,6 +84,16 @@ router.post('/entrar', async (req, res) => {
   }
 });
 
+/** Login social: botões prontos, aguardando configuração das credenciais OAuth. */
+function loginSocialIndisponivel(nome) {
+  return (req, res) => {
+    flash(req, 'erro', `O login com ${nome} ainda não está configurado. Use seu e-mail e senha.`);
+    res.redirect('/');
+  };
+}
+router.get('/entrar/google', loginSocialIndisponivel('Google'));
+router.get('/entrar/github', loginSocialIndisponivel('GitHub'));
+
 /** Formulário de cadastro do aluno. */
 router.get('/cadastro', (req, res) => {
   if (req.session.usuario) return res.redirect(homeDo(req.session.usuario));
