@@ -144,6 +144,7 @@ body.tela-login {
   padding: 26px 22px 18px;
   background-color: #f4d9e9;
   background-image: none;
+  transition: background-color 0.45s ease;
 }
 
 .login-pagina {
@@ -163,6 +164,7 @@ body.tela-login {
   border: 2px solid #e2c9e1;
   border-radius: 22px;
   background: #fff8ef;
+  transition: background-color 0.45s ease, border-color 0.45s ease;
   box-shadow:
     0 0 0 5px rgba(255, 248, 239, 0.72),
     0 0 0 6px #edd8ea,
@@ -177,6 +179,7 @@ body.tela-login {
   border-radius: 20px 0 0 20px;
   background-color: #ddc8ef;
   background-image: none;
+  transition: background-color 0.45s ease;
 }
 .login-cena-chao {
   position: absolute;
@@ -188,6 +191,7 @@ body.tela-login {
   background-color: #e8c2d5;
   background-image:
     repeating-linear-gradient(90deg, rgba(140, 92, 122, 0.09) 0 2px, transparent 2px 86px);
+  transition: background-color 0.45s ease, border-color 0.45s ease;
   border-top: 4px solid #cf9fbb;
 }
 .login-cena > .deco {
@@ -203,6 +207,28 @@ body.tela-login {
 .login-cena-notebook { bottom: 168px; left: 19%; }
 .login-cena-livros { bottom: 162px; left: 54%; }
 .login-cena-gato { bottom: 205px; left: 51%; z-index: 2; }
+
+/* Cena diurna/noturna: as duas variantes ficam sobrepostas e alternam por opacidade. */
+.login-cena-janela,
+.login-cena-gato {
+  transition: opacity 0.55s ease;
+}
+.login-cena-janela--dia,
+.login-cena-gato--acordado {
+  opacity: 1;
+}
+.login-cena-janela--noite,
+.login-cena-gato--dormindo {
+  opacity: 0;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cena-janela--dia,
+html[data-login-modo='escuro'] body.tela-login .login-cena-gato--acordado {
+  opacity: 0;
+}
+html[data-login-modo='escuro'] body.tela-login .login-cena-janela--noite,
+html[data-login-modo='escuro'] body.tela-login .login-cena-gato--dormindo {
+  opacity: 1;
+}
 .login-cena-caneca { bottom: 150px; left: 74%; }
 .login-cena-plantinha { right: 3%; bottom: 150px; }
 .login-cena-planta { bottom: 8px; left: 0; }
@@ -270,6 +296,7 @@ body.tela-login {
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
+  transition: background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease;
 }
 
 .login-hero {

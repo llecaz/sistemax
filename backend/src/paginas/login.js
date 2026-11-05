@@ -128,14 +128,16 @@ function cenaLogin() {
   return `
   <section class="login-cena" aria-hidden="true">
     <span class="login-cena-chao"></span>
-    ${decoracao('nuvia-window-night', { pasta: 'accessories', tamanho: '44%', classe: 'login-cena-janela' })}
+    ${decoracao('nuvia-window-day', { pasta: 'accessories', tamanho: '44%', classe: 'login-cena-janela login-cena-janela--dia' })}
+    ${decoracao('nuvia-window-night', { pasta: 'accessories', tamanho: '44%', classe: 'login-cena-janela login-cena-janela--noite' })}
     ${decoracao('nuvia-plant-hanging', { pasta: 'plants', tamanho: '20%', classe: 'login-cena-pendente' })}
     ${decoracao('nuvia-wall-hanging-cat', { pasta: 'accessories', tamanho: '15%', classe: 'login-cena-quadro' })}
     ${decoracao('nuvia-bookshelf', { pasta: 'stationery', tamanho: '27%', classe: 'login-cena-estante' })}
     ${decoracao('nuvia-plant-flowers', { pasta: 'plants', tamanho: '15%', classe: 'login-cena-flores' })}
     ${decoracao('nuvia-laptop', { pasta: 'stationery', tamanho: '32%', classe: 'login-cena-notebook' })}
     ${decoracao('nuvia-books-stack', { pasta: 'stationery', tamanho: '26%', classe: 'login-cena-livros' })}
-    ${decoracao('nuvia-cat-sleeping-pillow', { pasta: 'cats', tamanho: '26%', classe: 'login-cena-gato' })}
+    ${decoracao('nuvia-cat-bow-laying', { pasta: 'cats', tamanho: '26%', classe: 'login-cena-gato login-cena-gato--acordado' })}
+    ${decoracao('nuvia-cat-sleeping-pillow', { pasta: 'cats', tamanho: '26%', classe: 'login-cena-gato login-cena-gato--dormindo' })}
     ${decoracao('nuvia-mug-cat', { pasta: 'accessories', tamanho: '11%', classe: 'login-cena-caneca' })}
     ${decoracao('nuvia-plant-small-pot', { pasta: 'plants', tamanho: '9%', classe: 'login-cena-plantinha' })}
     ${decoracao('nuvia-plant-potted', { pasta: 'plants', tamanho: '19%', classe: 'login-cena-planta' })}
