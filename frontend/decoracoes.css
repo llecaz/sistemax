@@ -207,6 +207,8 @@ body.tela-login {
 .login-cena-notebook { bottom: 168px; left: 19%; }
 .login-cena-livros { bottom: 162px; left: 54%; }
 .login-cena-gato { bottom: 205px; left: 51%; z-index: 2; }
+/* Gato acordado: um pouco menor e centralizado sobre a pilha de livros. */
+.login-cena-gato--acordado { left: 56%; width: 22%; }
 
 /* Cena diurna/noturna: as duas variantes ficam sobrepostas e alternam por opacidade. */
 .login-cena-janela,
