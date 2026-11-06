@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema de Entrega de Trabalhos — Sistemax</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="favicon.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #fafafa;
+      color: #202124;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .hero {
+      text-align: center;
+      max-width: 560px;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 500;
+      color: #1a73e8;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: #5f6368;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    .role-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 560px;
+      margin-top: 32px;
+    }
+    .role-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.2s;
+      border: 1px solid #e8eaed;
+    }
+    .role-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      transform: translateY(-3px);
+    }
+    .role-card .icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+    .role-card h3 {
+      font-size: 1.15rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .role-card span {
+      font-size: 0.85rem;
+      color: #5f6368;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 32px;
+      border-radius: 24px;
+      text-decoration: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary {
+      background: #1a73e8;
+      color: #fff;
+      margin-top: 24px;
+      border: none;
+    }
+    .btn-primary:hover {
+      background: #1765cc;
+      box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 0.8rem;
+      color: #9aa0a6;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>Sistemax</h1>
+    <p>Sistema de gerenciamento de entregas de trabalhos escolares<br>— estilo Google Classroom</p>
+    <div class="role-cards">
+      <a class="role-card" href="/">
+        <div class="icon">👤</div>
+        <h3>Aluno</h3>
+        <span>Faça suas entregas e acompanhe o status</span>
+      </a>
+      <a class="role-card" href="/professor">
+        <div class="icon">🎓</div>
+        <h3>Professor</h3>
+        <span>Corrija entregas e avalie alunos</span>
+      </a>
+      <a class="role-card" href="/admin">
+        <div class="icon">⚙️</div>
+        <h3>Admin</h3>
+        <span>Gerencie turmas, disciplinas e professores</span>
+      </a>
+    </div>
+    <button class="btn btn-primary" onclick="location.href='/'">Login / Entrar</button>
+  </div>
+  <footer>Sistemax &copy; 2026 — Sistema de Entrega de Trabalhos</footer>
+</body>
+</html>
