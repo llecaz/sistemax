@@ -89,7 +89,7 @@ function modoCadastro() {
     ${campo('senha', 'password', 'Senha', 'minlength="6"')}
     ${campo('codigo', 'text', 'Código da turma', 'autocapitalize="characters"')}
     ${botao('Criar conta')}
-    <p class="rodape-form">Já tem conta? <a class="link" href="/">Entrar</a></p>
+    <p class="rodape-form">Já tem conta? <a class="link" href="/entrar">Entrar</a></p>
   </form>`;
 }
 
@@ -101,7 +101,7 @@ function modoRecuperar(dados) {
     <form method="post" action="/recuperar/passo1" class="form-login">
       ${campo('email', 'email', 'E-mail')}
       ${botao('Continuar')}
-      <p class="rodape-form"><a class="link" href="/">Voltar ao login</a></p>
+      <p class="rodape-form"><a class="link" href="/entrar">Voltar ao login</a></p>
     </form>`;
   }
   return `
@@ -119,7 +119,7 @@ function modoRecuperar(dados) {
     ${campo('resposta', 'text', 'Sua resposta')}
     ${campo('senha', 'password', 'Nova senha', 'minlength="6"')}
     ${botao('Redefinir senha')}
-    <p class="rodape-form"><a class="link" href="/">Voltar ao login</a></p>
+    <p class="rodape-form"><a class="link" href="/entrar">Voltar ao login</a></p>
   </form>`;
 }
 

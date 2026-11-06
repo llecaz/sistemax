@@ -6,6 +6,7 @@ const connectPg = require('connect-pg-simple');
 const path = require('path');
 
 const { pool, AMBIENTE } = require('./db');
+const { homeDo } = require('./paginas/layout');
 
 const app = express();
 
@@ -41,11 +42,18 @@ app.use(
 app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 app.use(express.json({ limit: '1mb' }));
 
+/* ---------- Página inicial (frontend/index.html) ---------- */
+app.get('/', (req, res) => {
+  if (req.session && req.session.usuario) return res.redirect(homeDo(req.session.usuario));
+  res.sendFile(path.join(__dirname, '..', '..', 'frontend', 'index.html'));
+});
+
 /* ---------- Arquivos estáticos (frontend/) ---------- */
 app.use(
   express.static(path.join(__dirname, '..', '..', 'frontend'), {
     maxAge: producao ? '1h' : 0,
     etag: true,
+    index: false, // a raiz "/" é servida pela rota acima
   })
 );
 // Fotos de perfil (nomes aleatórios gerados pelo próprio sistema)

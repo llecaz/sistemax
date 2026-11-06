@@ -41,8 +41,8 @@ const CONSULTA_USUARIO = `
     FROM usuarios u
     LEFT JOIN turmas t ON t.id = u.turma_id`;
 
-/** Página inicial: mostra o login (ou leva ao painel certo). */
-router.get('/', (req, res) => {
+/** Página de login (a página inicial "/" é o index.html, servido em app.js). */
+router.get('/entrar', (req, res) => {
   if (req.session.usuario) return res.redirect(homeDo(req.session.usuario));
   res.send(telaLogin({ modo: 'entrar', req }));
 });
@@ -56,13 +56,13 @@ router.post('/entrar', async (req, res) => {
 
     if (!email || !senha) {
       flash(req, 'erro', 'Informe e-mail e senha.');
-      return res.redirect('/');
+      return res.redirect('/entrar');
     }
 
     const chave = email;
     if (!podeTentar(chave)) {
       flash(req, 'erro', 'Muitas tentativas. Aguarde alguns minutos e tente novamente.');
-      return res.redirect('/');
+      return res.redirect('/entrar');
     }
 
     const usuario = await um(`${CONSULTA_USUARIO} WHERE lower(u.email) = lower($1)`, [email]);
@@ -71,7 +71,7 @@ router.post('/entrar', async (req, res) => {
     if (!usuario || !senhaOk || !usuario.ativo) {
       registrarTentativa(chave);
       flash(req, 'erro', 'Email ou senha incorretos.');
-      return res.redirect('/');
+      return res.redirect('/entrar');
     }
 
     limparTentativas(chave);
@@ -80,7 +80,7 @@ router.post('/entrar', async (req, res) => {
   } catch (erro) {
     console.error('[login]', erro);
     flash(req, 'erro', 'Não foi possível entrar agora. Tente novamente.');
-    res.redirect('/');
+    res.redirect('/entrar');
   }
 });
 
@@ -88,7 +88,7 @@ router.post('/entrar', async (req, res) => {
 function loginSocialIndisponivel(nome) {
   return (req, res) => {
     flash(req, 'erro', `O login com ${nome} ainda não está configurado. Use seu e-mail e senha.`);
-    res.redirect('/');
+    res.redirect('/entrar');
   };
 }
 router.get('/entrar/google', loginSocialIndisponivel('Google'));
@@ -192,7 +192,7 @@ router.post('/recuperar/passo2', async (req, res) => {
 
     await query(`UPDATE usuarios SET senha_hash = $1 WHERE id = $2`, [hash(senha), usuario.id]);
     flash(req, 'ok', 'Senha redefinida com sucesso! Já pode entrar.');
-    res.redirect('/');
+    res.redirect('/entrar');
   } catch (erro) {
     console.error('[recuperar2]', erro);
     flash(req, 'erro', 'Não foi possível redefinir a senha agora.');
