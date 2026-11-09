@@ -173,12 +173,15 @@ O app abre em tela cheia, com ícone próprio e funcionamento offline básico
 - [x] Instalação em dispositivos móveis (PWA)
 - [x] Interface visual e responsividade (temas e layout existentes)
 - [x] Organização do código (backend/frontend, rotas e páginas separadas)
-- [ ] Link público do Render (preencher após o deploy)
-- [ ] Link do repositório público no GitHub (preencher após publicar)
-
-Preencha os dois últimos itens aqui e no `README.md`:
+- [x] Link público do Render — <https://nuvia-s54c.onrender.com>
+- [x] Link do repositório público no GitHub — <https://github.com/llecaz/sistemax>
 
 ```
-Site:   https://SUA-URL.onrender.com
-GitHub: https://github.com/SEU-USUARIO/sistemax
+Site:   https://nuvia-s54c.onrender.com
+GitHub: https://github.com/llecaz/sistemax
 ```
+
+> ℹ️ Nesta conta o Render já tinha um PostgreSQL gratuito ativo (o plano free
+> permite **um** banco por workspace), então o serviço `nuvia` foi criado
+> apontando para esse banco em vez de criar um novo. O `render.yaml` continua
+> válido para recriar tudo do zero em outro workspace.

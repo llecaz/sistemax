@@ -161,7 +161,7 @@ npm start          # sobe o banco (se local) + prepara as tabelas + inicia o sit
 
 Abra <http://localhost:3000> — na rede da escola: `http://IP-DA-MÁQUINA:3000`.
 
-### 👤 Acessos de teste
+### 👤 Acessos de teste (ambiente local)
 
 | Perfil | E-mail | Senha |
 |---|---|---|
@@ -172,19 +172,31 @@ Abra <http://localhost:3000> — na rede da escola: `http://IP-DA-MÁQUINA:3000`
 
 > ⚠️ Troque as senhas depois do primeiro acesso.
 
-### 🌐 Publicar online (Render)
+**No site publicado** o banco começa vazio (sem dados de exemplo). O único
+acesso inicial é o administrador criado pelas variáveis do Render:
 
-O projeto já traz [`render.yaml`](render.yaml) e o guia completo em
-[`DEPLOY-RENDER.md`](DEPLOY-RENDER.md): o Render cria o site Node e o banco
-PostgreSQL juntos. Depois do deploy, o link público fica assim:
+| Perfil | E-mail | Senha |
+|---|---|---|
+| Admin | `admin@escola.com` | `Nuvia@2026` |
 
-```
-https://SEU-PROJETO.onrender.com
-```
+Depois de entrar, crie turmas, matérias, professores e alunos pelo painel
+**Admin**. Recomendo trocar a senha do administrador em **Configurações**.
 
-O mesmo guia explica como deixar o repositório público, configurar o primeiro
-administrador (`ADMIN_EMAIL` / `ADMIN_SENHA`), atualizar os callbacks do login
-social e instalar o PWA no celular.
+### 🌐 Sistema online
+
+| O que | Endereço |
+|---|---|
+| 🌍 Site (Nuvia) | <https://nuvia-s54c.onrender.com> |
+| 💻 Repositório público | <https://github.com/llecaz/sistemax> |
+
+O site está publicado no **Render** (plano gratuito, região Oregon) com
+**PostgreSQL** persistente. O primeiro acesso depois de um período sem uso pode
+levar ~50 segundos porque a instância gratuita hiberna.
+
+O projeto traz [`render.yaml`](render.yaml) e o guia completo em
+[`DEPLOY-RENDER.md`](DEPLOY-RENDER.md), que explica como recriar o deploy,
+configurar o primeiro administrador (`ADMIN_EMAIL` / `ADMIN_SENHA`), atualizar
+os callbacks do login social e instalar o PWA no celular.
 
 ### ⚙️ Configuração do banco (`.env`)
 
