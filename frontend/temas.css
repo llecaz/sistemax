@@ -257,6 +257,10 @@ html.tema-transicao *:not(svg):not(path) {
    só aparecem quando o tema correspondente está ativo (inclusive na
    pré-visualização da galeria, que troca o atributo data-tema do <html>). */
 .tema-decoracao {
+  display: block;
+}
+.deco-lofi,
+.deco-moonroom {
   display: none;
 }
 [data-tema='lo-fi-night'] .deco-lofi,

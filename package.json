@@ -2,12 +2,16 @@
   "name": "sistemax",
   "version": "1.0.0",
   "description": "Sistema de entrega de trabalhos escolares estilo Google Classroom — alunos enviam trabalhos direto para o professor de cada matéria.",
-  "main": "servidor.js",
+  "main": "backend/servidor.js",
   "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node backend/servidor.js",
     "dev": "node --watch backend/servidor.js",
-    "criar-banco": "node backend/src/criarBanco.js"
+    "criar-banco": "node backend/src/criarBanco.js",
+    "verificar-oauth": "node scripts/verificar-oauth.js"
   },
   "keywords": [
     "escola",

@@ -5,11 +5,16 @@
  */
 require('dotenv').config();
 
+const PRODUCAO =
+  process.env.AMBIENTE === 'producao' ||
+  process.env.VERCEL === '1' ||
+  process.env.RENDER === 'true';
+
 (async () => {
   // 1) Banco: PostgreSQL local embutido (desenvolvimento) ou externo (produção)
   let postgresLocal = null;
   try {
-    if (process.env.AMBIENTE !== 'producao') {
+    if (!PRODUCAO) {
       const { iniciarPostgresLocal } = require('./src/postgresLocal');
       postgresLocal = await iniciarPostgresLocal();
     }
@@ -43,10 +48,12 @@ require('dotenv').config();
     console.log(`   Local ....... http://localhost:${PORTA}`);
     if (ip) console.log(`   Na rede ..... http://${ip.address}:${PORTA}`);
     console.log('');
-    console.log('   Admin  → admin@escola.com / admin123');
-    console.log('   Aluno  → ana@escola.com   / aluno123');
-    console.log('   Prof.  → maria@escola.com / prof123');
-    console.log('');
+    if (!PRODUCAO) {
+      console.log('   Admin  → admin@escola.com / admin123');
+      console.log('   Aluno  → ana@escola.com   / aluno123');
+      console.log('   Prof.  → maria@escola.com / prof123');
+      console.log('');
+    }
   });
 
   const encerrar = async () => {

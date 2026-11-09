@@ -7,13 +7,25 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-const AMBIENTE = process.env.AMBIENTE === 'producao' ? 'producao' : 'local';
+// Em produção (Vercel, Render ou ambiente=producao) nunca usamos o
+// PostgreSQL embutido nem os dados de exemplo. VERCEL/RENDER são definidos
+// automaticamente por cada plataforma.
+const PRODUCAO =
+  process.env.AMBIENTE === 'producao' ||
+  process.env.VERCEL === '1' ||
+  process.env.RENDER === 'true';
+const AMBIENTE = PRODUCAO ? 'producao' : 'local';
 const DATABASE_URL =
-  (AMBIENTE === 'producao' ? process.env.DATABASE_URL_PRODUCAO : process.env.DATABASE_URL_LOCAL) ||
-  process.env.DATABASE_URL;
+  (PRODUCAO
+    ? process.env.DATABASE_URL || process.env.DATABASE_URL_PRODUCAO
+    : process.env.DATABASE_URL_LOCAL) || process.env.DATABASE_URL;
 
 if (!DATABASE_URL) {
-  console.error('❌ Nenhuma variável DATABASE_URL definida. Copie .env.exemplo para .env.');
+  const mensagem =
+    'Nenhuma variável de banco definida. Em produção use DATABASE_URL (ou DATABASE_URL_PRODUCAO); ' +
+    'localmente copie .env.exemplo para .env.';
+  console.error('❌ ' + mensagem);
+  if (PRODUCAO) throw new Error(mensagem);
   process.exit(1);
 }
 
@@ -21,9 +33,11 @@ const ehExterna = !/127\.0\.0\.1|localhost|::1/.test(DATABASE_URL);
 
 const pool = new Pool({
   connectionString: DATABASE_URL,
-  // Bancos externos (Render, Neon...) exigem SSL.
+  // Bancos externos (Neon, Supabase, Render...) exigem SSL.
   ssl: ehExterna ? (process.env.PG_SSL === 'false' ? false : { rejectUnauthorized: false }) : false,
-  max: 10,
+  // Funções serverless abrem várias instâncias; um pool pequeno evita
+  // esgotar as conexões do banco.
+  max: PRODUCAO ? 3 : 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 20000,
 });
@@ -49,4 +63,4 @@ async function todos(texto, params) {
   return res.rows;
 }
 
-module.exports = { pool, query, um, todos, AMBIENTE, DATABASE_URL };
+module.exports = { pool, query, um, todos, AMBIENTE, PRODUCAO, DATABASE_URL };

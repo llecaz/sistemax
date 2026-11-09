@@ -16,13 +16,8 @@ const PASTA_FOTOS = path.join(__dirname, '..', '..', 'uploads', 'fotos');
 fs.mkdirSync(PASTA_FOTOS, { recursive: true });
 
 const enviarFoto = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, PASTA_FOTOS),
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname || '').toLowerCase() || '.png';
-      cb(null, nomeArquivoUnico(ext));
-    },
-  }),
+  // Conteúdo vai para o banco (BYTEA), persistente na Vercel.
+  storage: multer.memoryStorage(),
   limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB
   fileFilter: (req, file, cb) => {
     if (['.png', '.jpg', '.jpeg', '.webp'].includes(path.extname(file.originalname || '').toLowerCase())) {
@@ -98,9 +93,15 @@ router.post('/foto', (req, res) => {
         return res.redirect('/configuracoes');
       }
       const atual = await um(`SELECT foto FROM usuarios WHERE id = $1`, [req.session.usuario.id]);
-      await query(`UPDATE usuarios SET foto = $1 WHERE id = $2`, [req.file.filename, req.session.usuario.id]);
+      const nomeFoto = nomeArquivoUnico(
+        path.extname(req.file.originalname || '').toLowerCase() || '.png'
+      );
+      await query(
+        `UPDATE usuarios SET foto = $1, foto_dados = $2, foto_tipo = $3 WHERE id = $4`,
+        [nomeFoto, req.file.buffer, req.file.mimetype, req.session.usuario.id]
+      );
       if (atual && atual.foto) fs.unlink(path.join(PASTA_FOTOS, atual.foto), () => {});
-      req.session.usuario.foto = req.file.filename;
+      req.session.usuario.foto = nomeFoto;
       flash(req, 'ok', 'Foto de perfil atualizada.');
       res.redirect('/configuracoes');
     } catch (e) {
@@ -115,7 +116,7 @@ router.post('/foto', (req, res) => {
 router.post('/foto/remover', async (req, res) => {
   try {
     const atual = await um(`SELECT foto FROM usuarios WHERE id = $1`, [req.session.usuario.id]);
-    await query(`UPDATE usuarios SET foto = NULL WHERE id = $1`, [req.session.usuario.id]);
+    await query(`UPDATE usuarios SET foto = NULL, foto_dados = NULL, foto_tipo = NULL WHERE id = $1`, [req.session.usuario.id]);
     if (atual && atual.foto) fs.unlink(path.join(PASTA_FOTOS, atual.foto), () => {});
     req.session.usuario.foto = null;
     flash(req, 'ok', 'Foto removida.');

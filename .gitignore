@@ -3,6 +3,10 @@ node_modules/
 
 # Segredos (banco de dados, senhas)
 .env
+.env.local
+
+# Vercel (links locais do projeto)
+.vercel/
 
 # Arquivos enviados pelos alunos
 backend/uploads/*

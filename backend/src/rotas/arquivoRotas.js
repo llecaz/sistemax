@@ -14,7 +14,8 @@ router.get('/entrega/:id', async (req, res) => {
     if (!usuario) return res.redirect('/');
 
     const entrega = await um(
-      `SELECT e.id, e.aluno_id, e.arquivo, e.arquivo_nome,
+      `SELECT e.id, e.aluno_id, e.arquivo, e.arquivo_nome, e.arquivo_tipo,
+              e.arquivo_dados,
               a.professor_id, td.turma_id
          FROM entregas e
          JOIN atividades a ON a.id = e.atividade_id
@@ -22,7 +23,7 @@ router.get('/entrega/:id', async (req, res) => {
         WHERE e.id = $1`,
       [Number(req.params.id)]
     );
-    if (!entrega || !entrega.arquivo) {
+    if (!entrega || (!entrega.arquivo && !entrega.arquivo_dados)) {
       req.session.flash = [{ tipo: 'erro', texto: 'Arquivo não encontrado.' }];
       return res.redirect(req.get('Referrer') || '/');
     }
@@ -38,6 +39,18 @@ router.get('/entrega/:id', async (req, res) => {
     }
 
     const nomeOriginal = entrega.arquivo_nome || 'arquivo';
+    const nomeSeguro = nomeOriginal.replace(/["\\\r\n]/g, '_');
+    const disposicao = `attachment; filename="${nomeSeguro}"; filename*=UTF-8''${encodeURIComponent(nomeOriginal)}`;
+
+    // Arquivo novo: conteúdo guardado no banco (persistente na Vercel).
+    if (entrega.arquivo_dados) {
+      res.setHeader('Content-Type', entrega.arquivo_tipo || 'application/octet-stream');
+      res.setHeader('Content-Disposition', disposicao);
+      res.setHeader('Content-Length', entrega.arquivo_dados.length);
+      return res.send(entrega.arquivo_dados);
+    }
+
+    // Arquivo antigo: ainda está no disco (dados de exemplo/legado).
     res.download(path.join(PASTA, entrega.arquivo), nomeOriginal, (erro) => {
       if (erro && !res.headersSent) {
         req.session.flash = [{ tipo: 'erro', texto: 'Arquivo não encontrado no servidor.' }];

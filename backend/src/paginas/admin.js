@@ -29,12 +29,24 @@ function secaoTurmas(dados) {
       <td>${Number(t.alunos || 0)}</td>
       <td>${t.ativa ? '<span class="chip corrigido">Ativa</span>' : '<span class="chip atrasado">Inativa</span>'}</td>
       <td class="acoes-linha">
+        <details class="dropdown">
+          <summary class="btn texto">Editar</summary>
+          <form method="post" action="/admin/turmas/${t.id}" class="form-dropdown">
+            <input type="text" name="nome" value="${esc(t.nome)}" placeholder="Nome da turma" maxlength="80" required>
+            <input type="number" name="ano_letivo" value="${t.ano_letivo}" min="2000" max="2100" aria-label="Ano letivo">
+            <button class="btn primario pequeno" type="submit">Salvar</button>
+          </form>
+        </details>
         <form method="post" action="/admin/turmas/${t.id}/codigo" class="inline"
               data-confirma="Gerar um NOVO código? O código antigo deixará de funcionar.">
           <button class="btn texto" type="submit">Novo código</button>
         </form>
         <form method="post" action="/admin/turmas/${t.id}/status" class="inline">
           <button class="btn texto" type="submit">${t.ativa ? 'Desativar' : 'Ativar'}</button>
+        </form>
+        <form method="post" action="/admin/turmas/${t.id}/excluir" class="inline"
+              data-confirma="Excluir a turma '${esc(t.nome)}'? Só é possível se não houver alunos nem vínculos.">
+          <button class="btn texto-perigo" type="submit">Excluir</button>
         </form>
       </td>
     </tr>`
@@ -69,6 +81,13 @@ function secaoDisciplinas(dados) {
       <td><strong>${esc(d.nome)}</strong></td>
       <td>${Number(d.vinculos || 0)} vínculo(s)</td>
       <td class="acoes-linha">
+        <details class="dropdown">
+          <summary class="btn texto">Editar</summary>
+          <form method="post" action="/admin/disciplinas/${d.id}" class="form-dropdown">
+            <input type="text" name="nome" value="${esc(d.nome)}" placeholder="Nome da matéria" maxlength="80" required>
+            <button class="btn primario pequeno" type="submit">Salvar</button>
+          </form>
+        </details>
         <form method="post" action="/admin/disciplinas/${d.id}/excluir" class="inline"
               data-confirma="Excluir a matéria '${esc(d.nome)}'?">
           <button class="btn texto-perigo" type="submit">Excluir</button>
@@ -106,6 +125,14 @@ function secaoProfessores(dados) {
       <td>${p.ativo ? '<span class="chip corrigido">Ativo</span>' : '<span class="chip atrasado">Inativo</span>'}</td>
       <td class="acoes-linha">
         <details class="dropdown">
+          <summary class="btn texto">Editar</summary>
+          <form method="post" action="/admin/usuarios/${p.id}" class="form-dropdown">
+            <input type="text" name="nome" value="${esc(p.nome)}" placeholder="Nome completo" maxlength="120" required>
+            <input type="email" name="email" value="${esc(p.email)}" placeholder="E-mail" maxlength="160" required>
+            <button class="btn primario pequeno" type="submit">Salvar</button>
+          </form>
+        </details>
+        <details class="dropdown">
           <summary class="btn texto">Redefinir senha</summary>
           <form method="post" action="/admin/usuarios/${p.id}/senha" class="form-dropdown">
             <input type="text" name="senha" placeholder="Nova senha" minlength="6" required>
@@ -114,6 +141,10 @@ function secaoProfessores(dados) {
         </details>
         <form method="post" action="/admin/usuarios/${p.id}/status" class="inline">
           <button class="btn texto" type="submit">${p.ativo ? 'Desativar' : 'Ativar'}</button>
+        </form>
+        <form method="post" action="/admin/usuarios/${p.id}/excluir" class="inline"
+              data-confirma="Excluir o professor '${esc(p.nome)}'? Só é possível se ele não tiver atividades publicadas.">
+          <button class="btn texto-perigo" type="submit">Excluir</button>
         </form>
       </td>
     </tr>`
@@ -219,6 +250,14 @@ function secaoAlunos(dados) {
       <td>${a.ativo ? '<span class="chip corrigido">Ativo</span>' : '<span class="chip atrasado">Inativo</span>'}</td>
       <td class="acoes-linha">
         <details class="dropdown">
+          <summary class="btn texto">Editar</summary>
+          <form method="post" action="/admin/usuarios/${a.id}" class="form-dropdown">
+            <input type="text" name="nome" value="${esc(a.nome)}" placeholder="Nome completo" maxlength="120" required>
+            <input type="email" name="email" value="${esc(a.email)}" placeholder="E-mail" maxlength="160" required>
+            <button class="btn primario pequeno" type="submit">Salvar</button>
+          </form>
+        </details>
+        <details class="dropdown">
           <summary class="btn texto">Redefinir senha</summary>
           <form method="post" action="/admin/usuarios/${a.id}/senha" class="form-dropdown">
             <input type="text" name="senha" placeholder="Nova senha" minlength="6" required>
@@ -227,6 +266,10 @@ function secaoAlunos(dados) {
         </details>
         <form method="post" action="/admin/usuarios/${a.id}/status" class="inline">
           <button class="btn texto" type="submit">${a.ativo ? 'Desativar' : 'Ativar'}</button>
+        </form>
+        <form method="post" action="/admin/usuarios/${a.id}/excluir" class="inline"
+              data-confirma="Excluir o aluno '${esc(a.nome)}'? As entregas dele também serão removidas.">
+          <button class="btn texto-perigo" type="submit">Excluir</button>
         </form>
       </td>
     </tr>`
@@ -338,6 +381,7 @@ function painelAdmin({ secao, dados, usuario }) {
                 chave === secao ? ' ·' : ''
               }</a></li>`
           ).join('')}
+          <li><a href="/admin/calendario">Calendário do mês</a></li>
         </ul>
       </section>
     </aside>

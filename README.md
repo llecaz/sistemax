@@ -113,10 +113,18 @@ O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de 
 
 ### ⚙️ Área do Admin
 - **Painel com resumo lateral**: totais de turmas, alunos, professores, matérias e vínculos, alertas (sem vínculo/sem turma) e atalhos.
+- **CRUD completo**: criar, consultar, **editar e excluir** turmas, matérias, professores e alunos (com proteções para não apagar dados em uso).
 - Cadastrar **turmas** (gera o **código de matrícula**, com botão "Copiar" e regeneração).
 - Cadastrar **disciplinas** e **professores**.
 - **Vincular professor ↔ turma ↔ matéria** (é daí que o aluno escolhe quem é professor de quê).
 - Gerenciar alunos (trocar turma, redefinir senha, ativar/desativar).
+
+### 📱 Aplicativo instalável (PWA)
+- **Manifesto** (`frontend/manifest.webmanifest`) com nome, ícones 192/512, cores e atalhos.
+- **Service Worker** (`frontend/sw.js`): cache dos arquivos estáticos e página **“Sem conexão”** quando a internet cai.
+- **Instalável** em Android (Chrome), iPhone/iPad (Safari) e computador — abre em tela cheia, com ícone próprio.
+- Botão flutuante **Instalar app** aparece quando o navegador permite; no iPhone, mostra o passo a passo.
+- Nenhuma página autenticada, foto ou arquivo enviado é guardado no cache (privacidade).
 
 ### ⚙️ Configurações (engrenagem)
 - **Foto de perfil** (JPG/PNG/WebP até 2 MB) ou inicial num círculo colorido.
@@ -136,6 +144,7 @@ O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de 
 | Sessões | `express-session` com store no PostgreSQL (`connect-pg-simple`) |
 | Uploads | `multer` (arquivos fora da área pública) |
 | Frontend | HTML + CSS + JS puro, ícones SVG embutidos |
+| PWA | `manifest.webmanifest` + Service Worker (`sw.js`) para instalação e modo offline |
 | Senhas | Hash `scrypt` + salt (nativo do Node) |
 | Configuração | `dotenv` (arquivo `.env`) |
 
@@ -162,6 +171,20 @@ Abra <http://localhost:3000> — na rede da escola: `http://IP-DA-MÁQUINA:3000`
 | Professor | `joao@escola.com` | `prof123` |
 
 > ⚠️ Troque as senhas depois do primeiro acesso.
+
+### 🌐 Publicar online (Render)
+
+O projeto já traz [`render.yaml`](render.yaml) e o guia completo em
+[`DEPLOY-RENDER.md`](DEPLOY-RENDER.md): o Render cria o site Node e o banco
+PostgreSQL juntos. Depois do deploy, o link público fica assim:
+
+```
+https://SEU-PROJETO.onrender.com
+```
+
+O mesmo guia explica como deixar o repositório público, configurar o primeiro
+administrador (`ADMIN_EMAIL` / `ADMIN_SENHA`), atualizar os callbacks do login
+social e instalar o PWA no celular.
 
 ### ⚙️ Configuração do banco (`.env`)
 
@@ -210,6 +233,11 @@ sistemax/
 │       │   └── decoracoes.js # ⭐ Componente decoracao() da biblioteca pixel art
 │       └── rotas/           # Rotas (auth, aluno, professor, admin, config, arquivos)
 ├── frontend/                # Lado cliente (estáticos servidos pelo Express)
+│   ├── manifest.webmanifest # ⭐ Manifesto PWA (nome, ícones, atalhos)
+│   ├── sw.js                # ⭐ Service Worker (cache + modo offline)
+│   ├── pwa.js               # ⭐ Registro do SW e botão "Instalar app"
+│   ├── offline.html         # ⭐ Página exibida sem conexão
+│   ├── icons/               # ⭐ Ícones 192x192 e 512x512 do aplicativo
 │   ├── estilo.css           # Tema base (variáveis) + visual Classroom + galeria
 │   ├── temas.css            # ⭐ Identidade visual de cada tema (variáveis CSS)
 │   ├── decoracoes.css       # ⭐ Componente .deco da biblioteca
@@ -222,6 +250,8 @@ sistemax/
 ├── scripts/gerar-pixel-art.js  # Gera os SVGs das ilustrações do calendário
 ├── backend/uploads/         # Arquivos enviados (fora da área pública)
 ├── package.json             # Scripts: start, dev, criar-banco
+├── render.yaml              # ⭐ Deploy automático no Render (site + PostgreSQL)
+├── DEPLOY-RENDER.md         # ⭐ Passo a passo de publicação e PWA
 ├── .env.exemplo             # Modelo de configuração
 └── README.md
 ```

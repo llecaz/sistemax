@@ -2,6 +2,7 @@
 const { esc, dataBR } = require('../util');
 const { homeDo, avatar } = require('./layout');
 const { decoracao } = require('./decoracoes');
+const { temaOuPadrao } = require('../temas');
 
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const DIAS_SEMANA_LONGO = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
@@ -55,26 +56,32 @@ function eventosPorDia(eventos) {
   return mapa;
 }
 
+/** Link de detalhe do evento conforme o perfil; admin e provas ficam informativos. */
+function linkDoEvento(ev, usuario) {
+  const perfil = usuario && usuario.tipo;
+  const ehTrabalho = (ev.tipo || 'trabalho') === 'trabalho';
+  if (perfil === 'aluno') return ehTrabalho ? `/aluno/trabalho/${ev.id}` : null;
+  if (perfil === 'professor') {
+    return ehTrabalho ? `/professor/atividade/${ev.id}` : `/professor/materia/${ev.vinculo_id || ''}`;
+  }
+  return null; // admin: o calendário é só de acompanhamento
+}
+
 /** Celula de um evento dentro da grade. */
-function pilulaEvento(ev, professor) {
+function pilulaEvento(ev, usuario) {
   const t = tipoDe(ev);
   const classe = `cal-pilula ${t.classe}`;
   const conteudo = `<span class="cal-pilula-titulo">${esc(ev.titulo)}</span>
     ${ev.prazo ? `<span class="cal-pilula-hora">${horaDe(ev.prazo)}</span>` : ''}`;
-  // Prova/evento não tem tela de entrega: no aluno fica só informativo.
-  if ((ev.tipo || 'trabalho') !== 'trabalho' && !professor) {
+  const href = linkDoEvento(ev, usuario);
+  if (!href) {
     return `<span class="${classe}" title="${esc(ev.titulo)} — ${esc(ev.materia || '')}">${conteudo}</span>`;
   }
-  const href = professor
-    ? ev.tipo === 'trabalho'
-      ? `/professor/atividade/${ev.id}`
-      : `/professor/materia/${ev.vinculo_id || ''}`
-    : `/aluno/trabalho/${ev.id}`;
   return `<a class="${classe}" href="${href}" title="${esc(ev.titulo)} — ${esc(ev.materia || '')}">${conteudo}</a>`;
 }
 
 /** Grade do mês com as atividades marcadas. */
-function gradeMes({ ano, mes, porDia, professor }) {
+function gradeMes({ ano, mes, porDia, usuario }) {
   const primeiro = new Date(ano, mes, 1);
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
   const offset = primeiro.getDay();
@@ -102,7 +109,7 @@ function gradeMes({ ano, mes, porDia, professor }) {
         ${lista.some((ev) => ev.tipo === 'avaliacao') ? '<span class="cal-marca-prova" title="Tem prova">★</span>' : ''}
       </div>
       <div class="cal-dia-eventos">
-        ${visiveis.map((ev) => pilulaEvento(ev, professor)).join('')}
+        ${visiveis.map((ev) => pilulaEvento(ev, usuario)).join('')}
         ${resto > 0 ? `<span class="cal-mais">+${resto} mais</span>` : ''}
       </div>
     </div>`;
@@ -119,16 +126,11 @@ function gradeMes({ ano, mes, porDia, professor }) {
 }
 
 /** Item da lista "Próximas tarefas" (coluna direita). */
-function proximaTarefa(ev, professor) {
+function proximaTarefa(ev, usuario) {
   const t = tipoDe(ev);
   const d = new Date(ev.prazo);
-  const ehTrabalho = (ev.tipo || 'trabalho') === 'trabalho';
-  const href = professor
-    ? ehTrabalho
-      ? `/professor/atividade/${ev.id}`
-      : `/professor/materia/${ev.vinculo_id || ''}`
-    : `/aluno/trabalho/${ev.id}`;
-  const titulo = ehTrabalho || professor
+  const href = linkDoEvento(ev, usuario);
+  const titulo = href
     ? `<a href="${href}">${esc(ev.titulo)}</a>`
     : `<span class="lofi-proxima-titulo">${esc(ev.titulo)}</span>`;
   return `
@@ -236,8 +238,14 @@ function itemNav(href, rotulo, icone, ativo = false, extra = '') {
 }
 
 /** Barra lateral escura com navegação, decoração e player lo-fi. */
-function barraLateral({ usuario, professor }) {
+function barraLateral({ usuario }) {
   const raiz = homeDo(usuario);
+  const perfil = usuario.tipo;
+  const professor = perfil === 'professor';
+  const admin = perfil === 'admin';
+  const linkCalendario = admin ? '/admin/calendario' : professor ? '/professor/calendario' : '/aluno/calendario';
+  const rotuloSecao = admin ? 'Painel' : professor ? 'Turmas' : 'Matérias';
+  const descricaoPerfil = admin ? 'administração' : professor ? 'sala dos professores' : usuario.turma_nome || 'estudante';
   return `
   <aside class="lofi-rail">
     <a class="lofi-marca" href="${raiz}">
@@ -247,16 +255,14 @@ function barraLateral({ usuario, professor }) {
 
     <div class="lofi-usuario">
       ${avatar(usuario, 'pequeno')}
-      <div><strong>${esc(usuario.nome)}</strong><small>${esc(
-        professor ? 'sala dos professores' : usuario.turma_nome || 'estudante'
-      )}</small></div>
+      <div><strong>${esc(usuario.nome)}</strong><small>${esc(descricaoPerfil)}</small></div>
     </div>
 
     <nav class="lofi-nav" aria-label="Menu do calendário">
       ${itemNav(raiz, 'Início', 'inicio')}
-      ${itemNav(raiz, professor ? 'Turmas' : 'Matérias', 'materias')}
+      ${itemNav(raiz, rotuloSecao, 'materias')}
       ${itemNav('#lista-eventos', 'Atividades', 'atividades')}
-      ${itemNav(professor ? '/professor/calendario' : '/aluno/calendario', 'Calendário', 'calendario', true)}
+      ${itemNav(linkCalendario, 'Calendário', 'calendario', true)}
       ${itemNav('/configuracoes', 'Perfil', 'perfil')}
     </nav>
 
@@ -292,8 +298,12 @@ function barraLateral({ usuario, professor }) {
   </aside>`;
 }
 
-/** Página completa do calendário do mês. */
-function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = [] }) {
+/** Página completa do calendário do mês no visual Lo-fi Night. */
+function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [] }) {
+  const perfil = usuario.tipo;
+  const professor = perfil === 'professor';
+  const admin = perfil === 'admin';
+  const staff = professor || admin;
   const porDia = eventosPorDia(eventos);
   const agora = new Date();
   const mesAtual = new Date(ano, mes, 1);
@@ -313,7 +323,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
     .sort((a, b) => new Date(a.prazo) - new Date(b.prazo));
 
   const total = doMes.length;
-  const concluidas = professor
+  const concluidas = staff
     ? doMes.filter((ev) => new Date(ev.prazo).getTime() < agora.getTime()).length
     : doMes.filter((ev) => ev.entrega_id).length;
   const percentual = total ? Math.round((concluidas / total) * 100) : 0;
@@ -380,7 +390,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
       <ul class="lofi-proximas-lista">
         ${
           proximas.length
-            ? proximas.map((ev) => proximaTarefa(ev, professor)).join('')
+            ? proximas.map((ev) => proximaTarefa(ev, usuario)).join('')
             : `<li class="lofi-proximas-vazio">${decoracao('nuvia-heart-pink', {
                 pasta: 'celestial',
                 tamanho: 40,
@@ -434,16 +444,10 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
     ? doMes
         .map((ev) => {
           const t = tipoDe(ev);
-          const ehTrabalho = (ev.tipo || 'trabalho') === 'trabalho';
-          const href = professor
-            ? ehTrabalho
-              ? `/professor/atividade/${ev.id}`
-              : `/professor/materia/${ev.vinculo_id || ''}`
-            : `/aluno/trabalho/${ev.id}`;
-          const titulo =
-            ehTrabalho || professor
-              ? `<a href="${href}">${esc(ev.titulo)}</a>`
-              : `<strong>${esc(ev.titulo)}</strong>`;
+          const href = linkDoEvento(ev, usuario);
+          const titulo = href
+            ? `<a href="${href}">${esc(ev.titulo)}</a>`
+            : `<strong>${esc(ev.titulo)}</strong>`;
           return `
           <li class="lofi-lista-item">
             <i class="ponto ${t.classe}"></i>
@@ -465,13 +469,15 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
         <p>${
           professor
             ? 'Use "+ Adicionar evento" para marcar uma prova, projeto ou evento.'
-            : 'Quando o professor publicar trabalhos ou marcar provas, eles aparecem aqui.'
+            : admin
+              ? 'Quando os professores publicarem trabalhos ou marcarem provas, eles aparecem aqui.'
+              : 'Quando o professor publicar trabalhos ou marcar provas, eles aparecem aqui.'
         }</p></div>
       </div>`;
 
   return `
   <div class="lofi-app">
-    ${barraLateral({ usuario, professor })}
+    ${barraLateral({ usuario })}
 
     <main class="lofi-main">
       <header class="lofi-topo">
@@ -508,7 +514,7 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
 
       <section class="lofi-calendario" aria-label="Calendário de ${MESES[mes]} de ${ano}">
         ${cabecalho}
-        ${gradeMes({ ano, mes, porDia, professor })}
+        ${gradeMes({ ano, mes, porDia, usuario })}
         ${rodape}
       </section>
 
@@ -532,6 +538,195 @@ function paginaCalendario({ usuario, eventos, ano, mes, professor, materias = []
     ${lateral}
   </div>
   <script src="/lofi.js"></script>`;
+}
+
+/** Item "Próximas tarefas" no visual clássico. */
+function proximaTarefaClassica(ev, usuario) {
+  const t = tipoDe(ev);
+  const d = new Date(ev.prazo);
+  const href = linkDoEvento(ev, usuario);
+  const titulo = href
+    ? `<a href="${href}">${esc(ev.titulo)}</a>`
+    : `<span class="cal-proxima-titulo">${esc(ev.titulo)}</span>`;
+  return `
+  <li class="cal-proxima">
+    <i class="ponto ${t.classe}"></i>
+    <div class="cal-proxima-corpo">
+      ${titulo}
+      <small>${esc(ev.materia || '')} · ${d.getDate()} ${MESES_CURTO[d.getMonth()]}${
+        ev.prazo ? ' · ' + horaDe(ev.prazo) : ''
+      }</small>
+    </div>
+  </li>`;
+}
+
+/** Página do calendário no visual clássico, usada pelos demais temas. */
+function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [] }) {
+  const perfil = usuario.tipo;
+  const professor = perfil === 'professor';
+  const admin = perfil === 'admin';
+  const staff = professor || admin;
+  const porDia = eventosPorDia(eventos);
+  const agora = new Date();
+
+  const anterior = new Date(ano, mes - 1, 1);
+  const proximo = new Date(ano, mes + 1, 1);
+  const linkAnterior = `?ano=${anterior.getFullYear()}&mes=${anterior.getMonth() + 1}`;
+  const linkProximo = `?ano=${proximo.getFullYear()}&mes=${proximo.getMonth() + 1}`;
+
+  const doMes = eventos
+    .filter((ev) => {
+      if (!ev.prazo) return false;
+      const d = new Date(ev.prazo);
+      return d.getFullYear() === ano && d.getMonth() === mes;
+    })
+    .sort((a, b) => new Date(a.prazo) - new Date(b.prazo));
+
+  const total = doMes.length;
+  const concluidas = staff
+    ? doMes.filter((ev) => new Date(ev.prazo).getTime() < agora.getTime()).length
+    : doMes.filter((ev) => ev.entrega_id).length;
+  const percentual = total ? Math.round((concluidas / total) * 100) : 0;
+
+  const futuros = eventos
+    .filter((ev) => ev.prazo && new Date(ev.prazo).getTime() >= agora.getTime())
+    .sort((a, b) => new Date(a.prazo) - new Date(b.prazo));
+  const proximas = (futuros.length ? futuros : doMes).slice(0, 6);
+
+  const hojeData = new Date();
+  const frase = FRASES[hojeData.getDate() % FRASES.length];
+  const subtitulo = admin
+    ? 'Visão geral das atividades da escola.'
+    : 'Organize seus estudos e não perca nenhum prazo!';
+
+  const cabecalho = `
+  <header class="cal-mes-cabecalho">
+    <div class="cal-mes-titulo">
+      <span class="cal-mes-icone" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2m0 16H5V10h14zm0-12H5V6h14z"/></svg>
+      </span>
+      <div>
+        <h1>Calendário</h1>
+        <p>${subtitulo}</p>
+      </div>
+    </div>
+    <div class="cal-mes-acoes">
+      <a class="cal-mes-nav" href="${linkAnterior}" aria-label="Mês anterior">‹</a>
+      <span class="cal-mes-nome">${MESES[mes]} ${ano}</span>
+      <a class="cal-mes-nav" href="${linkProximo}" aria-label="Próximo mês">›</a>
+      ${professor ? formEvento(materias) : ''}
+      <span class="cal-mes-estrela" aria-hidden="true">✦</span>
+    </div>
+  </header>`;
+
+  const rodape = `
+  <footer class="cal-mes-rodape">
+    <div class="cal-rodape-card cal-rodape-hoje">
+      <strong>Hoje, ${hojeData.getDate()} de ${MESES[hojeData.getMonth()]}</strong>
+      <p>“${esc(frase)}”</p>
+    </div>
+    <div class="cal-rodape-card cal-rodape-progresso">
+      <div class="cal-progresso-topo">
+        <strong>Progresso do mês</strong>
+        <small>${concluidas}/${total} tarefas</small>
+      </div>
+      <div class="cal-barra"><i style="width:${percentual}%"></i></div>
+      <span class="cal-percentual">${percentual}%</span>
+    </div>
+    <div class="cal-rodape-card cal-rodape-legenda">
+      <strong>Legenda</strong>
+      <ul>
+        <li><i class="ponto tarefa"></i> Tarefa/Quiz</li>
+        <li><i class="ponto entrega"></i> Entrega</li>
+        <li><i class="ponto prova"></i> Prova</li>
+        <li><i class="ponto projeto"></i> Projeto</li>
+        <li><i class="ponto evento"></i> Evento</li>
+      </ul>
+    </div>
+  </footer>`;
+
+  const lateral = `
+  <aside class="cal-lateral">
+    <section class="cal-proximas">
+      <header class="cal-proximas-topo">
+        <h2>Próximas tarefas</h2>
+        <span class="cal-proximas-estrela" aria-hidden="true">✦</span>
+      </header>
+      <ul class="cal-proximas-lista">
+        ${
+          proximas.length
+            ? proximas.map((ev) => proximaTarefaClassica(ev, usuario)).join('')
+            : '<li class="cal-proximas-vazio">Nada marcado por aqui ainda 🌱</li>'
+        }
+      </ul>
+      <a class="cal-ver-todas" href="#lista-eventos">Ver todas as tarefas →</a>
+    </section>
+
+    <section class="cal-motivacional">
+      <p>Pequenos passos<br>também são grandes<br>conquistas!</p>
+    </section>
+
+    <div class="cal-ilustracoes">
+      <img class="cal-cena" src="/img/calendario-cena.png" width="320" height="150" alt="Ilustração de um gatinho dormindo sobre uma pilha de livros ao lado de uma plantinha">
+    </div>
+  </aside>`;
+
+  const listaCompleta = doMes.length
+    ? doMes
+        .map((ev) => {
+          const t = tipoDe(ev);
+          const href = linkDoEvento(ev, usuario);
+          const titulo = href
+            ? `<a href="${href}">${esc(ev.titulo)}</a>`
+            : `<strong>${esc(ev.titulo)}</strong>`;
+          return `
+          <li class="cal-lista-item">
+            <i class="ponto ${t.classe}"></i>
+            <div class="cal-lista-corpo">
+              ${titulo}
+              <small>${esc(ev.materia || '')} · ${dataBR(ev.prazo)} ${
+                horaDe(ev.prazo) ? 'às ' + horaDe(ev.prazo) : ''
+              }${admin && ev.turma ? ' · ' + esc(ev.turma) : ''}</small>
+            </div>
+            <span class="cal-etiqueta ${t.classe}">${t.rotulo}</span>
+          </li>`;
+        })
+        .join('')
+    : `<div class="vazio"><div class="vazio-icone">🗓️</div>
+        <h3>Nada marcado neste mês</h3>
+        <p>${
+          professor
+            ? 'Use "+ Adicionar evento" para marcar uma prova, projeto ou evento.'
+            : admin
+              ? 'Quando os professores publicarem trabalhos ou marcarem provas, eles aparecem aqui.'
+              : 'Quando o professor publicar trabalhos ou marcar provas, eles aparecem aqui.'
+        }</p></div>`;
+
+  return `
+  <div class="cal-mes-layout">
+    <section class="cal-mes-cartao">
+      ${cabecalho}
+      ${gradeMes({ ano, mes, porDia, usuario })}
+      ${rodape}
+    </section>
+    ${lateral}
+  </div>
+
+  <section class="painel cal-lista-painel" id="lista-eventos">
+    <div class="painel-topo">
+      <h2>Atividades de ${MESES[mes]}</h2>
+      <span class="descricao">${total} atividade${total === 1 ? '' : 's'}</span>
+    </div>
+    <ul class="cal-lista">${listaCompleta}</ul>
+  </section>`;
+}
+
+/** Escolhe o visual do calendário conforme o tema aplicado na conta. */
+function paginaCalendario({ usuario, eventos, ano, mes, materias = [], tema }) {
+  const temaId = tema || temaOuPadrao(usuario && usuario.tema);
+  return temaId === 'lo-fi-night'
+    ? paginaCalendarioLofi({ usuario, eventos, ano, mes, materias })
+    : paginaCalendarioClassico({ usuario, eventos, ano, mes, materias });
 }
 
 module.exports = { paginaCalendario, chaveDia, MESES, TIPOS };

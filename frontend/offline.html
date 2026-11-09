@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17132d">
+<title>Sem conexão · Nuvia</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: #e4dcff;
+    background: radial-gradient(circle at 20% 15%, #3b2a6b, transparent 45%),
+                radial-gradient(circle at 85% 85%, #5a3a72, transparent 45%),
+                #17132d;
+  }
+  .cartao {
+    width: min(440px, 100%);
+    padding: 40px 32px;
+    text-align: center;
+    border-radius: 24px;
+    border: 1px solid rgba(185, 167, 255, .28);
+    background: rgba(33, 26, 68, .72);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+    backdrop-filter: blur(14px);
+  }
+  .gato { font-size: 54px; line-height: 1; }
+  h1 { margin: 18px 0 8px; font-size: 1.5rem; }
+  p { margin: 0 0 24px; color: #c8b8ff; line-height: 1.55; }
+  button, a.botao {
+    display: inline-block;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 600;
+    color: #21183d;
+    background: linear-gradient(145deg, #c7b7ff, #8064e8);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  button:active { transform: translateY(1px); }
+</style>
+</head>
+<body>
+  <main class="cartao">
+    <div class="gato" aria-hidden="true">🐈‍⬛</div>
+    <h1>Você está offline</h1>
+    <p>O Nuvia precisa de internet para carregar seus trabalhos e avisos. Verifique a conexão e tente novamente.</p>
+    <button type="button" onclick="location.reload()">Tentar novamente</button>
+  </main>
+</body>
+</html>

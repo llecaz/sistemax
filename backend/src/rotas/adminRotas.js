@@ -4,6 +4,7 @@ const { um, todos, query } = require('../db');
 const { exigePerfil, hash } = require('../auth');
 const { gerarCodigoTurma } = require('../util');
 const { painelAdmin } = require('../paginas/admin');
+const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
 
 const router = express.Router();
@@ -52,6 +53,42 @@ async function carregarDados() {
   };
 }
 
+/** Calendário escolar do admin: visão geral de todas as atividades. */
+router.get('/calendario', async (req, res) => {
+  try {
+    const usuario = req.session.usuario;
+    const agora = new Date();
+    const ano = Number(req.query.ano) || agora.getFullYear();
+    const mes = Math.min(11, Math.max(0, (Number(req.query.mes) || agora.getMonth() + 1) - 1));
+
+    const eventos = await todos(
+      `SELECT a.id, a.titulo, a.descricao, a.prazo, a.tipo, td.id AS vinculo_id,
+              d.nome AS materia, t.nome AS turma,
+              (SELECT count(*) FROM entregas e WHERE e.atividade_id = a.id) AS total_entregas
+         FROM atividades a
+         JOIN turma_disciplina td ON td.id = a.vinculo_id
+         JOIN disciplinas d ON d.id = td.disciplina_id
+         JOIN turmas t ON t.id = td.turma_id
+        WHERE a.ativa
+        ORDER BY (a.prazo IS NULL), a.prazo`
+    );
+
+    res.send(
+      pagina({
+        titulo: 'Calendário do mês',
+        usuario,
+        req,
+        ativa: 'calendario',
+        corpo: paginaCalendario({ usuario, eventos, ano, mes }),
+      })
+    );
+  } catch (erro) {
+    console.error('[admin/calendario]', erro);
+    flash(req, 'erro', 'Não foi possível carregar o calendário.');
+    res.redirect('/admin');
+  }
+});
+
 /** Painel administrativo. */
 router.get('/', async (req, res) => {
   try {
@@ -63,6 +100,7 @@ router.get('/', async (req, res) => {
         titulo: 'Painel administrativo',
         usuario: req.session.usuario,
         req,
+        ativa: 'admin',
         corpo: painelAdmin({ secao, dados, usuario: req.session.usuario }),
       })
     );
@@ -326,6 +364,136 @@ router.post('/alunos', async (req, res) => {
     console.error('[admin/alunos]', erro);
     flash(req, 'erro', 'Não foi possível cadastrar o aluno.');
     res.redirect('/admin?secao=alunos');
+  }
+});
+
+/* ---------------- Edição e exclusão (CRUD completo) ---------------- */
+
+/** Atualiza nome e ano letivo de uma turma. */
+router.post('/turmas/:id', async (req, res) => {
+  try {
+    const turmaId = id(req.params.id);
+    const nome = String(req.body.nome || '').trim();
+    const ano = Number(req.body.ano_letivo) || new Date().getFullYear();
+    if (!nome) {
+      flash(req, 'erro', 'Informe o nome da turma.');
+      return res.redirect('/admin?secao=turmas');
+    }
+    const r = await query(`UPDATE turmas SET nome = $1, ano_letivo = $2 WHERE id = $3`, [nome, ano, turmaId]);
+    flash(req, r.rowCount ? 'ok' : 'erro', r.rowCount ? 'Turma atualizada.' : 'Turma não encontrada.');
+    res.redirect('/admin?secao=turmas');
+  } catch (erro) {
+    console.error('[admin/turma-editar]', erro);
+    flash(req, 'erro', 'Não foi possível atualizar a turma.');
+    res.redirect('/admin?secao=turmas');
+  }
+});
+
+/** Exclui uma turma sem alunos e sem vínculos. */
+router.post('/turmas/:id/excluir', async (req, res) => {
+  try {
+    const turmaId = id(req.params.id);
+    const [alunos, vinculos] = await Promise.all([
+      um(`SELECT count(*)::int AS n FROM usuarios WHERE turma_id = $1 AND tipo = 'aluno'`, [turmaId]),
+      um(`SELECT count(*)::int AS n FROM turma_disciplina WHERE turma_id = $1`, [turmaId]),
+    ]);
+    if (alunos.n > 0) {
+      flash(req, 'erro', `Esta turma tem ${alunos.n} aluno(s). Transfira ou exclua os alunos antes de removê-la.`);
+      return res.redirect('/admin?secao=turmas');
+    }
+    if (vinculos.n > 0) {
+      flash(req, 'erro', `Esta turma tem ${vinculos.n} vínculo(s) com matérias. Remova os vínculos antes de excluí-la.`);
+      return res.redirect('/admin?secao=turmas');
+    }
+    await query(`DELETE FROM turmas WHERE id = $1`, [turmaId]);
+    flash(req, 'ok', 'Turma excluída.');
+    res.redirect('/admin?secao=turmas');
+  } catch (erro) {
+    console.error('[admin/turma-excluir]', erro);
+    flash(req, 'erro', 'Não foi possível excluir a turma.');
+    res.redirect('/admin?secao=turmas');
+  }
+});
+
+/** Renomeia uma matéria. */
+router.post('/disciplinas/:id', async (req, res) => {
+  try {
+    const nome = String(req.body.nome || '').trim();
+    if (!nome) {
+      flash(req, 'erro', 'Informe o nome da matéria.');
+      return res.redirect('/admin?secao=disciplinas');
+    }
+    const r = await query(`UPDATE disciplinas SET nome = $1 WHERE id = $2`, [nome, id(req.params.id)]);
+    flash(req, r.rowCount ? 'ok' : 'erro', r.rowCount ? 'Matéria atualizada.' : 'Matéria não encontrada.');
+    res.redirect('/admin?secao=disciplinas');
+  } catch (erro) {
+    const duplicada = erro.code === '23505';
+    console.error('[admin/disc-editar]', erro.message);
+    flash(req, 'erro', duplicada ? 'Já existe uma matéria com esse nome.' : 'Não foi possível atualizar a matéria.');
+    res.redirect('/admin?secao=disciplinas');
+  }
+});
+
+/** Atualiza nome/e-mail de aluno ou professor. */
+router.post('/usuarios/:id', async (req, res) => {
+  try {
+    const alvo = id(req.params.id);
+    const nome = String(req.body.nome || '').trim();
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!nome || !email) {
+      flash(req, 'erro', 'Informe nome e e-mail.');
+      return res.redirect('/admin');
+    }
+    const u = await um(`SELECT tipo FROM usuarios WHERE id = $1`, [alvo]);
+    if (!u) return res.redirect('/admin');
+    const secao = u.tipo === 'aluno' ? 'alunos' : 'professores';
+    if (u.tipo === 'admin') {
+      flash(req, 'erro', 'Os dados do administrador são alterados em Configurações.');
+      return res.redirect('/admin');
+    }
+    const conflito = await um(
+      `SELECT id FROM usuarios WHERE lower(email) = lower($1) AND id <> $2`,
+      [email, alvo]
+    );
+    if (conflito) {
+      flash(req, 'erro', 'Já existe outra conta com este e-mail.');
+      return res.redirect(`/admin?secao=${secao}`);
+    }
+    await query(`UPDATE usuarios SET nome = $1, email = $2 WHERE id = $3`, [nome, email, alvo]);
+    flash(req, 'ok', 'Dados atualizados.');
+    res.redirect(`/admin?secao=${secao}`);
+  } catch (erro) {
+    console.error('[admin/usuario-editar]', erro);
+    flash(req, 'erro', 'Não foi possível atualizar os dados.');
+    res.redirect('/admin');
+  }
+});
+
+/** Exclui aluno ou professor (com proteções). */
+router.post('/usuarios/:id/excluir', async (req, res) => {
+  try {
+    const alvo = id(req.params.id);
+    const u = await um(`SELECT id, tipo, nome FROM usuarios WHERE id = $1`, [alvo]);
+    if (!u) return res.redirect('/admin');
+    if (u.tipo === 'admin') {
+      flash(req, 'erro', 'Não é possível excluir um administrador.');
+      return res.redirect('/admin');
+    }
+    const secao = u.tipo === 'aluno' ? 'alunos' : 'professores';
+    if (u.tipo === 'professor') {
+      const atividades = await um(`SELECT count(*)::int AS n FROM atividades WHERE professor_id = $1`, [alvo]);
+      if (atividades.n > 0) {
+        flash(req, 'erro', `Este professor tem ${atividades.n} atividade(s) publicada(s). Exclua as atividades antes de remover a conta.`);
+        return res.redirect('/admin?secao=professores');
+      }
+    }
+    await query(`DELETE FROM usuarios WHERE id = $1`, [alvo]);
+    flash(req, 'ok', `${u.tipo === 'aluno' ? 'Aluno(a)' : 'Professor(a)'} ${u.nome} excluído(a).`);
+    res.redirect(`/admin?secao=${secao}`);
+  } catch (erro) {
+    console.error('[admin/usuario-excluir]', erro);
+    flash(req, 'erro', 'Não foi possível excluir a conta.');
+    res.redirect('/admin');
   }
 });
 

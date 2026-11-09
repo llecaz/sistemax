@@ -37,8 +37,23 @@ CREATE TABLE IF NOT EXISTS usuarios (
 CREATE INDEX IF NOT EXISTS idx_usuarios_turma  ON usuarios(turma_id);
 CREATE INDEX IF NOT EXISTS idx_usuarios_tipo   ON usuarios(tipo);
 
+-- Foto de perfil guardada no próprio banco (necessário em hospedagem
+-- serverless, onde o disco não é permanente). Mantemos também a coluna
+-- "foto" com o nome do arquivo, usada nas URLs /fotos/<nome>.
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_dados BYTEA;
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_tipo  TEXT;
+
 -- Tema visual preferido do usuário (sistema de personalização de temas)
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS tema TEXT NOT NULL DEFAULT 'clean-minimal';
+
+-- Vínculo com login social (Google / GitHub). O e-mail precisa ser o mesmo
+-- da conta Nuvia; o ID externo evita depender do e-mail em logins futuros.
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS oauth_google_id TEXT;
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS oauth_github_id TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_usuarios_oauth_google
+  ON usuarios(oauth_google_id) WHERE oauth_google_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_usuarios_oauth_github
+  ON usuarios(oauth_github_id) WHERE oauth_github_id IS NOT NULL;
 
 -- ⭐ Vínculo turma <-> matéria <-> professor (o coração do sistema)
 CREATE TABLE IF NOT EXISTS turma_disciplina (
@@ -91,6 +106,10 @@ CREATE TABLE IF NOT EXISTS entregas (
   UNIQUE (atividade_id, aluno_id)
 );
 CREATE INDEX IF NOT EXISTS idx_entrega_aluno ON entregas(aluno_id);
+
+-- Conteúdo do arquivo entregue guardado no banco (hospedagem serverless).
+-- Registros antigos continuam funcionando pelo arquivo em disco.
+ALTER TABLE entregas ADD COLUMN IF NOT EXISTS arquivo_dados BYTEA;
 
 -- Migrações de colunas novas (tabelas já existentes ignoram o CREATE TABLE acima)
 ALTER TABLE entregas ADD COLUMN IF NOT EXISTS link TEXT;                          -- entrega via link (Drive, site, Docs...)

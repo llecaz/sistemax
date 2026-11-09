@@ -1,0 +1,62 @@
+# ============================================================
+#  Blueprint do Render — Nuvia
+#  Como usar: suba este arquivo no GitHub e, no Render,
+#  New → Blueprint → escolha o repositório. O Render cria o
+#  site e o PostgreSQL juntos. Veja DEPLOY-RENDER.md.
+# ============================================================
+
+databases:
+  - name: nuvia-db
+    databaseName: nuvia
+    user: nuvia
+    plan: free
+    postgresMajorVersion: "17"
+
+services:
+  - type: web
+    name: nuvia
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /saude
+    autoDeploy: true
+    envVars:
+      - key: AMBIENTE
+        value: producao
+      - key: NODE_VERSION
+        value: "22"
+      # Banco interno do Render: sem SSL na rede privada.
+      - key: PG_SSL
+        value: "false"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nuvia-db
+          property: connectionString
+      # O Render gera um segredo forte automaticamente.
+      - key: SESSION_SECRET
+        generateValue: true
+      # Preencha no painel com a URL pública (ex.: https://nuvia.onrender.com).
+      # Se ficar vazio, o sistema usa o host da própria requisição.
+      - key: SITE_URL
+        sync: false
+      # Primeiro administrador (criado no primeiro boot; senha 8+ caracteres).
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_SENHA
+        sync: false
+      - key: ADMIN_NOME
+        value: Administrador
+      # Login social (opcional). Preencha depois, se quiser usar.
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      # Limite de upload por entrega (MB).
+      - key: LIMITE_ENTREGA_MB
+        value: "10"

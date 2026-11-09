@@ -68,8 +68,9 @@ function gaveta(usuario, ativa = '') {
     itens += itemGaveta('/professor/calendario', 'Calendário do mês', ativa === 'calendario', IC.calendario);
     itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   } else {
-    itens += itemGaveta('/admin', 'Painel administrativo', true, IC.pasta);
-    itens += itemGaveta('/configuracoes', 'Configurações', false, IC.engrenagem);
+    itens += itemGaveta('/admin', 'Painel administrativo', ativa === 'admin', IC.pasta);
+    itens += itemGaveta('/admin/calendario', 'Calendário do mês', ativa === 'calendario', IC.calendario);
+    itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   }
   return `
   <div class="sobreposicao" id="sobreposicao"></div>
@@ -150,6 +151,9 @@ function decoracaoTema() {
 function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
   // Tema salvo na conta (sessão) — o servidor já renderiza com ele, sem "piscar".
   const tema = temaDe((req.session && req.session.usuario && req.session.usuario.tema) || (usuario && usuario.tema));
+  // O CSS do Lo-fi Night só é carregado quando o tema está realmente aplicado;
+  // assim o visual personalizado não vaza para os demais temas.
+  const cssLofi = tema.id === 'lo-fi-night' ? '<link rel="stylesheet" href="/lofi.css">' : '';
   // O painel inicial e as configurações usam o mesmo visual lo-fi do calendário.
   const classeCorpo = /\bini-app\b/.test(corpo)
     ? ' class="pagina-inicio"'
@@ -169,9 +173,15 @@ ${scriptTemas()}
 <link rel="stylesheet" href="/estilo.css">
 <link rel="stylesheet" href="/temas.css">
 <link rel="stylesheet" href="/decoracoes.css">
-<link rel="stylesheet" href="/lofi.css">
+${cssLofi}
 <link rel="icon" type="image/png" href="/favicon.png">
-<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#17132d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nuvia">
 </head>
 <body data-pagina="${ativa}"${classeCorpo}>
 ${topo(usuario, ativa)}
@@ -182,6 +192,7 @@ ${corpo}
 </main>
 ${decoracaoTema()}
 <script src="/app.js"></script>
+<script src="/pwa.js" defer></script>
 </body>
 </html>`;
 }

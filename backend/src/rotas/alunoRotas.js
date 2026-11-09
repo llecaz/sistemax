@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-const { um, todos, query } = require('../db');
+const { um, todos, query, PRODUCAO } = require('../db');
 const { exigePerfil } = require('../auth');
 const { nomeArquivoUnico } = require('../util');
 const { abasDe, ROTULOS_ABA } = require('../regras');
@@ -35,15 +35,14 @@ function linkValido(valor) {
   }
 }
 
+// O conteúdo é guardado no banco (BYTEA). Isso mantém os arquivos
+// persistentes na Vercel, onde o disco da função é temporário.
+// A Vercel limita o corpo da requisição a ~4,5 MB; em produção usamos 4 MB.
+const LIMITE_MB = Number(process.env.LIMITE_ENTREGA_MB) || (PRODUCAO ? 4 : 15);
+
 const enviarArquivo = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, PASTA),
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname || '').toLowerCase() || '.pdf';
-      cb(null, nomeArquivoUnico(ext));
-    },
-  }),
-  limits: { fileSize: 15 * 1024 * 1024 }, // 15 MB
+  storage: multer.memoryStorage(),
+  limits: { fileSize: LIMITE_MB * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname || '').toLowerCase();
     if (!EXTENSOES.includes(ext)) {
@@ -270,7 +269,7 @@ router.post('/entregar/:id', (req, res) => {
       if (erro) {
         const texto =
           erro.code === 'LIMIT_FILE_SIZE'
-            ? 'Arquivo muito grande: o limite é 15 MB.'
+            ? `Arquivo muito grande: o limite é ${LIMITE_MB} MB.`
             : erro.message || 'Não foi possível enviar o arquivo.';
         flash(req, 'erro', texto);
         return res.redirect('/aluno');
@@ -308,15 +307,14 @@ router.post('/entregar/:id', (req, res) => {
         [atividadeId, usuario.id]
       );
       if (existente && existente.nota !== null && existente.nota !== undefined) {
-        if (req.file) fs.unlink(req.file.path, () => {});
         flash(req, 'erro', 'Este trabalho já foi corrigido pelo professor. Fale com ele para solicitar reavaliação.');
         return res.redirect(`/aluno/trabalho/${atividadeId}`);
       }
 
       if (metodo !== 'arquivo') {
         await query(
-          `INSERT INTO entregas (atividade_id, aluno_id, metodo, link, arquivo_nome, arquivo, arquivo_tipo, arquivo_tamanho)
-           VALUES ($1, $2, $3, $4, NULL, NULL, NULL, NULL)
+          `INSERT INTO entregas (atividade_id, aluno_id, metodo, link, arquivo_nome, arquivo, arquivo_tipo, arquivo_tamanho, arquivo_dados)
+           VALUES ($1, $2, $3, $4, NULL, NULL, NULL, NULL, NULL)
            ON CONFLICT (atividade_id, aluno_id) DO UPDATE SET
              metodo = EXCLUDED.metodo,
              link = EXCLUDED.link,
@@ -324,6 +322,7 @@ router.post('/entregar/:id', (req, res) => {
              arquivo = NULL,
              arquivo_tipo = NULL,
              arquivo_tamanho = NULL,
+             arquivo_dados = NULL,
              enviado_em = now()`,
           [atividadeId, usuario.id, metodo, link]
         );
@@ -335,9 +334,13 @@ router.post('/entregar/:id', (req, res) => {
         return res.redirect(`/aluno/materia/${atividade.vinculo_id}?aba=todos`);
       }
 
+      const nomeGuardado = nomeArquivoUnico(
+        path.extname(req.file.originalname || '').toLowerCase() || '.pdf'
+      );
+
       await query(
-        `INSERT INTO entregas (atividade_id, aluno_id, metodo, link, arquivo_nome, arquivo, arquivo_tipo, arquivo_tamanho)
-         VALUES ($1, $2, 'arquivo', NULL, $3, $4, $5, $6)
+        `INSERT INTO entregas (atividade_id, aluno_id, metodo, link, arquivo_nome, arquivo, arquivo_tipo, arquivo_tamanho, arquivo_dados)
+         VALUES ($1, $2, 'arquivo', NULL, $3, $4, $5, $6, $7)
          ON CONFLICT (atividade_id, aluno_id) DO UPDATE SET
            metodo = 'arquivo',
            link = NULL,
@@ -345,14 +348,16 @@ router.post('/entregar/:id', (req, res) => {
            arquivo = EXCLUDED.arquivo,
            arquivo_tipo = EXCLUDED.arquivo_tipo,
            arquivo_tamanho = EXCLUDED.arquivo_tamanho,
+           arquivo_dados = EXCLUDED.arquivo_dados,
            enviado_em = now()`,
         [
           atividadeId,
           usuario.id,
           req.file.originalname,
-          req.file.filename,
+          nomeGuardado,
           req.file.mimetype,
           req.file.size,
+          req.file.buffer,
         ]
       );
 

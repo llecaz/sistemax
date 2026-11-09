@@ -5,27 +5,42 @@ const session = require('express-session');
 const connectPg = require('connect-pg-simple');
 const path = require('path');
 
-const { pool, AMBIENTE } = require('./db');
+const { pool, query, AMBIENTE, PRODUCAO } = require('./db');
 const { homeDo } = require('./paginas/layout');
+const { provedorConfigurado } = require('./oauth');
 
 const app = express();
 
-const producao = AMBIENTE === 'producao';
-if (producao) app.set('trust proxy', 1); // Render/proxy reverso
+const producao = PRODUCAO;
+if (producao) app.set('trust proxy', 1); // Vercel/Render/proxy reverso
 app.set('view engine', false); // as páginas são montadas em JS
 app.disable('x-powered-by');
 
+/* ---------- Cabeçalhos de segurança básicos ---------- */
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  next();
+});
+
 /* ---------- Sessões (guardadas no PostgreSQL) ---------- */
+const segredo = process.env.SESSION_SECRET;
+if (producao && (!segredo || segredo.length < 32)) {
+  throw new Error('Defina SESSION_SECRET com pelo menos 32 caracteres nas variáveis de ambiente de produção.');
+}
+
 const PgSession = connectPg(session);
 app.use(
   session({
     store: new PgSession({
       pool,
       table: 'session',
-      pruneSessionInterval: 10 * 60,
+      // Em serverless o processo é curto; a limpeza é feita no preparo do banco.
+      pruneSessionInterval: producao ? false : 10 * 60,
     }),
     name: 'sistemax.sid',
-    secret: process.env.SESSION_SECRET || 'sistemax-credencial-temporaria',
+    secret: segredo || 'sistemax-credencial-temporaria',
     resave: false,
     saveUninitialized: false,
     proxy: producao,
@@ -56,7 +71,43 @@ app.use(
     index: false, // a raiz "/" é servida pela rota acima
   })
 );
-// Fotos de perfil (nomes aleatórios gerados pelo próprio sistema)
+
+/* ---------- Diagnóstico simples (sem dados sensíveis) ---------- */
+app.get('/saude', async (req, res) => {
+  try {
+    await query('SELECT 1');
+    res.json({
+      ok: true,
+      ambiente: AMBIENTE,
+      oauth: {
+        google: provedorConfigurado('google'),
+        github: provedorConfigurado('github'),
+      },
+    });
+  } catch {
+    res.status(503).json({ ok: false });
+  }
+});
+
+// Fotos de perfil: primeiro procura no banco (produção/serverless) e,
+// se não encontrar, cai para os arquivos antigos em disco (desenvolvimento).
+app.get('/fotos/:nome', async (req, res, next) => {
+  try {
+    const foto = await query(
+      `SELECT foto_dados, foto_tipo FROM usuarios WHERE foto = $1 LIMIT 1`,
+      [req.params.nome]
+    );
+    const registro = foto.rows[0];
+    if (registro && registro.foto_dados) {
+      res.setHeader('Content-Type', registro.foto_tipo || 'image/png');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.send(registro.foto_dados);
+    }
+  } catch (erro) {
+    console.error('[fotos]', erro.message);
+  }
+  next();
+});
 app.use(
   '/fotos',
   express.static(path.join(__dirname, '..', 'uploads', 'fotos'), {
