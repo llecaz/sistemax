@@ -172,15 +172,20 @@ Abra <http://localhost:3000> — na rede da escola: `http://IP-DA-MÁQUINA:3000`
 
 > ⚠️ Troque as senhas depois do primeiro acesso.
 
-**No site publicado** o banco começa vazio (sem dados de exemplo). O único
-acesso inicial é o administrador criado pelas variáveis do Render:
+**No site publicado** já existem dados de demonstração prontos:
 
 | Perfil | E-mail | Senha |
 |---|---|---|
-| Admin | `admin@escola.com` | `Nuvia@2026` |
+| Professora (Maria) | `maria@escola.com` | `prof123` |
+| Professor (João) | `joao@escola.com` | `prof123` |
+| Aluna (Ana) | `ana@escola.com` | `aluno123` |
+| Aluno (Bruno) | `bruno@escola.com` | `aluno123` |
+| Aluna (Carla) | `carla@escola.com` | `aluno123` |
 
-Depois de entrar, crie turmas, matérias, professores e alunos pelo painel
-**Admin**. Recomendo trocar a senha do administrador em **Configurações**.
+Há 2 turmas (1º Ano A e 2º Ano B), 4 matérias e os vínculos professor ↔ turma ↔
+matéria já configurados. O acesso **administrador** é criado pelas variáveis
+`ADMIN_EMAIL` / `ADMIN_SENHA` configuradas no Render — a senha **não** fica no
+repositório. Troque-a em **Configurações** depois do primeiro acesso.
 
 ### 🌐 Sistema online
 
