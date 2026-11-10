@@ -299,7 +299,7 @@ function barraLateral({ usuario }) {
 }
 
 /** Página completa do calendário do mês no visual Lo-fi Night. */
-function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [] }) {
+function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [], tema = 'lo-fi-night' }) {
   const perfil = usuario.tipo;
   const professor = perfil === 'professor';
   const admin = perfil === 'admin';
@@ -476,7 +476,7 @@ function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [] }) {
       </div>`;
 
   return `
-  <div class="lofi-app">
+  <div class="lofi-app" data-cal-tema="${esc(tema)}">
     ${barraLateral({ usuario })}
 
     <main class="lofi-main">
@@ -561,7 +561,7 @@ function proximaTarefaClassica(ev, usuario) {
 }
 
 /** Página do calendário no visual clássico, usada pelos demais temas. */
-function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [] }) {
+function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], tema = 'clean-minimal' }) {
   const perfil = usuario.tipo;
   const professor = perfil === 'professor';
   const admin = perfil === 'admin';
@@ -703,7 +703,7 @@ function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [] })
         }</p></div>`;
 
   return `
-  <div class="cal-mes-layout">
+  <div class="cal-mes-layout" data-cal-tema="${esc(tema)}">
     <section class="cal-mes-cartao">
       ${cabecalho}
       ${gradeMes({ ano, mes, porDia, usuario })}
@@ -725,8 +725,8 @@ function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [] })
 function paginaCalendario({ usuario, eventos, ano, mes, materias = [], tema }) {
   const temaId = tema || temaOuPadrao(usuario && usuario.tema);
   return temaId === 'lo-fi-night'
-    ? paginaCalendarioLofi({ usuario, eventos, ano, mes, materias })
-    : paginaCalendarioClassico({ usuario, eventos, ano, mes, materias });
+    ? paginaCalendarioLofi({ usuario, eventos, ano, mes, materias, tema: temaId })
+    : paginaCalendarioClassico({ usuario, eventos, ano, mes, materias, tema: temaId });
 }
 
 module.exports = { paginaCalendario, chaveDia, MESES, TIPOS };

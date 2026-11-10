@@ -19,6 +19,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
   - **Restaurar padrão** volta ao Clean Minimal.
   - Alternador **Sol 🌞 / Lua 🌙** na barra superior troca rapidamente entre o par claro/escuro do tema atual.
   - Cada tema tem sua própria identidade (fontes, cores, decorações de fundo), mas mantém a mesma estrutura e funcionalidades.
+  - O **calendário do mês** também acompanha o tema: cores das atividades, cantos, brilhos e cartões mudam junto; no **Lo-fi Night** ele usa o layout exclusivo de quarto de estudos.
   - Organizado com **variáveis CSS**: base em `frontend/estilo.css` + identidade dos temas em `frontend/temas.css` + registro em `backend/src/temas.js`.
 - Ícone de **engrenagem ⚙️** na barra superior → página de **Configurações**.
 - Responsivo (celular e computador).
@@ -47,8 +48,9 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 
 ### 🗓️ Calendário do mês (aluno e professor)
 - Página própria com grade do **mês**, prazos e provas marcados por dia.
-- **Visual lo-fi / dreamy em pixel art**: quarto de estudos aconchegante, tons pastel de rosa, lilás, roxo e creme.
-- **Barra lateral escura** com navegação em ícones pixel, estante de livros, luas e plantinhas.
+- **Acompanha o tema escolhido na conta**: no **Lo-fi Night** usa o visual lo-fi / dreamy em pixel art (quarto de estudos, tons pastel, barra lateral escura e player); nos demais temas usa o layout clássico com as cores, fontes, cantos e brilhos do tema ativo.
+- **Cores das atividades por tema**: tarefa/quiz, entrega, prova, projeto e evento são ajustados à paleta de cada tema.
+- **Barra lateral escura** com navegação em ícones pixel, estante de livros, luas e plantinhas (layout Lo-fi Night).
 - **Player lo-fi** funcional (acordes, baixo e chuva sintetizados com Web Audio — sem arquivos externos).
 - Área principal com cabeçalho ilustrado, navegação de meses e cartão do calendário.
 - Painel direito com **Próximas tarefas**, cartão motivacional e ilustrações de gatinhos.

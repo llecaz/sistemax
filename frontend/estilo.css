@@ -28,6 +28,18 @@
   --sombra: 0 1px 2px rgba(60, 64, 67, 0.1), 0 2px 6px rgba(60, 64, 67, 0.08);
   --sombra-alta: 0 6px 20px rgba(60, 64, 67, 0.18);
   --sobreposicao: rgba(32, 33, 36, 0.45);
+  /* Cores das atividades — cada tema pode reajustar estas variáveis */
+  --tipo-tarefa: #e2555f;
+  --tipo-entrega: #4caf7d;
+  --tipo-prova: #e0a83e;
+  --tipo-projeto: #5b8def;
+  --tipo-evento: #9b7cf0;
+  /* Tons de texto das etiquetas no tema claro (contraste) */
+  --tipo-tarefa-texto: #d84a55;
+  --tipo-entrega-texto: #3d9568;
+  --tipo-prova-texto: #c08e2b;
+  --tipo-projeto-texto: #4a7bdc;
+  --tipo-evento-texto: #8266d6;
 }
 
 [data-tema='escuro'],
@@ -53,6 +65,11 @@
   --sombra: 0 1px 3px rgba(0, 0, 0, 0.45);
   --sombra-alta: 0 8px 24px rgba(0, 0, 0, 0.55);
   --sobreposicao: rgba(0, 0, 0, 0.6);
+  --tipo-tarefa: #f28b82;
+  --tipo-entrega: #81c784;
+  --tipo-prova: #fdd663;
+  --tipo-projeto: #8ab4f8;
+  --tipo-evento: #b39ddb;
 }
 
 /* ------------------- Base ------------------- */
@@ -1449,39 +1466,39 @@ body.tela-login {
   background: var(--azul);
 }
 .ponto.tarefa {
-  background: #e2555f;
+  background: var(--tipo-tarefa);
 }
 .ponto.entrega {
-  background: #4caf7d;
+  background: var(--tipo-entrega);
 }
 .ponto.prova {
-  background: #e0a83e;
+  background: var(--tipo-prova);
 }
 .ponto.projeto {
-  background: #5b8def;
+  background: var(--tipo-projeto);
 }
 .ponto.evento {
-  background: #9b7cf0;
+  background: var(--tipo-evento);
 }
 .cal-pilula.tarefa {
-  background: rgba(226, 85, 95, 0.14);
-  border-left-color: #e2555f;
+  background: color-mix(in srgb, var(--tipo-tarefa) 14%, transparent);
+  border-left-color: var(--tipo-tarefa);
 }
 .cal-pilula.entrega {
-  background: rgba(76, 175, 125, 0.16);
-  border-left-color: #4caf7d;
+  background: color-mix(in srgb, var(--tipo-entrega) 16%, transparent);
+  border-left-color: var(--tipo-entrega);
 }
 .cal-pilula.prova {
-  background: rgba(224, 168, 62, 0.18);
-  border-left-color: #e0a83e;
+  background: color-mix(in srgb, var(--tipo-prova) 18%, transparent);
+  border-left-color: var(--tipo-prova);
 }
 .cal-pilula.projeto {
-  background: rgba(91, 141, 239, 0.16);
-  border-left-color: #5b8def;
+  background: color-mix(in srgb, var(--tipo-projeto) 16%, transparent);
+  border-left-color: var(--tipo-projeto);
 }
 .cal-pilula.evento {
-  background: rgba(155, 124, 240, 0.16);
-  border-left-color: #9b7cf0;
+  background: color-mix(in srgb, var(--tipo-evento) 16%, transparent);
+  border-left-color: var(--tipo-evento);
 }
 
 /* Rodapé do cartão: hoje, progresso e legenda */
@@ -1730,24 +1747,24 @@ body.tela-login {
   white-space: nowrap;
 }
 .cal-etiqueta.tarefa {
-  background: rgba(226, 85, 95, 0.14);
-  color: #e2555f;
+  background: color-mix(in srgb, var(--tipo-tarefa) 14%, transparent);
+  color: var(--tipo-tarefa-texto, var(--tipo-tarefa));
 }
 .cal-etiqueta.entrega {
-  background: rgba(76, 175, 125, 0.16);
-  color: #3d9568;
+  background: color-mix(in srgb, var(--tipo-entrega) 16%, transparent);
+  color: var(--tipo-entrega-texto, var(--tipo-entrega));
 }
 .cal-etiqueta.prova {
-  background: rgba(224, 168, 62, 0.18);
-  color: #c08e2b;
+  background: color-mix(in srgb, var(--tipo-prova) 18%, transparent);
+  color: var(--tipo-prova-texto, var(--tipo-prova));
 }
 .cal-etiqueta.projeto {
-  background: rgba(91, 141, 239, 0.16);
-  color: #4a7bdc;
+  background: color-mix(in srgb, var(--tipo-projeto) 16%, transparent);
+  color: var(--tipo-projeto-texto, var(--tipo-projeto));
 }
 .cal-etiqueta.evento {
-  background: rgba(155, 124, 240, 0.16);
-  color: #8266d6;
+  background: color-mix(in srgb, var(--tipo-evento) 16%, transparent);
+  color: var(--tipo-evento-texto, var(--tipo-evento));
 }
 
 @media (max-width: 1080px) {
@@ -1817,19 +1834,19 @@ body.tela-login {
     display: none;
   }
   .cal-pilula.tarefa {
-    background: #e2555f;
+    background: var(--tipo-tarefa);
   }
   .cal-pilula.entrega {
-    background: #4caf7d;
+    background: var(--tipo-entrega);
   }
   .cal-pilula.prova {
-    background: #e0a83e;
+    background: var(--tipo-prova);
   }
   .cal-pilula.projeto {
-    background: #5b8def;
+    background: var(--tipo-projeto);
   }
   .cal-pilula.evento {
-    background: #9b7cf0;
+    background: var(--tipo-evento);
   }
 }
 

@@ -79,7 +79,7 @@ router.get('/calendario', async (req, res) => {
         usuario,
         req,
         ativa: 'calendario',
-        corpo: paginaCalendario({ usuario, eventos, ano, mes }),
+        corpo: paginaCalendario({ usuario, eventos, ano, mes, tema: usuario.tema }),
       })
     );
   } catch (erro) {
