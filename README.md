@@ -9,17 +9,16 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
 ## ✨ Principais recursos
 
 ### 🎨 Visual
-- **Identidade Nuvia em pixel art**: noite lilás, gatinhos, plantas e laços em tons de rosa, com tipografia `Pixelify Sans` nos títulos e fundos estrelados. Um tema claro correspondente, **Normal Mode**, mantém o mesmo carinho em tons creme e rosa.
-- **Sidebar fixa à esquerda** com logo, navegação (Início, Minhas Tarefas, Matérias, Calendário, Notificações e Configurações), seletor claro/escuro e o perfil do estudante no rodapé. Em telas menores ela vira uma gaveta recolhível.
+- **Identidade Nuvia em pixel art**: noite lilás, gatinhos, plantas e laços em tons de rosa, com tipografia `Pixelify Sans` nos títulos e fundos estrelados. Um modo claro correspondente, **Normal Mode**, mantém o mesmo carinho em tons creme e rosa.
+- **Sidebar fixa à esquerda** com logo, navegação (Início, Minhas Tarefas, Matérias, Calendário, Notificações e Configurações), seletor **Dark/Normal**, toggle do **Lofi Mode** e o perfil do estudante no rodapé. Em telas menores ela vira uma gaveta recolhível.
 - **Topbar** com campo de busca de tarefas e matérias, atalho para notificações, acesso ao perfil e saída.
 - **Banner de boas-vindas** com saudação por horário (“Bom dia / Boa tarde / Boa noite”) e cartão de data ao lado.
-- **🎨 Sistema de aparência** (⚙️ Configurações → **Aparência**):
-  - **Dois modos principais**: **Dark Mode** (noite lilás, padrão) e **Normal Mode** (claro, tons creme e rosa).
-  - Alternador **Sol 🌞 / Lua 🌙** na sidebar troca diretamente entre os dois modos, sem navegar por galeria.
-  - **Lofi Mode**, opcional e independente: uma camada aconchegante (pixel art, chuva, tipografia de títulos em `Pixelify Sans`, widget de rádio lo-fi e o **quarto de estudos** exclusivo do calendário) que funciona **tanto no Dark Mode quanto no Normal Mode**.
-  - O Lofi Mode liga/desliga pelo botão na sidebar ou pelo interruptor em Configurações → Aparência — ao desligar, a interface volta exatamente à aparência do modo atual.
-  - Clique num card de modo para **aplicar na hora**; a preferência fica salva **na conta (banco de dados)** — sobrevive a atualizar a página, sair e entrar novamente, e vale para qualquer dispositivo.
-  - O **calendário do mês** acompanha o modo e o Lofi Mode: cores das atividades, cantos, brilhos e cartões mudam junto; com o Lofi Mode ativo, ele usa o layout exclusivo de quarto de estudos (inclusive com clima escuro no Dark Mode).
+- **🎨 Dois modos + um modo opcional** (⚙️ Configurações → **Aparência**):
+  - **Dark Mode** (noite lilás, padrão) e **Normal Mode** (claro, tons creme e rosa), alternáveis pelo botão sol/lua na sidebar.
+  - **Lofi Mode**, opcional e independente: uma camada aconchegante (pixel art, chuva, tipografia dos títulos em `Pixelify Sans`, widget de rádio lo-fi e o **quarto de estudos** exclusivo do calendário) que funciona **tanto no Dark Mode quanto no Normal Mode**.
+  - Liga/desliga pelo botão na sidebar ou pelo interruptor em Configurações → Aparência — ao desligar, tudo volta à aparência padrão do modo atual.
+  - Clique num card de modo para **aplicar na hora**; a preferência fica salva **na conta (banco de dados)**, vale para qualquer dispositivo.
+  - O **calendário do mês** acompanha o modo e o Lofi Mode — com o Lofi ativo usa o layout exclusivo de quarto de estudos, inclusive com clima escuro no Dark Mode.
   - Organizado com **variáveis CSS**: base em `frontend/estilo.css` + acabamentos compartilhados em `frontend/temas.css` + a identidade Nuvia (dark/light) em `frontend/nuvia.css` + a camada Lofi (independente do tema) em `frontend/lofi.css` + registro em `backend/src/temas.js`.
 - Ícone de **engrenagem ⚙️** na sidebar → página de **Configurações**.
 - Responsivo em desktop, notebook, tablet e celular.
@@ -34,10 +33,11 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
 - Tentativas de login limitadas (proteção contra força bruta).
 
 ### 🎓 Área do Aluno
-- **Dashboard inicial**: banner com saudação por horário, cartão de data, **Sua semana** (planner dos próximos 7 dias com dots por tipo de atividade), **Modo foco** (timer pomodoro de 25 minutos integrado), **Minhas Tarefas** com filtros funcionais (`Todas`, `A fazer`, `Entregues`, `Corrigidas`), **Minhas Matérias** em cards com ícone, média/desempenho e barra de progresso, mini-calendário navegável, **Próximas Tarefas** e um gatinho companheiro na página inicial.
+- **Dashboard inicial**: banner com saudação por horário, cartão de data, **Sua semana** (planner dos próximos 7 dias com pontinhos por tipo de atividade), **Modo foco** (timer pomodoro de 25 min), **Minhas Tarefas** com filtros funcionais (`Todas`, `A fazer`, `Entregues`, `Corrigidas`), **Minhas Matérias** em cards com ícone, média/desempenho e barra de progresso, mini-calendário navegável, **Próximas Tarefas** e um gatinho companheiro na página.
 - **Status coloridos** nas tarefas: verde para corrigida, azul para entregue, laranja para pendente e vermelho para atrasada.
-- **Busca** na topbar filtra tarefas e matérias por nome/matéria (`?q=`), mantendo os filtros e a navegação do calendário.
+- **Busca** na topbar filtra tarefas e matérias pelo nome (`?q=`).
 - **Notificações**: página com prazos próximos, atividades atrasadas, entregas enviadas e correções recebidas, geradas a partir dos dados reais da conta.
+- **Linha inteira da tarefa clicável**: abre o detalhe do trabalho.
 - **Página da matéria em painel**: lista de trabalhos + resumo lateral com entregues, progresso e próximo prazo.
 - **Detalhe do trabalho em painel**: descrição, prazo, entrega/correção e envio + resumo lateral (situação, prazo, envio, nota), orientações de entrega e atalhos.
 - Grade de **cards das matérias** da turma (cada matéria com o nome do professor).
@@ -46,21 +46,19 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
   - *Corrigidos*: com nota e observação do professor
   - *Atrasados*: prazo vencido e não entregue (ou entregue fora do prazo)
 - Envio de arquivo (PDF, DOCX, PPTX, XLSX, JPG/PNG, TXT — até 15 MB).
-- **Outras formas de entrega**: abas **Arquivo**, **Link** (site, artigo, post) e **Google Drive** (link compartilhado), com validação de URL no servidor e chips de categorias (documentos, planilhas, apresentações, imagens).
+- **Outras formas de entrega**: abas **Arquivo**, **Link** (site, artigo, post) e **Google Drive** (link compartilhado), com validação de URL e chips de categorias (documentos, planilhas, apresentações, imagens).
 - **Reenvio permitido enquanto o trabalho não for corrigido.**
 
 ### 🗓️ Calendário do mês (aluno e professor)
 - Página própria com grade do **mês**, prazos e provas marcados por dia.
-- **Acompanha o modo e o Lofi Mode**: com o **Lofi Mode ativo** usa o visual lo-fi / dreamy em pixel art (quarto de estudos, tons pastel no Normal Mode e tons de noite no Dark Mode, barra lateral escura e player); sem o Lofi Mode usa o layout clássico com as cores, fontes, cantos e brilhos do modo ativo.
-- **Cores das atividades por modo**: tarefa/quiz, entrega, prova, projeto e evento são ajustadas à paleta de cada modo.
-- **Barra lateral escura** com navegação em ícones pixel, estante de livros, luas e plantinhas (layout Lo-fi Night).
+- **Acompanha o modo e o Lofi Mode**: com o Lofi ativo usa o visual lo-fi / dreamy em pixel art (Normal Mode: creme aconchegante; Dark Mode: noite de estudos estrelada); sem o Lofi usa o layout clássico com as cores, fontes, cantos e brilhos do modo ativo.
+- **Clique num dia com atividades** para filtrar a lista do mês abaixo (marca o dia selecionado no calendário e mostra um chip "Filtrado por …" com botão para limpar). Funciona também pelo teclado.
+- **Professor** pode usar **+ Adicionar evento** para marcar provas/projetos/eventos no mês; o aluno apenas visualiza.
+- **Barra lateral escura** com navegação em ícones pixel, estante de livros, luas e plantinhas, no estilo do quarto de estudos.
 - **Player lo-fi** funcional (acordes, baixo e chuva sintetizados com Web Audio — sem arquivos externos).
-- Área principal com cabeçalho ilustrado, navegação de meses e cartão do calendário.
-- Painel direito com **Próximas tarefas**, cartão motivacional e ilustrações de gatinhos.
 - Rodapé com **resumo do dia**, **progresso do mês** e legenda de cores.
 - Indicadores coloridos: **tarefa/quiz**, **entrega**, **prova**, **projeto** e **evento**.
-- No celular, a grade mostra a **semana inteira** com pontinhos coloridos por tipo de atividade.
-- O **professor** pode usar **+ Adicionar evento** para marcar provas/projetos/eventos no mês; o aluno apenas visualiza.
+- No celular, a grade mantém o **mês inteiro**; as atividades viram pontinhos coloridos por tipo.
 - Ilustrações em SVG pixel art geradas por `scripts/gerar-pixel-art.js` e salvas em `frontend/img/lofi/`.
 - **Biblioteca de decorações Nuvia** recortada da cartela oficial em pixel art, com PNGs transparentes em `frontend/assets/decorations/`:
   - `cats/` — gatinhos com laço, dormindo na almofada, no sofá, com auréola e espiando.
@@ -68,25 +66,14 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
   - `stationery/` — livros, estante, notebook, caderno, bloco e lápis.
   - `celestial/` — lua, estrelas, brilhos e corações.
   - `accessories/` — laços, almofada, caneca, fones, envelope, patinhas, quadro e janela.
+  - `details/` — acabamentos micro (asas, patinhas, laços, brilhos).
   - `ui/` — ícones e componentes de interface (barras, cartão, balão de fala).
 - Componente reutilizável `decoracao(nome, opções)` em `backend/src/paginas/decoracoes.js` (tamanho, posição, margem, opacidade, rotação, visibilidade e `alt`).
-- A página de **calendário com o Lofi Mode ativo** usa a biblioteca Nuvia (cenas, gatinhos, plantas, laços, luas e estrelas). O novo dashboard em lavanda/roxo **não usa ilustrações** — apenas formas e ícones minimalistas.
+- A página de **calendário com o Lofi Mode ativo** usa a biblioteca Nuvia (cenas, gatinhos, plantas, laços, luas e estrelas); o dashboard usa apenas formas e ícones minimalistas.
 
 ### 🖼️ Biblioteca de decorações (Nuvia Pixel Art)
 
 Os recortes foram extraídos da cartela oficial (`frontend/assets/source/nuvia-assets-sheet.png`), mantendo transparência real, contorno, sombras, cores e proporção. Nenhuma ilustração foi redesenhada. Os novos arquivos usam o prefixo `nuvia-` e convivem com a biblioteca anterior, que continua intacta.
-
-```
-frontend/assets/decorations/
-├── cats/             # 6 gatinhos
-├── plants/           # 4 plantas
-├── stationery/       # 7 itens de papelaria
-├── celestial/        # 23 luas, estrelas, brilhos e corações
-├── accessories/      # 10 acessórios
-└── ui/               # 11 ícones e componentes
-```
-
-Inventário completo e usos em `frontend/assets/decorations/README.md`.
 
 Uso do componente no backend:
 
@@ -128,15 +115,14 @@ O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de 
 - **Manifesto** (`frontend/manifest.webmanifest`) com nome, ícones 192/512, cores e atalhos.
 - **Service Worker** (`frontend/sw.js`): cache dos arquivos estáticos e página **“Sem conexão”** quando a internet cai.
 - **Instalável** em Android (Chrome), iPhone/iPad (Safari) e computador — abre em tela cheia, com ícone próprio.
-- Botão flutuante **Instalar app** aparece quando o navegador permite; no iPhone, mostra o passo a passo.
+- Botão flutuante **Instalar app** aparece quando o navegador permite; some sozinho após alguns segundos e no iPhone mostra o passo a passo.
 - Nenhuma página autenticada, foto ou arquivo enviado é guardado no cache (privacidade).
 
 ### ⚙️ Configurações (engrenagem)
 - **Foto de perfil** (JPG/PNG/WebP até 2 MB) ou inicial num círculo colorido.
 - **Nome**, **email** e **turma conectada** (aluno) / matérias que leciona (professor).
 - Alterar **senha** e **pergunta de segurança**.
-- Escolha entre **Dark Mode** e **Normal Mode** (padrão: Dark Mode) + interruptor do **Lofi Mode** (funciona nos dois).
-- Com o **Lofi Mode ativo**, a página usa o mesmo visual do calendário (no Normal Mode: cartões creme e tipografia pixel; no Dark Mode: a mesma cena em clima de noite).
+- Escolha entre **Dark Mode** e **Normal Mode** + interruptor do **Lofi Mode** (funciona nos dois).
 
 ---
 
@@ -152,12 +138,13 @@ O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de 
 | PWA | `manifest.webmanifest` + Service Worker (`sw.js`) para instalação e modo offline |
 | Senhas | Hash `scrypt` + salt (nativo do Node) |
 | Configuração | `dotenv` (arquivo `.env`) |
+| Banco local | PostgreSQL embutido via `embedded-postgres` (nada para instalar no dev) |
 
 ---
 
 ## ▶️ Como executar
 
-**Requisitos:** Node.js **18+** (testado na 26).
+**Requisitos:** Node.js **20+**.
 
 ```bash
 npm install        # primeira vez
@@ -184,10 +171,8 @@ Abra <http://localhost:3000> — na rede da escola: `http://IP-DA-MÁQUINA:3000`
 | Professora (Maria) | `maria@escola.com` | `prof123` |
 | Professor (João) | `joao@escola.com` | `prof123` |
 | Aluna (Ana) | `ana@escola.com` | `aluno123` |
-| Aluno (Bruno) | `bruno@escola.com` | `aluno123` |
-| Aluna (Carla) | `carla@escola.com` | `aluno123` |
 
-Há 2 turmas (1º Ano A e 2º Ano B), 4 matérias e os vínculos professor ↔ turma ↔
+Há 2 turmas (9º Ano A e 1º Ano B), 5 matérias e 7 vínculos professor ↔ turma ↔
 matéria já configurados. O acesso **administrador** é criado pelas variáveis
 `ADMIN_EMAIL` / `ADMIN_SENHA` configuradas no Render — a senha **não** fica no
 repositório. Troque-a em **Configurações** depois do primeiro acesso.
@@ -225,7 +210,7 @@ cp .env.exemplo .env
 | `SESSION_SECRET` | Segredo das sessões — troque por algo longo e único |
 | `SITE_URL` | URL pública do site |
 
-**No modo `local`** o servidor baixa e sobe um PostgreSQL real automaticamente (pasta `.pglocal/`) — sem sudo e sem Docker.
+**No modo `local`** o servidor sobe um PostgreSQL de verdade automaticamente (pasta `.pglocal/`) — sem sudo e sem Docker.
 **No modo `producao`** basta apontar `DATABASE_URL_PRODUCAO` para o banco; as tabelas e os dados iniciais são criados sozinhos.
 
 > 🔎 **Aviso:** algumas redes bloqueiam a porta `5432`. Se o site rodar em uma rede assim, use o modo `local` (as conexões são internas) ou um banco acessível pela rede permitida.
@@ -260,15 +245,15 @@ sistemax/
 │   ├── pwa.js               # ⭐ Registro do SW e botão "Instalar app"
 │   ├── offline.html         # ⭐ Página exibida sem conexão
 │   ├── icons/               # ⭐ Ícones 192x192 e 512x512 do aplicativo
-│   ├── estilo.css           # Tema base (variáveis) + shell SaaS + dashboard + galeria
+│   ├── estilo.css           # Base (variáveis) + shell SaaS + dashboard
 │   ├── temas.css            # ⭐ Acabamentos compartilhados + Lofi Mode (transições, rádio)
 │   ├── decoracoes.css       # ⭐ Componente .deco da biblioteca
-│   ├── lofi.css             # ⭐ Visual lo-fi/pixel art da página de calendário
+│   ├── lofi.css             # ⭐ Camada Lofi Mode: quarto de estudos (calendário + configurações)
 │   ├── lofi.js              # ⭐ Player lo-fi (Web Audio API)
-│   ├── assets/decorations/  # ⭐ PNGs transparentes Nuvia (cats, plants, stationery, celestial, accessories, ui)
+│   ├── assets/decorations/  # ⭐ PNGs transparentes Nuvia (cats, plants, stationery, celestial, accessories, details, ui)
 │   ├── assets/source/       # ⭐ Cartela original nuvia-assets-sheet.png
 │   ├── img/lofi/            # ⭐ Ilustrações pixel art (gatos, livros, plantas, lua)
-│   └── app.js               # Aparência (modos + Lofi), menu, filtros do calendário, confirmações
+│   └── app.js               # Aparência (modos + Lofi), menu, confirmações, seleção de arquivos
 ├── scripts/gerar-pixel-art.js  # Gera os SVGs das ilustrações do calendário
 ├── backend/uploads/         # Arquivos enviados (fora da área pública)
 ├── package.json             # Scripts: start, dev, criar-banco
@@ -286,7 +271,7 @@ O sistema tem **dois modos** (`nuvia` = Dark Mode, `nuvia-day` = Normal Mode) e 
 
 1. **Modos**: registre em [`backend/src/temas.js`](backend/src/temas.js) e crie o bloco de variáveis em [`frontend/nuvia.css`](frontend/nuvia.css) com o seletor `[data-tema='seu-id']`.
 2. **Tokens compartilhados** (transição suave, rádio lo-fi): [`frontend/temas.css`](frontend/temas.css).
-3. **Lofi Mode**: ative/desative pelo botão na sidebar ou em Configurações → Aparência. O CSS em [`frontend/lofi.css`](frontend/lofi.css) só vale com `html[data-lofi='on']` e adapta a paleta (`--lf-*`) ao modo (`[data-tema-modo='claro'|'escuro']`). O layout do calendário troca para o "quarto de estudos" quando o modo está ativo.
+3. **Lofi Mode**: ative/desative pelo botão na sidebar ou em Configurações → Aparência. O CSS em [`frontend/lofi.css`](frontend/lofi.css) só vale com `html[data-lofi='on']` e adapta a paleta (`--lf-*`) ao modo (`[data-tema-modo='claro'|'escuro']`). O calendário troca para o "quarto de estudos" quando o modo está ativo.
 4. Contas antigas com temas removidos caem no modo equivalente (escuros → Dark Mode, claros → Normal Mode) automaticamente.
 
 O modo padrão de novos usuários é o **Dark Mode** (`nuvia`, coluna `usuarios.tema`).
@@ -327,4 +312,4 @@ O modo padrão de novos usuários é o **Dark Mode** (`nuvia`, coluna `usuarios.
 4. **Aluno** abre a matéria → envia o arquivo (pode reenviar enquanto não corrigido).
 5. **Professor** baixa o arquivo → dá **nota e observação**.
 6. **Aluno** acompanha nas abas `Não corrigidos` / `Corrigidos` / `Atrasados`.
-7. Qualquer usuário configura **foto, dados e tema** pelo ícone ⚙️.
+7. Qualquer usuário configura **foto, dados e aparência** pelo ícone ⚙️.
