@@ -1,12 +1,15 @@
-/** Layout geral: topo, gaveta lateral, mensagens e páginas completas. */
+/** Layout geral: sidebar fixa, barra superior, mensagens e páginas completas. */
 const { esc, iniciais } = require('../util');
 const { temaDe, scriptTemas } = require('../temas');
 
 const NOME_SISTEMA = 'Classroom Escolar';
 
-function iconeLogo(tamanho = 30) {
+/** Logotipo minimalista: capelo de formatura em roxo. */
+function iconeLogo(tamanho = 38) {
   return `<span class="logo-icone" style="width:${tamanho}px;height:${tamanho}px" aria-hidden="true">
-    <img src="/img/cat-icon.png" alt="">
+    <svg viewBox="0 0 48 48" width="${tamanho}" height="${tamanho}" fill="currentColor">
+      <path d="M24 6 3 16l21 10 21-10L24 6Zm-15 14.6v9.2C9 34.6 15.7 38 24 38s15-3.4 15-8.2v-9.2l-15 7.1-15-7.1Zm33 .9-6 2.9v7.4c0 1.2-.3 2.3-.9 3.2l4.3 2.1c1.6-1.5 2.6-3.4 2.6-5.3V21.5Z"/>
+    </svg>
   </span>`;
 }
 
@@ -14,7 +17,7 @@ function iconeLogo(tamanho = 30) {
 function avatar(usuario, classe = '') {
   if (!usuario) return '';
   const cor = usuario.email || usuario.nome || '';
-  let corCss = '#1e88e5';
+  let corCss = '#7b5ce6';
   try {
     corCss = require('../util').corDe(cor).claro;
   } catch {}
@@ -24,34 +27,79 @@ function avatar(usuario, classe = '') {
   return `<span class="avatar ${classe}">${conteudo}</span>`;
 }
 
-function itemGaveta(href, texto, ativo, icone, extra = '') {
+function itemGaveta(href, texto, ativo, icone, extra = '', ponto = false) {
   return `<a class="gaveta-item ${ativo ? 'ativo' : ''}" href="${href}" ${extra}>
-    <span class="gaveta-icone">${icone}</span><span>${texto}</span>
+    <span class="gaveta-icone">${icone}</span>
+    <span class="gaveta-texto">${texto}</span>
+    ${ponto ? '<span class="gaveta-ponto" aria-hidden="true"></span>' : ''}
   </a>`;
 }
 
+const svg = (conteudo, tamanho = 20) =>
+  `<svg viewBox="0 0 24 24" width="${tamanho}" height="${tamanho}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${conteudo}</svg>`;
+
 const IC = {
-  casa: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 3 2 12h3v8h6v-6h2v6h6v-8h3z"/></svg>`,
-  calendario: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2m0 16H5V10h14zm0-12H5V6h14z"/></svg>`,
-  engrenagem: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="m19.4 13-.1-1 .1-1 2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-1.7-1L14.9 3h-3.8l-.4 2.5c-.6.2-1.2.6-1.7 1l-2.4-1-2 3.4 2 1.6-.1 1 .1 1-2 1.6 2 3.4 2.4-1c.5.4 1.1.8 1.7 1l.4 2.5h3.8l.4-2.5c.6-.2 1.2-.6 1.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>`,
-  sair: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M17 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2h-2v2H5V5h10v2zm4-2v14h-2v-2h-2v2h2v2h2v2h2v-2h2V9h-2V7h-2z"/></svg>`,
-  pasta: `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8z"/></svg>`,
-  lua: `<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12.3 4.9a7.1 7.1 0 1 0 6.8 9.4 7.1 7.1 0 0 1-6.8-9.4"/></svg>`,
-  sol: `<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10m0-5v2m0 16v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M2 12h2m16 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`,
+  casa: svg('<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>'),
+  tarefas: svg('<rect x="3" y="4" width="18" height="16" rx="4"/><path d="m8 12 2.5 2.5L16 9"/>'),
+  materias: svg('<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/>'),
+  calendario: svg('<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>'),
+  notificacoes: svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>'),
+  engrenagem: svg('<circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>'),
+  sair: svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>'),
+  busca: svg('<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>'),
+  lua: svg('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>', 18),
+  sol: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/>', 18),
+  seta: svg('<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>', 16),
+  menu: svg('<path d="M3 6h18M3 12h18M3 18h18"/>', 22),
+  fechar: svg('<path d="M18 6 6 18M6 6l12 12"/>', 22),
 };
 
-function topo(usuario, ativa) {
-  const iconeTema = `<span class="tema-icone sol">${IC.sol}</span><span class="tema-icone lua">${IC.lua}</span>`;
+function homeDo(usuario) {
+  if (!usuario) return '/';
+  return usuario.tipo === 'admin' ? '/admin' : usuario.tipo === 'professor' ? '/professor' : '/aluno';
+}
+
+function notificacoesDo(usuario) {
+  if (!usuario) return '/';
+  if (usuario.tipo === 'professor') return '/professor/notificacoes';
+  if (usuario.tipo === 'aluno') return '/aluno/notificacoes';
+  return '/admin';
+}
+
+function rotuloPerfil(usuario) {
+  if (!usuario) return '';
+  if (usuario.tipo === 'professor') return 'Professor';
+  if (usuario.tipo === 'admin') return 'Administrador';
+  return usuario.turma_nome || 'Aluno';
+}
+
+function topo(usuario, ativa, req) {
+  const q = (req && req.query && req.query.q) || '';
+  const busca =
+    usuario && usuario.tipo !== 'admin'
+      ? `<form class="topo-busca" action="${homeDo(usuario)}" method="get" role="search">
+          <span class="topo-busca-icone">${IC.busca}</span>
+          <input type="search" name="q" value="${esc(q)}" placeholder="Buscar tarefas, matérias..." aria-label="Buscar tarefas e matérias">
+        </form>`
+      : '<div class="topo-busca-vazio"></div>';
+
+  const sino =
+    usuario && usuario.tipo !== 'admin'
+      ? `<a class="icone-botao topo-sino" href="${notificacoesDo(usuario)}" title="Notificações" aria-label="Notificações">
+          ${IC.notificacoes}<span class="topo-ponto" aria-hidden="true"></span>
+        </a>`
+      : '';
+
   return `
   <header class="topo">
-    <button class="icone-botao" id="btn-menu" aria-label="Abrir menu">
-      <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </button>
-    <a class="marca" href="${homeDo(usuario)}">${iconeLogo()}<span>${NOME_SISTEMA}</span></a>
+    <button class="icone-botao topo-menu" id="btn-menu" aria-label="Abrir menu">${IC.menu}</button>
+    ${busca}
     <div class="topo-acoes">
-      <button class="icone-botao" id="btn-tema" title="Alternar tema (claro/escuro)" aria-label="Alternar tema">${iconeTema}</button>
-      <a class="icone-botao" href="/configuracoes" title="Configurações" aria-label="Configurações">${IC.engrenagem}</a>
-      ${usuario ? `<a class="avatar-link" href="/configuracoes" title="${esc(usuario.nome)}">${avatar(usuario)}</a>` : ''}
+      ${sino}
+      ${usuario ? `<a class="avatar-link topo-perfil" href="/configuracoes" title="${esc(usuario.nome)}">${avatar(usuario)}</a>` : ''}
+      <form method="post" action="/sair" class="topo-sair">
+        <button class="icone-botao" type="submit" title="Sair" aria-label="Sair">${IC.sair}</button>
+      </form>
     </div>
   </header>`;
 }
@@ -61,31 +109,58 @@ function gaveta(usuario, ativa = '') {
   let itens = '';
   if (tipo === 'aluno') {
     itens += itemGaveta('/aluno', 'Início', ativa === 'inicio', IC.casa);
-    itens += itemGaveta('/aluno/calendario', 'Calendário do mês', ativa === 'calendario', IC.calendario);
+    itens += itemGaveta('/aluno#tarefas', 'Minhas Tarefas', ativa === 'tarefas', IC.tarefas);
+    itens += itemGaveta('/aluno#materias', 'Matérias', ativa === 'materias', IC.materias);
+    itens += itemGaveta('/aluno/calendario', 'Calendário', ativa === 'calendario', IC.calendario);
+    itens += itemGaveta('/aluno/notificacoes', 'Notificações', ativa === 'notificacoes', IC.notificacoes, '', true);
     itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   } else if (tipo === 'professor') {
     itens += itemGaveta('/professor', 'Início', ativa === 'inicio', IC.casa);
-    itens += itemGaveta('/professor/calendario', 'Calendário do mês', ativa === 'calendario', IC.calendario);
+    itens += itemGaveta('/professor#correcoes', 'Correções', ativa === 'correcoes', IC.tarefas);
+    itens += itemGaveta('/professor#materias', 'Matérias', ativa === 'materias', IC.materias);
+    itens += itemGaveta('/professor/calendario', 'Calendário', ativa === 'calendario', IC.calendario);
+    itens += itemGaveta('/professor/notificacoes', 'Notificações', ativa === 'notificacoes', IC.notificacoes, '', true);
     itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   } else {
-    itens += itemGaveta('/admin', 'Painel administrativo', ativa === 'admin', IC.pasta);
-    itens += itemGaveta('/admin/calendario', 'Calendário do mês', ativa === 'calendario', IC.calendario);
+    itens += itemGaveta('/admin', 'Painel administrativo', ativa === 'admin', IC.casa);
+    itens += itemGaveta('/admin/calendario', 'Calendário', ativa === 'calendario', IC.calendario);
     itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   }
+
   return `
   <div class="sobreposicao" id="sobreposicao"></div>
   <nav class="gaveta" id="gaveta" aria-label="Menu principal">
     <div class="gaveta-topo">
-      <a class="marca" href="${homeDo(usuario)}">${iconeLogo(26)}<span>${NOME_SISTEMA}</span></a>
-      <button class="icone-botao" id="btn-fechar" aria-label="Fechar menu">
-        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg>
-      </button>
+      <a class="marca" href="${homeDo(usuario)}">
+        ${iconeLogo(40)}
+        <span class="marca-texto">Classroom<span>Escolar</span></span>
+      </a>
+      <button class="icone-botao btn-fechar" id="btn-fechar" aria-label="Fechar menu">${IC.fechar}</button>
     </div>
-    ${usuario ? `<div class="gaveta-usuario">${avatar(usuario, 'pequeno')}<div><strong>${esc(usuario.nome)}</strong><small>${esc(usuario.email)}</small></div></div>` : ''}
+
     <div class="gaveta-lista">${itens}</div>
-    <form method="post" action="/sair" class="gaveta-rodape">
-      <button type="submit" class="gaveta-item"><span class="gaveta-icone">${IC.sair}</span><span>Sair</span></button>
-    </form>
+
+    <div class="gaveta-base">
+      <div class="gaveta-tema">
+        <span class="gaveta-tema-rotulo">Tema</span>
+        <button class="alternar-tema" id="btn-tema" type="button" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro">
+          <span class="tema-opcao sol">${IC.sol}</span>
+          <span class="tema-opcao lua">${IC.lua}</span>
+        </button>
+      </div>
+      ${
+        usuario
+          ? `<a class="gaveta-perfil" href="/configuracoes" title="Abrir perfil">
+              ${avatar(usuario, 'pequeno')}
+              <span class="gaveta-perfil-info">
+                <strong>${esc(usuario.nome)}</strong>
+                <small>${esc(rotuloPerfil(usuario))}</small>
+              </span>
+              <span class="gaveta-perfil-seta">${IC.seta}</span>
+            </a>`
+          : ''
+      }
+    </div>
   </nav>`;
 }
 
@@ -106,11 +181,6 @@ function mensagens(req) {
     .join('')}</div>`;
 }
 
-function homeDo(usuario) {
-  if (!usuario) return '/';
-  return usuario.tipo === 'admin' ? '/admin' : usuario.tipo === 'professor' ? '/professor' : '/aluno';
-}
-
 /**
  * Decoração e widgets exclusivos de temas — renderizados sempre no HTML e
  * visíveis apenas quando o tema correspondente está ativo (via CSS em
@@ -120,7 +190,6 @@ function homeDo(usuario) {
 function decoracaoTema() {
   return `
 <div class="tema-decoracao" aria-hidden="true">
-  <!-- Lo-fi Night: cantinho com rádio lo-fi tocando -->
   <div class="deco-lofi">
     <div class="deco-lofi-player">
       <span class="deco-lofi-nota">♫</span>
@@ -131,7 +200,6 @@ function decoracaoTema() {
       <span class="deco-equalizador"><i></i><i></i><i></i><i></i></span>
     </div>
   </div>
-  <!-- Moonroom: luminária da lua com estrelinhas -->
   <div class="deco-moonroom">
     <div class="deco-moonroom-widget">
       <span class="deco-lua"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12.3 4.9a7.1 7.1 0 1 0 6.8 9.4 7.1 7.1 0 0 1-6.8-9.4"/></svg></span>
@@ -147,19 +215,20 @@ function decoracaoTema() {
 </div>`;
 }
 
-/** Página HTML completa com topo + gaveta + conteúdo. */
+/** Página HTML completa com topo + sidebar + conteúdo. */
 function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
   // Tema salvo na conta (sessão) — o servidor já renderiza com ele, sem "piscar".
   const tema = temaDe((req.session && req.session.usuario && req.session.usuario.tema) || (usuario && usuario.tema));
-  // O CSS do Lo-fi Night só é carregado quando o tema está realmente aplicado;
-  // assim o visual personalizado não vaza para os demais temas.
+  // O CSS do Lo-fi Night só é carregado quando o tema está realmente aplicado.
   const cssLofi = tema.id === 'lo-fi-night' ? '<link rel="stylesheet" href="/lofi.css">' : '';
-  // O painel inicial e as configurações usam o mesmo visual lo-fi do calendário.
+  // O painel inicial e as configurações usam classes próprias no body.
   const classeCorpo = /\bini-app\b/.test(corpo)
     ? ' class="pagina-inicio"'
     : /\bcfg-app\b/.test(corpo)
       ? ' class="pagina-config"'
       : '';
+  // O dashboard segue o novo visual SaaS, sem os widgets decorativos antigos.
+  const semDecoracao = ativa === 'inicio' || ativa === 'notificacoes';
   return `<!DOCTYPE html>
 <html lang="pt-BR" data-tema="${tema.id}" data-tema-modo="${tema.modo}" data-tema-salvo="${tema.id}">
 <head>
@@ -169,7 +238,7 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
 ${scriptTemas()}
 <script>window.SISTEMA_LOGADO = true;</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Pixelify+Sans:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css">
 <link rel="stylesheet" href="/temas.css">
 <link rel="stylesheet" href="/decoracoes.css">
@@ -177,20 +246,20 @@ ${cssLofi}
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="theme-color" content="#17132d">
+<meta name="theme-color" content="#7b5ce6">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Nuvia">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Classroom Escolar">
 </head>
 <body data-pagina="${ativa}"${classeCorpo}>
-${topo(usuario, ativa)}
+${topo(usuario, ativa, req)}
 ${gaveta(usuario, ativa)}
 <main class="conteudo">
 ${mensagens(req)}
 ${corpo}
 </main>
-${decoracaoTema()}
+${semDecoracao ? '' : decoracaoTema()}
 <script src="/app.js"></script>
 <script src="/pwa.js" defer></script>
 </body>

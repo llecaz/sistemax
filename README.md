@@ -1,31 +1,34 @@
-# 🏫 Sistema de Entrega de Trabalhos — Estilo Google Classroom
+# 🎓 Classroom Escolar — Nuvia
 
-Site para a escola onde os alunos enviam seus trabalhos **direto para o professor daquela matéria**, com escolha automática de **turma → matéria → professor**, correção com nota/observação e visual minimalista inspirado no Google Classroom.
+Site para a escola onde os alunos enviam seus trabalhos **direto para o professor daquela matéria**, com escolha automática de **turma → matéria → professor**, correção com nota/observação e um dashboard moderno em **lavanda e roxo**, no estilo SaaS.
 
-Feito com **Express** (Node.js) + **PostgreSQL**.
+Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas no servidor.
 
 ---
 
 ## ✨ Principais recursos
 
 ### 🎨 Visual
-- Estética **Google Classroom / minimalista**: Roboto, cards brancos com cantos arredondados, faixa colorida no topo de cada matéria, botões arredondados no azul do Google `#1a73e8`.
+- **Dashboard SaaS em lavanda/roxo**: fundo lavanda muito claro, cartões brancos com bordas discretas, cantos arredondados e sombras suaves; tipografia limpa e ícones minimalistas.
+- **Sidebar fixa à esquerda** com logo, navegação (Início, Minhas Tarefas, Matérias, Calendário, Notificações e Configurações), seletor claro/escuro e o perfil do estudante no rodapé. Em telas menores ela vira uma gaveta recolhível.
+- **Topbar** com campo de busca de tarefas e matérias, atalho para notificações, acesso ao perfil e saída.
+- **Banner de boas-vindas** com saudação por horário (“Bom dia / Boa tarde / Boa noite”) e cartão de data ao lado.
 - **🎨 Sistema de personalização de temas** (⚙️ Configurações → **Aparência**):
-  - **8 temas**: `Clean Minimal` (padrão), `Japandi`, `Dark Minimal`, `Soft UI`, `Lo-fi Night`, `Pastel Dream`, `Moonroom` e `Dark Academia`.
+  - **8 temas**: `Lavanda` (padrão), `Japandi`, `Lavanda Noturna`, `Soft UI`, `Lo-fi Night`, `Pastel Dream`, `Moonroom` e `Dark Academia`.
   - **Lo-fi Night** e **Moonroom** também mudam o **design** (decoração de fundo + widget exclusivo: rádio lo-fi e cantinho da lua), sem alterar a paleta do Lo-fi Night.
   - Galeria com **cards de pré-visualização** (miniatura da interface), **paleta de cores**, **descrição da estética** e selos `Selecionado` / `Visualizando` / `Padrão`.
   - Clique num card para **visualizar** a aparência na plataforma inteira e depois **Aplicar tema** (ou **Cancelar pré-visualização**).
   - O tema fica salvo **na conta (banco de dados)** — sobrevive a atualizar a página, sair e entrar novamente, e vale para qualquer dispositivo.
-  - **Restaurar padrão** volta ao Clean Minimal.
-  - Alternador **Sol 🌞 / Lua 🌙** na barra superior troca rapidamente entre o par claro/escuro do tema atual.
+  - **Restaurar padrão** volta ao tema Lavanda.
+  - Alternador **Sol 🌞 / Lua 🌙** na sidebar troca rapidamente entre o par claro/escuro do tema atual.
   - Cada tema tem sua própria identidade (fontes, cores, decorações de fundo), mas mantém a mesma estrutura e funcionalidades.
   - O **calendário do mês** também acompanha o tema: cores das atividades, cantos, brilhos e cartões mudam junto; no **Lo-fi Night** ele usa o layout exclusivo de quarto de estudos.
   - Organizado com **variáveis CSS**: base em `frontend/estilo.css` + identidade dos temas em `frontend/temas.css` + registro em `backend/src/temas.js`.
-- Ícone de **engrenagem ⚙️** na barra superior → página de **Configurações**.
-- Responsivo (celular e computador).
+- Ícone de **engrenagem ⚙️** na sidebar → página de **Configurações**.
+- Responsivo em desktop, notebook, tablet e celular.
 
 ### 🔐 Login
-- Tela de entrada **estilo Google**: card centralizado, campos Email/Senha, botão azul.
+- Tela de entrada **Nuvia**: card centralizado, campos Email/Senha e botão em destaque.
 - **Manter conectado** (sessão de 30 dias) ou sessão só no navegador.
 - **Cadastro de aluno pelo código da turma** (fornecido pela escola).
 - **Esqueci a senha**: recuperação por pergunta de segurança + redefinição pelo admin.
@@ -33,8 +36,10 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
 - Tentativas de login limitadas (proteção contra força bruta).
 
 ### 🎓 Área do Aluno
-- **Início em painel**: saudação, resumo (a fazer / aguardando correção / corrigidas), **Minhas tarefas** com abas, **Minhas matérias** com barra de progresso, mini-calendário e próximas tarefas.
-- **Visual lo-fi / dreamy** no painel inicial: mesma paleta creme, lilás e rosa do calendário, tipografia pixel, cartões com sombra dura, ilustrações da biblioteca e cartão de dica escuro.
+- **Dashboard inicial**: banner com saudação por horário, cartão de data, **Minhas Tarefas** com filtros funcionais (`Todas`, `A fazer`, `Entregues`, `Corrigidas`), **Minhas Matérias** em cards com ícone, média/desempenho e barra de progresso, mini-calendário navegável e **Próximas Tarefas**.
+- **Status coloridos** nas tarefas: verde para corrigida, azul para entregue, laranja para pendente e vermelho para atrasada.
+- **Busca** na topbar filtra tarefas e matérias por nome/matéria (`?q=`), mantendo os filtros e a navegação do calendário.
+- **Notificações**: página com prazos próximos, atividades atrasadas, entregas enviadas e correções recebidas, geradas a partir dos dados reais da conta.
 - **Página da matéria em painel**: lista de trabalhos + resumo lateral com entregues, progresso e próximo prazo.
 - **Detalhe do trabalho em painel**: descrição, prazo, entrega/correção e envio + resumo lateral (situação, prazo, envio, nota), orientações de entrega e atalhos.
 - Grade de **cards das matérias** da turma (cada matéria com o nome do professor).
@@ -67,7 +72,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**.
   - `accessories/` — laços, almofada, caneca, fones, envelope, patinhas, quadro e janela.
   - `ui/` — ícones e componentes de interface (barras, cartão, balão de fala).
 - Componente reutilizável `decoracao(nome, opções)` em `backend/src/paginas/decoracoes.js` (tamanho, posição, margem, opacidade, rotação, visibilidade e `alt`).
-- Login, painel do aluno/professor e calendário usam a biblioteca Nuvia (cenas, gatinhos, plantas, laços, luas e estrelas).
+- A página de **calendário no tema Lo-fi Night** usa a biblioteca Nuvia (cenas, gatinhos, plantas, laços, luas e estrelas). O novo dashboard em lavanda/roxo **não usa ilustrações** — apenas formas e ícones minimalistas.
 
 ### 🖼️ Biblioteca de decorações (Nuvia Pixel Art)
 
@@ -105,8 +110,8 @@ decoracao('nuvia-cat-sleeping-pillow', {
 O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de visibilidade) e preserva a proporção com `width` + `height: auto`, `image-rendering: pixelated` e `pointer-events: none`.
 
 ### 👩‍🏫 Área do Professor
-- **Início em painel**: entregas para corrigir, matérias com progresso de correções, mini-calendário e próximas tarefas.
-- **Visual lo-fi / dreamy** também no painel do professor, seguindo o calendário.
+- **Dashboard inicial**: banner com saudação, cartão de data, **Entregas para corrigir**, **Minhas Matérias** com progresso de correções, mini-calendário navegável e **Próximas Tarefas**.
+- **Notificações**: novas entregas e entregas fora do prazo, com atalho direto para a correção.
 - **Página da matéria em painel**: publicar atividades + resumo lateral (entregas, correções pendentes e próximo prazo).
 - **Tela de correção em painel**: entregas dos alunos + resumo lateral (prazo, alunos, entregues, corrigidas, média e progresso), lista de quem está aguardando e de quem não entregou (com atalho para o aluno).
 - Cards das turmas/matérias que leciona (com entregas aguardando correção).
@@ -132,7 +137,7 @@ O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de 
 - **Foto de perfil** (JPG/PNG/WebP até 2 MB) ou inicial num círculo colorido.
 - **Nome**, **email** e **turma conectada** (aluno) / matérias que leciona (professor).
 - Alterar **senha** e **pergunta de segurança**.
-- Escolha do **tema claro/escuro**.
+- Escolha do **tema claro/escuro** (padrão: Lavanda).
 - Com o tema **Lo-fi Night** ativo, a página usa o mesmo visual do calendário (cartões creme, tipografia pixel, sombras duras e barra superior roxa). A galeria de temas continua pré-visualizando os outros temas normalmente.
 
 ---
@@ -257,7 +262,7 @@ sistemax/
 │   ├── pwa.js               # ⭐ Registro do SW e botão "Instalar app"
 │   ├── offline.html         # ⭐ Página exibida sem conexão
 │   ├── icons/               # ⭐ Ícones 192x192 e 512x512 do aplicativo
-│   ├── estilo.css           # Tema base (variáveis) + visual Classroom + galeria
+│   ├── estilo.css           # Tema base (variáveis) + shell SaaS + dashboard + galeria
 │   ├── temas.css            # ⭐ Identidade visual de cada tema (variáveis CSS)
 │   ├── decoracoes.css       # ⭐ Componente .deco da biblioteca
 │   ├── lofi.css             # ⭐ Visual lo-fi/pixel art da página de calendário
@@ -293,7 +298,7 @@ sistemax/
 3. (Opcional) Adicione toques de identidade no mesmo arquivo — fontes, decorações de fundo etc.
 
 Pronto: o tema aparece **automaticamente** na galeria de Configurações → Aparência.
-O tema padrão de novos usuários é o `clean-minimal` (coluna `usuarios.tema`).
+O tema padrão de novos usuários é o **Lavanda** (`clean-minimal`, coluna `usuarios.tema`).
 
 ---
 

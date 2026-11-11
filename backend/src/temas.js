@@ -15,13 +15,13 @@ const TEMAS = [
   /* ---------- Minimalistas e sofisticados ---------- */
   {
     id: 'clean-minimal',
-    nome: 'Clean Minimal',
+    nome: 'Lavanda',
     categoria: 'Minimalistas e sofisticados',
     modo: 'claro',
     par: 'dark-minimal',
     padrao: true,
-    descricao: 'Interface branca, moderna e organizada — o visual clássico da plataforma.',
-    paleta: ['#f7f8fa', '#ffffff', '#202124', '#1a73e8', '#1e8e3e'],
+    descricao: 'Interface clara em lavanda e roxo, com cartões brancos, cantos arredondados e visual SaaS moderno.',
+    paleta: ['#f4f2fb', '#ffffff', '#2e2947', '#7b5ce6', '#2f9e6e'],
   },
   {
     id: 'japandi',
@@ -35,13 +35,13 @@ const TEMAS = [
   },
   {
     id: 'dark-minimal',
-    nome: 'Dark Minimal',
+    nome: 'Lavanda Noturna',
     categoria: 'Minimalistas e sofisticados',
     modo: 'escuro',
     par: 'clean-minimal',
     padrao: false,
-    descricao: 'Interface escura, elegante e discreta, com contraste suave para os olhos.',
-    paleta: ['#1e2126', '#262a31', '#e8eaed', '#8ab4f8', '#81c784'],
+    descricao: 'Versão escura da identidade lavanda, com contraste suave e superfícies roxas discretas.',
+    paleta: ['#17131f', '#211b2e', '#f1edf9', '#a78bfa', '#4ade80'],
   },
   {
     id: 'soft-ui',

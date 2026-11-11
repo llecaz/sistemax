@@ -8,7 +8,7 @@ const { exigePerfil } = require('../auth');
 const { nomeArquivoUnico } = require('../util');
 const { abasDe, ROTULOS_ABA } = require('../regras');
 const { paginaMateria, paginaTrabalho } = require('../paginas/aluno');
-const { paginaInicioAluno } = require('../paginas/inicio');
+const { paginaInicioAluno, paginaNotificacoes } = require('../paginas/inicio');
 const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
 
@@ -84,7 +84,10 @@ router.get('/', async (req, res) => {
                   WHERE a.vinculo_id = td.id AND a.ativa AND a.tipo = 'trabalho' AND e.aluno_id = $2) AS entregues,
                 (SELECT count(*) FROM atividades a
                    JOIN entregas e ON e.atividade_id = a.id
-                  WHERE a.vinculo_id = td.id AND e.aluno_id = $2 AND e.nota IS NULL) AS aguardando
+                  WHERE a.vinculo_id = td.id AND e.aluno_id = $2 AND e.nota IS NULL) AS aguardando,
+                (SELECT round(avg(e.nota)::numeric, 1) FROM atividades a
+                   JOIN entregas e ON e.atividade_id = a.id
+                  WHERE a.vinculo_id = td.id AND e.aluno_id = $2 AND e.nota IS NOT NULL) AS media
            FROM turma_disciplina td
            JOIN disciplinas d ON d.id = td.disciplina_id
            LEFT JOIN usuarios p ON p.id = td.professor_id
@@ -109,6 +112,10 @@ router.get('/', async (req, res) => {
     const aba = ['todas', 'afazer', 'entregues', 'corrigidas'].includes(req.query.aba)
       ? req.query.aba
       : 'todas';
+    const busca = String(req.query.q || '').trim();
+    const agora = new Date();
+    const ano = Number(req.query.ano) || agora.getFullYear();
+    const mes = Math.min(11, Math.max(0, (Number(req.query.mes) || agora.getMonth() + 1) - 1));
 
     res.send(
       pagina({
@@ -116,13 +123,68 @@ router.get('/', async (req, res) => {
         usuario,
         req,
         ativa: 'inicio',
-        corpo: paginaInicioAluno({ usuario, materias, atividades, eventos: atividades, aba }),
+        corpo: paginaInicioAluno({
+          usuario,
+          materias,
+          atividades,
+          eventos: atividades,
+          aba,
+          busca,
+          ano,
+          mes,
+        }),
       })
     );
   } catch (erro) {
     console.error('[aluno/home]', erro);
     flash(req, 'erro', 'Não foi possível carregar suas matérias.');
     res.redirect('/');
+  }
+});
+
+/** Notificações: prazos, entregas e correções do aluno. */
+router.get('/notificacoes', async (req, res) => {
+  try {
+    const usuario = req.session.usuario;
+
+    if (!usuario.turma_id) {
+      return res.send(
+        pagina({
+          titulo: 'Notificações',
+          usuario,
+          req,
+          ativa: 'notificacoes',
+          corpo: paginaNotificacoes({ usuario, perfil: 'aluno' }),
+        })
+      );
+    }
+
+    const atividades = await todos(
+      `SELECT a.id, a.titulo, a.descricao, a.prazo, a.tipo, td.id AS vinculo_id,
+              d.nome AS materia,
+              e.id AS entrega_id, e.enviado_em, e.nota
+         FROM atividades a
+         JOIN turma_disciplina td ON td.id = a.vinculo_id
+         JOIN disciplinas d ON d.id = td.disciplina_id
+         LEFT JOIN entregas e ON e.atividade_id = a.id AND e.aluno_id = $2
+        WHERE td.turma_id = $1 AND a.ativa
+        ORDER BY (a.prazo IS NULL), a.prazo`,
+      [usuario.turma_id, usuario.id]
+    );
+
+    res.send(
+      pagina({
+        titulo: 'Notificações',
+        usuario,
+        req,
+        ativa: 'notificacoes',
+        corpo: paginaNotificacoes({ usuario, atividades, perfil: 'aluno' }),
+      })
+    );
+  } catch (erro) {
+    console.error('[aluno/notificacoes]', erro);
+    flash(req, 'erro', 'Não foi possível carregar suas notificações.');
+    res.redirect('/aluno');
   }
 });
 

@@ -3,7 +3,7 @@ const express = require('express');
 const { um, todos, query } = require('../db');
 const { exigePerfil } = require('../auth');
 const { paginaMateriaProfessor, paginaAtividadeProfessor } = require('../paginas/professor');
-const { paginaInicioProfessor } = require('../paginas/inicio');
+const { paginaInicioProfessor, paginaNotificacoes } = require('../paginas/inicio');
 const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
 
@@ -114,19 +114,61 @@ router.get('/', async (req, res) => {
         [usuario.id]
       ),
     ]);
+    const busca = String(req.query.q || '').trim();
+    const agora = new Date();
+    const ano = Number(req.query.ano) || agora.getFullYear();
+    const mes = Math.min(11, Math.max(0, (Number(req.query.mes) || agora.getMonth() + 1) - 1));
+
     res.send(
       pagina({
         titulo: 'Início',
         usuario,
         req,
         ativa: 'inicio',
-        corpo: paginaInicioProfessor({ usuario, materias, entregas, eventos }),
+        corpo: paginaInicioProfessor({ usuario, materias, entregas, eventos, busca, ano, mes }),
       })
     );
   } catch (erro) {
     console.error('[prof/home]', erro);
     flash(req, 'erro', 'Não foi possível carregar suas matérias.');
     res.redirect('/');
+  }
+});
+
+/** Notificações: novas entregas e entregas fora do prazo. */
+router.get('/notificacoes', async (req, res) => {
+  try {
+    const usuario = req.session.usuario;
+    const entregas = await todos(
+      `SELECT e.id, e.enviado_em, e.metodo, e.link, e.arquivo_nome,
+              a.id AS atividade_id, a.titulo, a.prazo, a.vinculo_id,
+              d.nome AS materia, t.nome AS turma, u.nome AS aluno,
+              (a.prazo IS NOT NULL AND e.enviado_em > a.prazo) AS atrasada
+         FROM entregas e
+         JOIN atividades a ON a.id = e.atividade_id
+         JOIN turma_disciplina td ON td.id = a.vinculo_id
+         JOIN disciplinas d ON d.id = td.disciplina_id
+         JOIN turmas t ON t.id = td.turma_id
+         JOIN usuarios u ON u.id = e.aluno_id
+        WHERE a.professor_id = $1 AND e.nota IS NULL
+        ORDER BY e.enviado_em DESC
+        LIMIT 30`,
+      [usuario.id]
+    );
+
+    res.send(
+      pagina({
+        titulo: 'Notificações',
+        usuario,
+        req,
+        ativa: 'notificacoes',
+        corpo: paginaNotificacoes({ usuario, entregas, perfil: 'professor' }),
+      })
+    );
+  } catch (erro) {
+    console.error('[prof/notificacoes]', erro);
+    flash(req, 'erro', 'Não foi possível carregar suas notificações.');
+    res.redirect('/professor');
   }
 });
 
