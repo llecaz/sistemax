@@ -47,6 +47,7 @@ const svg = (conteudo, tamanho = 20) =>
 
 const IC = {
   casa: svg('<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>'),
+  lofi: svg('<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>', 18),
   tarefas: svg('<rect x="3" y="4" width="18" height="16" rx="4"/><path d="m8 12 2.5 2.5L16 9"/>'),
   materias: svg('<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/>'),
   calendario: svg('<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>'),
@@ -113,6 +114,7 @@ function topo(usuario, ativa, req) {
 
 function gaveta(usuario, ativa = '') {
   const tipo = usuario ? usuario.tipo : '';
+  const lofiAtivo = !!(usuario && usuario.lofi);
   let itens = '';
   if (tipo === 'aluno') {
     itens += itemGaveta('/aluno', 'Início', ativa === 'inicio', IC.casa);
@@ -152,9 +154,16 @@ function gaveta(usuario, ativa = '') {
     <div class="gaveta-base">
       <div class="gaveta-tema">
         <span class="gaveta-tema-rotulo">Tema</span>
-        <button class="alternar-tema" id="btn-tema" type="button" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro">
+        <button class="alternar-tema" id="btn-tema" type="button" title="Alternar entre Dark Mode e Normal Mode" aria-label="Alternar entre Dark Mode e Normal Mode">
           <span class="tema-opcao sol">${IC.sol}</span>
           <span class="tema-opcao lua">${IC.lua}</span>
+        </button>
+      </div>
+      <div class="gaveta-lofi">
+        <span class="gaveta-tema-rotulo">Lofi Mode</span>
+        <button class="lofi-toggle" id="btn-lofi" type="button" role="switch" aria-checked="${lofiAtivo ? 'true' : 'false'}" title="Ativar ou desativar o Lofi Mode" aria-label="Ativar ou desativar o Lofi Mode">
+          <span class="lofi-toggle-nota" aria-hidden="true">${IC.lofi}</span>
+          <span class="lofi-toggle-trilho" aria-hidden="true"><span class="lofi-toggle-bolinha"></span></span>
         </button>
       </div>
       ${
@@ -191,10 +200,8 @@ function mensagens(req) {
 }
 
 /**
- * Decoração e widgets exclusivos de temas — renderizados sempre no HTML e
- * visíveis apenas quando o tema correspondente está ativo (via CSS em
- * temas.css). Assim funcionam na pré-visualização da galeria de temas.
- * Hoje: Lo-fi Night (rádio lo-fi) e Moonroom (cantinho da lua).
+ * Widget flutuante do Lofi Mode — renderizado sempre no HTML, mas visível
+ * apenas quando o modo está ativo (CSS em temas.css reage a [data-lofi='on']).
  */
 function decoracaoTema() {
   return `
@@ -209,27 +216,18 @@ function decoracaoTema() {
       <span class="deco-equalizador"><i></i><i></i><i></i><i></i></span>
     </div>
   </div>
-  <div class="deco-moonroom">
-    <div class="deco-moonroom-widget">
-      <span class="deco-lua"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12.3 4.9a7.1 7.1 0 1 0 6.8 9.4 7.1 7.1 0 0 1-6.8-9.4"/></svg></span>
-      <div class="deco-moonroom-textos">
-        <strong>cantinho da lua</strong>
-        <small>luz suave pra focar 🌙</small>
-      </div>
-      <i class="deco-estrela e1">✦</i>
-      <i class="deco-estrela e2">✧</i>
-      <i class="deco-estrela e3">✦</i>
-    </div>
-  </div>
 </div>`;
 }
 
 /** Página HTML completa com topo + sidebar + conteúdo. */
 function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
   // Tema salvo na conta (sessão) — o servidor já renderiza com ele, sem "piscar".
-  const tema = temaDe((req.session && req.session.usuario && req.session.usuario.tema) || (usuario && usuario.tema));
-  // O CSS do Lo-fi Night só é carregado quando o tema está realmente aplicado.
-  const cssLofi = tema.id === 'lo-fi-night' ? `<link rel="stylesheet" href="/lofi.css${versaoAsset('lofi.css')}">` : '';
+  const sessao = (req.session && req.session.usuario) || usuario || {};
+  const tema = temaDe(sessao.tema || (usuario && usuario.tema));
+  // Lofi Mode: camada independente, vale para Dark e Normal.
+  const lofiAtivo = Boolean(sessao.lofi != null ? sessao.lofi : (usuario && usuario.lofi));
+  // O CSS do Lofi Mode é sempre carregado (o visual reage a [data-lofi]).
+  const cssLofi = `<link rel="stylesheet" href="/lofi.css${versaoAsset('lofi.css')}">`;
   // O painel inicial e as configurações usam classes próprias no body.
   const classeCorpo = /\bini-app\b/.test(corpo)
     ? ' class="pagina-inicio"'
@@ -250,7 +248,7 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
         </aside>`
       : '';
   return `<!DOCTYPE html>
-<html lang="pt-BR" data-tema="${tema.id}" data-tema-modo="${tema.modo}" data-tema-salvo="${tema.id}">
+<html lang="pt-BR" data-tema="${tema.id}" data-tema-modo="${tema.modo}" data-tema-salvo="${tema.id}" data-lofi="${lofiAtivo ? 'on' : 'off'}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

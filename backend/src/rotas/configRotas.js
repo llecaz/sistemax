@@ -41,7 +41,7 @@ router.use(exigirLogin);
 async function dadosDoUsuario(id) {
   const usuario = await um(
     `SELECT u.id, u.nome, u.email, u.tipo, u.matricula, u.turma_id, u.foto,
-            u.pergunta_seg, u.criado_em, u.tema, t.nome AS turma_nome
+            u.pergunta_seg, u.criado_em, u.tema, u.lofi, t.nome AS turma_nome
        FROM usuarios u LEFT JOIN turmas t ON t.id = u.turma_id
       WHERE u.id = $1`,
     [id]
@@ -202,7 +202,7 @@ router.post('/tema', async (req, res) => {
 
     if (!temaValido(id)) {
       if (ehJson) return res.status(400).json({ ok: false, erro: 'Tema inválido.' });
-      flash(req, 'erro', 'Este tema não existe. Escolha outro na galeria.');
+      flash(req, 'erro', 'Este tema não existe. Escolha outro modo.');
       return res.redirect('/configuracoes');
     }
 
@@ -216,6 +216,26 @@ router.post('/tema', async (req, res) => {
     console.error('[config/tema]', e);
     if (ehJson) return res.status(500).json({ ok: false, erro: 'Não foi possível salvar o tema.' });
     flash(req, 'erro', 'Não foi possível salvar o tema.');
+  }
+  res.redirect('/configuracoes');
+});
+
+/** Ativar/desativar o Lofi Mode (camada independente do tema). */
+router.post('/lofi', async (req, res) => {
+  const ehJson = req.is('json') || req.headers.accept === 'application/json';
+  try {
+    const bruto = req.body && req.body.lofi;
+    const ativo = bruto === true || bruto === 'true' || bruto === 'on' || bruto === '1';
+    await query(`UPDATE usuarios SET lofi = $1 WHERE id = $2`, [ativo, req.session.usuario.id]);
+    req.session.usuario.lofi = ativo;
+    if (ehJson) {
+      return res.json({ ok: true, lofi: ativo });
+    }
+    flash(req, 'ok', ativo ? 'Lofi Mode ativado. Bom estudo!' : 'Lofi Mode desativado.');
+  } catch (e) {
+    console.error('[config/lofi]', e);
+    if (ehJson) return res.status(500).json({ ok: false, erro: 'Não foi possível salvar o Lofi Mode.' });
+    flash(req, 'erro', 'Não foi possível salvar o Lofi Mode.');
   }
   res.redirect('/configuracoes');
 });

@@ -102,10 +102,13 @@ function gradeMes({ ano, mes, porDia, usuario }) {
     const hoje = ehHoje(data);
     const visiveis = lista.slice(0, 3);
     const resto = lista.length - visiveis.length;
+    const filtroDia = lista.length
+      ? `<button type="button" class="cal-num cal-num-botao" data-filtro-dia="${k}" aria-pressed="false" aria-label="Filtrar atividades de ${d}/${mes + 1}/${ano}">${d}</button>`
+      : `<span class="cal-num">${d}</span>`;
     celulas += `
-    <div class="cal-dia ${hoje ? 'hoje' : ''} ${lista.length ? 'com-eventos' : ''}" data-dia="${k}">
+    <div class="cal-dia ${hoje ? 'hoje' : ''} ${lista.length ? 'com-eventos' : ''}" data-dia="${k}" data-eventos="${lista.length}">
       <div class="cal-dia-topo">
-        <span class="cal-num">${d}</span>
+        ${filtroDia}
         ${lista.some((ev) => ev.tipo === 'avaliacao') ? '<span class="cal-marca-prova" title="Tem prova">★</span>' : ''}
       </div>
       <div class="cal-dia-eventos">
@@ -299,7 +302,7 @@ function barraLateral({ usuario }) {
 }
 
 /** Página completa do calendário do mês no visual Lo-fi Night. */
-function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [], tema = 'lo-fi-night' }) {
+function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [], tema = 'nuvia' }) {
   const perfil = usuario.tipo;
   const professor = perfil === 'professor';
   const admin = perfil === 'admin';
@@ -449,7 +452,7 @@ function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [], tema 
             ? `<a href="${href}">${esc(ev.titulo)}</a>`
             : `<strong>${esc(ev.titulo)}</strong>`;
           return `
-          <li class="lofi-lista-item">
+          <li class="lofi-lista-item" data-dia="${chaveDia(new Date(ev.prazo))}">
             <i class="ponto ${t.classe}"></i>
             <div class="lofi-lista-corpo">
               ${titulo}
@@ -524,6 +527,10 @@ function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [], tema 
           <span>${total} atividade${total === 1 ? '' : 's'}</span>
         </header>
         <ul class="lofi-lista">${listaCompleta}</ul>
+        <div class="cal-filtro" id="filtro-dia" hidden>
+          <span>Filtrado por <strong id="filtro-dia-texto"></strong></span>
+          <button type="button" class="cal-filtro-limpar" id="filtro-dia-limpar">Mostrar todas ✕</button>
+        </div>
       </section>
 
       <div class="lofi-canto" aria-hidden="true">
@@ -561,7 +568,7 @@ function proximaTarefaClassica(ev, usuario) {
 }
 
 /** Página do calendário no visual clássico, usada pelos demais temas. */
-function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], tema = 'clean-minimal' }) {
+function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], tema = 'nuvia' }) {
   const perfil = usuario.tipo;
   const professor = perfil === 'professor';
   const admin = perfil === 'admin';
@@ -680,7 +687,7 @@ function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], t
             ? `<a href="${href}">${esc(ev.titulo)}</a>`
             : `<strong>${esc(ev.titulo)}</strong>`;
           return `
-          <li class="cal-lista-item">
+          <li class="cal-lista-item" data-dia="${chaveDia(new Date(ev.prazo))}">
             <i class="ponto ${t.classe}"></i>
             <div class="cal-lista-corpo">
               ${titulo}
@@ -718,13 +725,18 @@ function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], t
       <span class="descricao">${total} atividade${total === 1 ? '' : 's'}</span>
     </div>
     <ul class="cal-lista">${listaCompleta}</ul>
+    <div class="cal-filtro" id="filtro-dia" hidden>
+      <span>Filtrado por <strong id="filtro-dia-texto"></strong></span>
+      <button type="button" class="cal-filtro-limpar" id="filtro-dia-limpar">Mostrar todas ✕</button>
+    </div>
   </section>`;
 }
 
-/** Escolhe o visual do calendário conforme o tema aplicado na conta. */
-function paginaCalendario({ usuario, eventos, ano, mes, materias = [], tema }) {
+/** Escolhe o visual do calendário conforme o Lofi Mode da conta. */
+function paginaCalendario({ usuario, eventos, ano, mes, materias = [], tema, lofi }) {
   const temaId = tema || temaOuPadrao(usuario && usuario.tema);
-  return temaId === 'lo-fi-night'
+  const lofiAtivo = lofi != null ? Boolean(lofi) : Boolean(usuario && usuario.lofi);
+  return lofiAtivo
     ? paginaCalendarioLofi({ usuario, eventos, ano, mes, materias, tema: temaId })
     : paginaCalendarioClassico({ usuario, eventos, ano, mes, materias, tema: temaId });
 }

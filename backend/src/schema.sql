@@ -43,8 +43,10 @@ CREATE INDEX IF NOT EXISTS idx_usuarios_tipo   ON usuarios(tipo);
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_dados BYTEA;
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_tipo  TEXT;
 
--- Tema visual preferido do usuário (sistema de personalização de temas)
+-- Tema visual preferido do usuário (Dark Mode ou Normal Mode)
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS tema TEXT NOT NULL DEFAULT 'nuvia';
+-- Lofi Mode: camada opcional de aparência, independente do tema escolhido
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS lofi BOOLEAN NOT NULL DEFAULT FALSE;
 
 -- Vínculo com login social (Google / GitHub). O e-mail precisa ser o mesmo
 -- da conta Nuvia; o ID externo evita depender do e-mail em logins futuros.

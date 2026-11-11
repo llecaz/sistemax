@@ -9,21 +9,18 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
 ## ✨ Principais recursos
 
 ### 🎨 Visual
-- **Identidade Nuvia em pixel art**: noite lilás, gatinhos, plantas e laços em tons de rosa, com tipografia `Pixelify Sans` nos títulos e fundos estrelados. Um tema claro correspondente, **Nuvia Manhã**, mantém o mesmo carinho em tons creme e rosa.
+- **Identidade Nuvia em pixel art**: noite lilás, gatinhos, plantas e laços em tons de rosa, com tipografia `Pixelify Sans` nos títulos e fundos estrelados. Um tema claro correspondente, **Normal Mode**, mantém o mesmo carinho em tons creme e rosa.
 - **Sidebar fixa à esquerda** com logo, navegação (Início, Minhas Tarefas, Matérias, Calendário, Notificações e Configurações), seletor claro/escuro e o perfil do estudante no rodapé. Em telas menores ela vira uma gaveta recolhível.
 - **Topbar** com campo de busca de tarefas e matérias, atalho para notificações, acesso ao perfil e saída.
 - **Banner de boas-vindas** com saudação por horário (“Bom dia / Boa tarde / Boa noite”) e cartão de data ao lado.
-- **🎨 Sistema de personalização de temas** (⚙️ Configurações → **Aparência**):
-  - **10 temas**: `Nuvia Pixel` (padrão), `Nuvia Manhã`, `Lavanda`, `Japandi`, `Lavanda Noturna`, `Soft UI`, `Lo-fi Night`, `Pastel Dream`, `Moonroom` e `Dark Academia`.
-  - **Lo-fi Night** e **Moonroom** também mudam o **design** (decoração de fundo + widget exclusivo: rádio lo-fi e cantinho da lua), sem alterar a paleta do Lo-fi Night.
-  - Galeria com **cards de pré-visualização** (miniatura da interface), **paleta de cores**, **descrição da estética** e selos `Selecionado` / `Visualizando` / `Padrão`.
-  - Clique num card para **visualizar** a aparência na plataforma inteira e depois **Aplicar tema** (ou **Cancelar pré-visualização**).
-  - O tema fica salvo **na conta (banco de dados)** — sobrevive a atualizar a página, sair e entrar novamente, e vale para qualquer dispositivo.
-  - **Restaurar padrão** volta ao tema Nuvia Pixel.
-  - Alternador **Sol 🌞 / Lua 🌙** na sidebar troca rapidamente entre o par claro/escuro do tema atual.
-  - Cada tema tem sua própria identidade (fontes, cores, decorações de fundo), mas mantém a mesma estrutura e funcionalidades.
-  - O **calendário do mês** também acompanha o tema: cores das atividades, cantos, brilhos e cartões mudam junto; no **Lo-fi Night** ele usa o layout exclusivo de quarto de estudos.
-  - Organizado com **variáveis CSS**: base em `frontend/estilo.css` + identidade dos temas em `frontend/temas.css` + a identidade Nuvia (escuro/claro) em `frontend/nuvia.css` + registro em `backend/src/temas.js`.
+- **🎨 Sistema de aparência** (⚙️ Configurações → **Aparência**):
+  - **Dois modos principais**: **Dark Mode** (noite lilás, padrão) e **Normal Mode** (claro, tons creme e rosa).
+  - Alternador **Sol 🌞 / Lua 🌙** na sidebar troca diretamente entre os dois modos, sem navegar por galeria.
+  - **Lofi Mode**, opcional e independente: uma camada aconchegante (pixel art, chuva, tipografia de títulos em `Pixelify Sans`, widget de rádio lo-fi e o **quarto de estudos** exclusivo do calendário) que funciona **tanto no Dark Mode quanto no Normal Mode**.
+  - O Lofi Mode liga/desliga pelo botão na sidebar ou pelo interruptor em Configurações → Aparência — ao desligar, a interface volta exatamente à aparência do modo atual.
+  - Clique num card de modo para **aplicar na hora**; a preferência fica salva **na conta (banco de dados)** — sobrevive a atualizar a página, sair e entrar novamente, e vale para qualquer dispositivo.
+  - O **calendário do mês** acompanha o modo e o Lofi Mode: cores das atividades, cantos, brilhos e cartões mudam junto; com o Lofi Mode ativo, ele usa o layout exclusivo de quarto de estudos (inclusive com clima escuro no Dark Mode).
+  - Organizado com **variáveis CSS**: base em `frontend/estilo.css` + acabamentos compartilhados em `frontend/temas.css` + a identidade Nuvia (dark/light) em `frontend/nuvia.css` + a camada Lofi (independente do tema) em `frontend/lofi.css` + registro em `backend/src/temas.js`.
 - Ícone de **engrenagem ⚙️** na sidebar → página de **Configurações**.
 - Responsivo em desktop, notebook, tablet e celular.
 
@@ -54,8 +51,8 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
 
 ### 🗓️ Calendário do mês (aluno e professor)
 - Página própria com grade do **mês**, prazos e provas marcados por dia.
-- **Acompanha o tema escolhido na conta**: no **Lo-fi Night** usa o visual lo-fi / dreamy em pixel art (quarto de estudos, tons pastel, barra lateral escura e player); nos demais temas usa o layout clássico com as cores, fontes, cantos e brilhos do tema ativo.
-- **Cores das atividades por tema**: tarefa/quiz, entrega, prova, projeto e evento são ajustados à paleta de cada tema.
+- **Acompanha o modo e o Lofi Mode**: com o **Lofi Mode ativo** usa o visual lo-fi / dreamy em pixel art (quarto de estudos, tons pastel no Normal Mode e tons de noite no Dark Mode, barra lateral escura e player); sem o Lofi Mode usa o layout clássico com as cores, fontes, cantos e brilhos do modo ativo.
+- **Cores das atividades por modo**: tarefa/quiz, entrega, prova, projeto e evento são ajustadas à paleta de cada modo.
 - **Barra lateral escura** com navegação em ícones pixel, estante de livros, luas e plantinhas (layout Lo-fi Night).
 - **Player lo-fi** funcional (acordes, baixo e chuva sintetizados com Web Audio — sem arquivos externos).
 - Área principal com cabeçalho ilustrado, navegação de meses e cartão do calendário.
@@ -73,7 +70,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
   - `accessories/` — laços, almofada, caneca, fones, envelope, patinhas, quadro e janela.
   - `ui/` — ícones e componentes de interface (barras, cartão, balão de fala).
 - Componente reutilizável `decoracao(nome, opções)` em `backend/src/paginas/decoracoes.js` (tamanho, posição, margem, opacidade, rotação, visibilidade e `alt`).
-- A página de **calendário no tema Lo-fi Night** usa a biblioteca Nuvia (cenas, gatinhos, plantas, laços, luas e estrelas). O novo dashboard em lavanda/roxo **não usa ilustrações** — apenas formas e ícones minimalistas.
+- A página de **calendário com o Lofi Mode ativo** usa a biblioteca Nuvia (cenas, gatinhos, plantas, laços, luas e estrelas). O novo dashboard em lavanda/roxo **não usa ilustrações** — apenas formas e ícones minimalistas.
 
 ### 🖼️ Biblioteca de decorações (Nuvia Pixel Art)
 
@@ -138,8 +135,8 @@ O CSS base fica em `frontend/decoracoes.css` (`.deco`, `.deco--abs`, classes de 
 - **Foto de perfil** (JPG/PNG/WebP até 2 MB) ou inicial num círculo colorido.
 - **Nome**, **email** e **turma conectada** (aluno) / matérias que leciona (professor).
 - Alterar **senha** e **pergunta de segurança**.
-- Escolha do **tema claro/escuro** (padrão: Lavanda).
-- Com o tema **Lo-fi Night** ativo, a página usa o mesmo visual do calendário (cartões creme, tipografia pixel, sombras duras e barra superior roxa). A galeria de temas continua pré-visualizando os outros temas normalmente.
+- Escolha entre **Dark Mode** e **Normal Mode** (padrão: Dark Mode) + interruptor do **Lofi Mode** (funciona nos dois).
+- Com o **Lofi Mode ativo**, a página usa o mesmo visual do calendário (no Normal Mode: cartões creme e tipografia pixel; no Dark Mode: a mesma cena em clima de noite).
 
 ---
 
@@ -250,7 +247,7 @@ sistemax/
 │       ├── criarBanco.js    # Cria tabelas + insere dados de exemplo
 │       ├── seed.js          # Dados iniciais (admin, turmas, matérias, professores)
 │       ├── auth.js          # Senhas (scrypt), sessão e proteção de rotas
-│       ├── temas.js         # ⭐ Registro dos temas visuais (fonte única)
+│       ├── temas.js         # ⭐ Registro dos modos de aparência (fonte única)
 │       ├── regras.js        # Regras de status (atrasado/corrigido/etc.)
 │       ├── util.js          # Escape HTML, datas, cores, códigos
 │       ├── postgresLocal.js # PostgreSQL local embutido (modo local)
@@ -264,14 +261,14 @@ sistemax/
 │   ├── offline.html         # ⭐ Página exibida sem conexão
 │   ├── icons/               # ⭐ Ícones 192x192 e 512x512 do aplicativo
 │   ├── estilo.css           # Tema base (variáveis) + shell SaaS + dashboard + galeria
-│   ├── temas.css            # ⭐ Identidade visual de cada tema (variáveis CSS)
+│   ├── temas.css            # ⭐ Acabamentos compartilhados + Lofi Mode (transições, rádio)
 │   ├── decoracoes.css       # ⭐ Componente .deco da biblioteca
 │   ├── lofi.css             # ⭐ Visual lo-fi/pixel art da página de calendário
 │   ├── lofi.js              # ⭐ Player lo-fi (Web Audio API)
 │   ├── assets/decorations/  # ⭐ PNGs transparentes Nuvia (cats, plants, stationery, celestial, accessories, ui)
 │   ├── assets/source/       # ⭐ Cartela original nuvia-assets-sheet.png
 │   ├── img/lofi/            # ⭐ Ilustrações pixel art (gatos, livros, plantas, lua)
-│   └── app.js               # Temas, menu, confirmações, seleção de arquivos
+│   └── app.js               # Aparência (modos + Lofi), menu, filtros do calendário, confirmações
 ├── scripts/gerar-pixel-art.js  # Gera os SVGs das ilustrações do calendário
 ├── backend/uploads/         # Arquivos enviados (fora da área pública)
 ├── package.json             # Scripts: start, dev, criar-banco
@@ -283,23 +280,16 @@ sistemax/
 
 ---
 
-## 🎨 Sistema de temas — como adicionar um tema novo
+## 🎨 Sistema de aparência — como mexer
 
-1. **Registre** o tema em [`backend/src/temas.js`](backend/src/temas.js):
-   adicione um objeto com `id`, `nome`, `categoria`, `modo` (`claro`/`escuro`),
-   `par` (tema oposto usado pelo alternador Sol/Lua), `descricao` e `paleta` (5 cores).
-2. **Crie o bloco de cores** em [`frontend/temas.css`](frontend/temas.css):
-   ```css
-   [data-tema='meu-tema'] {
-     --fundo: #...;
-     --superficie: #...;
-     /* as mesmas variáveis do :root em estilo.css */
-   }
-   ```
-3. (Opcional) Adicione toques de identidade no mesmo arquivo — fontes, decorações de fundo etc.
+O sistema tem **dois modos** (`nuvia` = Dark Mode, `nuvia-day` = Normal Mode) e a camada **Lofi Mode** (independente do modo, salva em `usuarios.lofi`).
 
-Pronto: o tema aparece **automaticamente** na galeria de Configurações → Aparência.
-O tema padrão de novos usuários é o **Nuvia Pixel** (`nuvia`, coluna `usuarios.tema`); a identidade Nuvia fica toda em [`frontend/nuvia.css`](frontend/nuvia.css).
+1. **Modos**: registre em [`backend/src/temas.js`](backend/src/temas.js) e crie o bloco de variáveis em [`frontend/nuvia.css`](frontend/nuvia.css) com o seletor `[data-tema='seu-id']`.
+2. **Tokens compartilhados** (transição suave, rádio lo-fi): [`frontend/temas.css`](frontend/temas.css).
+3. **Lofi Mode**: ative/desative pelo botão na sidebar ou em Configurações → Aparência. O CSS em [`frontend/lofi.css`](frontend/lofi.css) só vale com `html[data-lofi='on']` e adapta a paleta (`--lf-*`) ao modo (`[data-tema-modo='claro'|'escuro']`). O layout do calendário troca para o "quarto de estudos" quando o modo está ativo.
+4. Contas antigas com temas removidos caem no modo equivalente (escuros → Dark Mode, claros → Normal Mode) automaticamente.
+
+O modo padrão de novos usuários é o **Dark Mode** (`nuvia`, coluna `usuarios.tema`).
 
 ---
 
@@ -307,7 +297,7 @@ O tema padrão de novos usuários é o **Nuvia Pixel** (`nuvia`, coluna `usuario
 
 | Tabela | Função |
 |---|---|
-| `usuarios` | admin, professores e alunos (nome, e-mail, senha, pergunta de segurança, **tema visual**) |
+| `usuarios` | admin, professores e alunos (nome, e-mail, senha, pergunta de segurança, **modo de aparência** e **lofi**) |
 | `turmas` | turmas com **código de matrícula** (ex.: `TURMA-9ANOA-K7X2`) |
 | `disciplinas` | Matemática, Português, História... |
 | `turma_disciplina` | ⭐ vínculo **turma ↔ matéria ↔ professor** (o coração do sistema) |

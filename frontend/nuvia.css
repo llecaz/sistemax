@@ -15,9 +15,9 @@
   --superficie-2: #251d45;
   --superficie-3: #2e2452;
   --texto: #f3eeff;
-  --texto-suave: #aaa2cf;
-  --borda: #433567;
-  --borda-suave: rgba(200, 184, 255, 0.14);
+  --texto-suave: #bab2e0;
+  --borda: #473a6e;
+  --borda-suave: rgba(203, 184, 255, 0.17);
   --azul: #c1a9ff;
   --azul-hover: #d6c8ff;
   --azul-texto: #251a3d;
@@ -57,9 +57,9 @@
   --superficie-2: #fcf2f8;
   --superficie-3: #f4e6f3;
   --texto: #4b3a63;
-  --texto-suave: #8b789e;
-  --borda: #e4cde2;
-  --borda-suave: #f0dcea;
+  --texto-suave: #7e6a92;
+  --borda: #e2c8df;
+  --borda-suave: #ecdae9;
   --azul: #a77bd8;
   --azul-hover: #9366c8;
   --azul-texto: #fffaf4;
@@ -1204,3 +1204,106 @@
   .nuvia-companion-bubble { display: none; }
 }
 
+
+/* ------------------------------------------------------------
+   14. Polimento final — detalhes que dão acabamento
+   ------------------------------------------------------------ */
+
+/* Placeholders e cursor de texto nos dois modos */
+[data-tema='nuvia'] input::placeholder,
+[data-tema='nuvia'] textarea::placeholder,
+[data-tema='nuvia-day'] input::placeholder,
+[data-tema='nuvia-day'] textarea::placeholder {
+  color: var(--texto-suave);
+  opacity: 0.72;
+}
+[data-tema='nuvia'] input,
+[data-tema='nuvia'] textarea,
+[data-tema='nuvia-day'] input,
+[data-tema='nuvia-day'] textarea {
+  caret-color: var(--azul);
+}
+
+/* O gatinho da marca dá uma espiadinha no hover */
+[data-tema='nuvia'] .marca:hover .marca-gato img,
+[data-tema='nuvia-day'] .marca:hover .marca-gato img {
+  animation: gato-espiada 0.7s ease;
+}
+@keyframes gato-espiada {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(2px) rotate(-6deg); }
+  62% { transform: translateY(-1px) rotate(5deg); }
+}
+
+/* Pontinho de notificação respirando */
+[data-tema='nuvia'] .topo-ponto,
+[data-tema='nuvia-day'] .topo-ponto,
+[data-tema='nuvia'] .gaveta-ponto,
+[data-tema='nuvia-day'] .gaveta-ponto {
+  animation: ponto-respira 2.6s ease-in-out infinite;
+}
+@keyframes ponto-respira {
+  0%, 100% { box-shadow: 0 0 0 2px var(--fundo), 0 0 6px var(--nv-pink); }
+  50% { box-shadow: 0 0 0 2px var(--fundo), 0 0 14px var(--nv-pink); }
+}
+
+/* Cartões interativos: leve salto no hover (dash e galeria de matérias) */
+[data-tema='nuvia'] .dash-card,
+[data-tema='nuvia-day'] .dash-card,
+[data-tema='nuvia'] .card-materia,
+[data-tema='nuvia-day'] .card-materia {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+[data-tema='nuvia'] .dash-card:hover,
+[data-tema='nuvia-day'] .dash-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Anel de foco consistente em tudo que é interativo */
+[data-tema='nuvia'] :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible,
+[data-tema='nuvia-day'] :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Seleção de texto na cor da marca */
+[data-tema='nuvia-day'] ::selection {
+  background: rgba(216, 99, 140, 0.28);
+  color: #4b3a63;
+}
+
+/* ---------- Lofi Mode nos dois modos (atmosfera extra) ---------- */
+[data-lofi='on'][data-tema-modo='escuro'] body {
+  background-image:
+    radial-gradient(1100px 620px at 8% -10%, rgba(143, 116, 232, 0.2), transparent 70%),
+    radial-gradient(820px 520px at 100% 0%, rgba(255, 143, 196, 0.12), transparent 72%),
+    radial-gradient(1000px 700px at 60% 120%, rgba(94, 70, 170, 0.2), transparent 72%),
+    radial-gradient(2px 2px at 7% 18%, rgba(255, 255, 255, 0.55), transparent 55%),
+    radial-gradient(1.5px 1.5px at 25% 74%, rgba(255, 255, 255, 0.35), transparent 55%),
+    radial-gradient(2px 2px at 44% 12%, rgba(255, 180, 217, 0.5), transparent 55%),
+    radial-gradient(1.5px 1.5px at 71% 82%, rgba(191, 170, 255, 0.42), transparent 55%),
+    radial-gradient(2px 2px at 91% 28%, rgba(255, 180, 217, 0.42), transparent 55%);
+  background-attachment: fixed;
+}
+[data-lofi='on'][data-tema-modo='claro'] body {
+  background-image:
+    radial-gradient(1000px 600px at 6% -8%, rgba(255, 214, 233, 0.42), transparent 70%),
+    radial-gradient(800px 520px at 100% 4%, rgba(214, 197, 255, 0.34), transparent 72%),
+    radial-gradient(900px 640px at 55% 120%, rgba(255, 226, 184, 0.32), transparent 70%),
+    radial-gradient(2px 2px at 10% 22%, rgba(216, 99, 140, 0.22), transparent 55%),
+    radial-gradient(1.5px 1.5px at 62% 72%, rgba(167, 123, 216, 0.22), transparent 55%),
+    radial-gradient(2px 2px at 88% 34%, rgba(196, 138, 55, 0.2), transparent 55%);
+  background-attachment: fixed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tema='nuvia'] .marca:hover .marca-gato img,
+  [data-tema='nuvia-day'] .marca:hover .marca-gato img,
+  [data-tema='nuvia'] .topo-ponto,
+  [data-tema='nuvia-day'] .topo-ponto,
+  [data-tema='nuvia'] .gaveta-ponto,
+  [data-tema='nuvia-day'] .gaveta-ponto {
+    animation: none;
+  }
+}

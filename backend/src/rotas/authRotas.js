@@ -35,6 +35,7 @@ function entrarNaSessao(req, usuario, manter) {
         pergunta_seg: usuario.pergunta_seg,
         criado_em: usuario.criado_em,
         tema: temaOuPadrao(usuario.tema),
+        lofi: Boolean(usuario.lofi),
       };
       if (manter) req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 dias
       else req.session.cookie.maxAge = null; // só enquanto o navegador abrir

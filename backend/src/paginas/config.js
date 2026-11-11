@@ -1,7 +1,7 @@
 /** Página de Configurações: foto, dados pessoais, tema e segurança. */
 const { esc } = require('../util');
 const { avatar } = require('./layout');
-const { TEMAS, CATEGORIAS, TEMA_PADRAO, temaDe, temaOuPadrao } = require('../temas');
+const { TEMAS, temaOuPadrao } = require('../temas');
 
 const PERGUNTAS = [
   'Qual o nome da sua mãe?',
@@ -15,15 +15,12 @@ function rotuloPerfil(tipo) {
   return tipo === 'admin' ? 'Administrador' : tipo === 'professor' ? 'Professor(a)' : 'Aluno(a)';
 }
 
-/** Card de tema da galeria: prévia da interface + paleta + descrição. */
-function cardTema(t, atual) {
+/** Card de modo (Dark/Normal): prévia da interface + descrição. */
+function cardModo(t, atual) {
   const [fundo, superficie, texto, acento, detalhe] = t.paleta;
   const sel = t.id === atual;
-  const cores = t.paleta.map((c) => `<i style="background:${c}"></i>`).join('');
   return `
-  <button type="button" class="tema-card ${sel ? 'selecionado' : ''}" data-tema-card="${t.id}" data-modo="${
-    t.modo
-  }" aria-pressed="${sel}" aria-label="Visualizar tema ${esc(t.nome)}">
+  <button type="submit" name="tema" value="${t.id}" class="tema-card modo-card ${sel ? 'selecionado' : ''}" data-tema-escolher="${t.id}" aria-pressed="${sel}" aria-label="Aplicar ${esc(t.nome)}">
     <span class="tema-previa" aria-hidden="true" style="--p-fundo:${fundo};--p-superficie:${superficie};--p-texto:${texto};--p-acento:${acento};--p-detalhe:${detalhe}">
       <span class="previa-barra"><span class="previa-logo"></span><span class="previa-ponto"></span><span class="previa-ponto"></span></span>
       <span class="previa-corpo">
@@ -33,46 +30,39 @@ function cardTema(t, atual) {
     </span>
     <span class="tema-card-topo">
       <strong>${esc(t.nome)}</strong>
-      <span class="selo-tema">✓ Selecionado</span>
+      <span class="selo-tema">${sel ? '✓ Selecionado' : 'Aplicar'}</span>
       ${t.padrao ? '<span class="selo-padrao">Padrão</span>' : ''}
     </span>
-    <span class="paleta" title="Paleta de cores">${cores}</span>
     <small class="tema-descricao">${esc(t.descricao)}</small>
   </button>`;
 }
 
-/** Seção "Aparência": galeria de temas com pré-visualização e aplicação. */
+/** Seção "Aparência": os dois modos principais + o Lofi Mode opcional. */
 function secaoAparencia(usuario) {
   const atual = temaOuPadrao(usuario.tema);
-  const grupos = CATEGORIAS.map(
-    (cat) => `
-    <div class="grupo-temas">
-      <h3 class="grupo-tema-titulo">${esc(cat)}</h3>
-      <div class="linha-temas">${TEMAS.filter((t) => t.categoria === cat)
-        .map((t) => cardTema(t, atual))
-        .join('')}</div>
-    </div>`
-  ).join('');
-
+  const lofiAtivo = Boolean(usuario.lofi);
   return `
     <section class="cartao-config cartao-temas">
       <h2>Aparência</h2>
-      <p class="descricao">Escolha um tema para personalizar a plataforma. Clique num card para visualizar a aparência
-      e depois clique em <strong>Aplicar tema</strong> — sua preferência fica salva na conta e vale para qualquer dispositivo.</p>
+      <p class="descricao">Dois modos principais — <strong>Dark Mode</strong> e <strong>Normal Mode</strong> — que você
+      alterna pelo botão no menu lateral. Clique num card para aplicar na hora; a preferência fica salva na conta.</p>
       <form method="post" action="/configuracoes/tema" id="form-tema" data-tema-atual="${atual}">
-        <input type="hidden" name="tema" id="tema-escondido" value="${atual}">
-        ${grupos}
-        <div class="barra-tema" id="barra-tema">
-          <span class="barra-tema-texto" id="barra-tema-texto">Tema atual: <strong>${esc(
-            temaDe(atual).nome
-          )}</strong></span>
-          <div class="barra-tema-acoes">
-            <button class="btn texto" type="button" id="btn-cancelar-tema">Cancelar pré-visualização</button>
-            <button class="btn secundario" type="submit" name="restaurar" value="1">Restaurar padrão</button>
-            <button class="btn primario" type="submit">Aplicar tema</button>
-          </div>
-        </div>
+        <div class="linha-modos">${TEMAS.map((t) => cardModo(t, atual)).join('')}</div>
       </form>
+
+      <div class="lofi-linha">
+        <span class="lofi-linha-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </span>
+        <div class="lofi-linha-texto">
+          <strong>Lofi Mode</strong>
+          <small>Pixel art, chuva e study room — opcional e funciona nos dois modos. Ao desativar, tudo volta ao visual do modo atual.</small>
+        </div>
+        <button type="button" class="lofi-toggle lofi-toggle-grande" id="btn-lofi-cfg" role="switch" aria-checked="${lofiAtivo ? 'true' : 'false'}" aria-label="Ativar ou desativar o Lofi Mode">
+          <span class="lofi-toggle-trilho" aria-hidden="true"><span class="lofi-toggle-bolinha"></span></span>
+          <span class="lofi-toggle-rotulo" aria-hidden="true">${lofiAtivo ? 'Ativado' : 'Desativado'}</span>
+        </button>
+      </div>
     </section>`;
 }
 

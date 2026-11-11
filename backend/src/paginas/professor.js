@@ -16,7 +16,7 @@ function gradeProfessor({ usuario, materias }) {
       const pendentes = Number(m.pendentes || 0);
       return `
       <a class="card-materia" href="/professor/materia/${m.vinculo_id}">
-        <div class="card-faixa" style="background:${cor}">
+        <div class="card-faixa" style="--faixa:${cor}">
           <span class="card-nome">${esc(m.materia)}</span>
           <span class="card-turma">${esc(m.turma)}</span>
         </div>
@@ -134,7 +134,7 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
           if ((a.tipo || 'trabalho') !== 'trabalho') {
             return `
         <article class="atividade">
-          <div class="atividade-icone" style="background:${cor}">
+          <div class="atividade-icone" style="--faixa:${cor}">
             <span style="font-size:20px;color:#fff">${info.icone}</span>
           </div>
           <div class="atividade-corpo">
@@ -159,7 +159,7 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
 
           return `
         <article class="atividade">
-          <div class="atividade-icone" style="background:${cor}">
+          <div class="atividade-icone" style="--faixa:${cor}">
             <svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm0 2 4 4h-4zM8 13h8v2H8zm0 4h5v2H8z"/></svg>
           </div>
           <div class="atividade-corpo">
@@ -204,7 +204,7 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
     .sort((a, b) => new Date(a.prazo) - new Date(b.prazo))[0];
 
   return `
-  <header class="faixa-materia" style="background:${cor}">
+  <header class="faixa-materia" style="--faixa:${cor}">
     <div class="faixa-conteudo">
       <div>
         <h1>${esc(materia.materia)}</h1>
@@ -359,7 +359,7 @@ function paginaAtividadeProfessor({ materia, atividade, alunos }) {
   const info = TIPOS[atividade.tipo || 'trabalho'] || TIPOS.trabalho;
 
   return `
-  <header class="faixa-materia" style="background:${cor}">
+  <header class="faixa-materia" style="--faixa:${cor}">
     <div class="faixa-conteudo">
       <div>
         <span class="rotulo-faixa">${esc(materia.turma)} · ${esc(materia.materia)}</span>

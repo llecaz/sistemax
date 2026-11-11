@@ -1,12 +1,11 @@
 /* ============================================================
-   Sistema de Entrega de Trabalhos — visual Google Classroom
-   Temas: claro (confortável) e escuro (grafite suave)
+   Sistema de Entrega de Trabalhos — identidade Nuvia
+   Dois modos: Dark Mode e Normal Mode (acabados em nuvia.css).
+   Este arquivo traz a base estrutural e o fallback claro.
    ============================================================ */
 
 /* ------------------- Variáveis ------------------- */
-:root,
-[data-tema='claro'],
-[data-tema='clean-minimal'] {
+:root {
   --fundo: #f4f2fb;
   --superficie: #ffffff;
   --superficie-2: #f7f5fd;
@@ -51,8 +50,7 @@
   --st-atrasada-fundo: #fdecec;
 }
 
-[data-tema='escuro'],
-[data-tema='dark-minimal'] {
+[data-tema='escuro'] {
   --fundo: #17131f;
   --superficie: #211b2e;
   --superficie-2: #2a2339;
@@ -808,19 +806,28 @@ body.tela-login {
 .faixa-materia {
   position: relative;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 30px 32px;
   color: #fff;
   margin-bottom: 18px;
   box-shadow: var(--sombra);
+  background:
+    linear-gradient(115deg, rgba(16, 8, 34, 0.34) 0%, rgba(16, 8, 34, 0.08) 48%, rgba(16, 8, 34, 0.38) 100%),
+    radial-gradient(900px 320px at 14% -30%, rgba(255, 255, 255, 0.32), transparent 62%),
+    var(--faixa, var(--azul));
+  text-shadow: 0 1px 2px rgba(10, 6, 24, 0.3);
 }
 .faixa-materia::before {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.18) 0 70px, transparent 71px),
-    radial-gradient(circle at 6% 130%, rgba(255, 255, 255, 0.14) 0 90px, transparent 91px);
+    radial-gradient(1.6px 1.6px at 24px 18px, rgba(255, 255, 255, 0.4), transparent 60%),
+    radial-gradient(2px 2px at 78% 64%, rgba(255, 255, 255, 0.28), transparent 60%),
+    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.16) 0 70px, transparent 71px),
+    radial-gradient(circle at 6% 130%, rgba(255, 255, 255, 0.13) 0 90px, transparent 91px);
+  background-size: 52px 52px, 68px 68px, auto, auto;
+  pointer-events: none;
 }
 .faixa-conteudo {
   position: relative;
@@ -1426,6 +1433,23 @@ body.tela-login {
   display: grid;
   place-items: center;
   border-radius: 50%;
+}
+.cal-num-botao {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.cal-num-botao:hover {
+  background: var(--azul-claro);
+  color: var(--azul);
+  transform: scale(1.08);
+}
+.cal-num-botao[aria-pressed='true'] {
+  background: var(--azul);
+  color: var(--azul-texto);
 }
 .cal-dia.hoje .cal-num {
   background: var(--azul);
@@ -2178,24 +2202,19 @@ body.tela-login {
 .cartao-temas {
   grid-column: 1 / -1;
 }
-.grupo-temas:first-of-type {
-  margin-top: 4px;
-}
-.grupo-temas + .grupo-temas {
-  margin-top: 20px;
-}
-.grupo-tema-titulo {
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--texto-suave);
-  margin-bottom: 10px;
-}
-.linha-temas {
+.linha-modos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+  margin-bottom: 6px;
+}
+@media (max-width: 640px) {
+  .linha-modos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.modo-card {
+  min-height: 100%;
 }
 .tema-card {
   position: relative;
@@ -2309,12 +2328,14 @@ body.tela-login {
   white-space: nowrap;
 }
 .selo-tema {
-  display: none;
-  color: var(--azul-texto);
-  background: var(--azul);
+  display: inline-block;
+  color: var(--texto-suave);
+  background: var(--superficie-3);
+  transition: color 0.15s ease, background 0.15s ease;
 }
 .tema-card.selecionado .selo-tema {
-  display: inline-block;
+  color: var(--azul-texto);
+  background: var(--azul);
 }
 .selo-padrao {
   color: var(--texto-suave);
@@ -2323,55 +2344,10 @@ body.tela-login {
 .tema-card.selecionado .selo-padrao {
   display: none;
 }
-.paleta {
-  display: flex;
-  gap: 5px;
-}
-.paleta i {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: block;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
-}
 .tema-descricao {
   font-size: 12px;
   line-height: 1.45;
   color: var(--texto-suave);
-}
-
-/* Barra de ações: pré-visualizar, aplicar e restaurar o padrão */
-.barra-tema {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
-  padding: 12px 14px;
-  background: var(--superficie-2);
-  border: 1px solid var(--borda-suave);
-  border-radius: 14px;
-  transition: background 0.25s ease, border-color 0.25s ease;
-}
-.barra-tema-texto {
-  font-size: 14px;
-  color: var(--texto-suave);
-}
-.barra-tema-texto strong {
-  color: var(--texto);
-}
-.barra-tema.preview .barra-tema-texto strong {
-  color: var(--azul);
-}
-.barra-tema-acoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-.barra-tema:not(.preview) #btn-cancelar-tema {
-  display: none;
 }
 
 /* ------------------- Responsivo ------------------- */
@@ -4265,3 +4241,275 @@ body.tela-login {
   .dash-week-dia:nth-child(n + 5) { display: none; }
 }
 
+
+/* ============================================================
+   Aparência — Dark/Normal + Lofi Mode + polimento interativo
+   ============================================================ */
+
+/* ---------- Scrollbars temáticas ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--superficie-3) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--superficie-3);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--texto-suave);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+/* ---------- Selo da página de configuração ---------- */
+.cfg-selo {
+  display: inline-block;
+  margin-bottom: 5px;
+  padding: 2px 10px;
+  background: var(--azul-claro);
+  border: 1px solid var(--borda-suave);
+  border-radius: 6px;
+  color: var(--azul);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+/* ---------- Alternador do Lofi Mode (menu lateral) ---------- */
+.gaveta-lofi {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 9px 11px;
+  border: 1px solid var(--borda-suave);
+  border-radius: 11px;
+  background: var(--superficie-2);
+}
+.lofi-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 3px 10px 3px 4px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--texto-suave);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.lofi-toggle:hover {
+  border-color: var(--azul);
+  color: var(--texto);
+}
+.lofi-toggle:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 2px;
+}
+.lofi-toggle-nota {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 999px;
+  background: var(--superficie-3);
+  color: var(--texto-suave);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.lofi-toggle-trilho {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--superficie-3);
+  transition: background 0.25s ease;
+}
+.lofi-toggle-bolinha {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--texto-suave);
+  transition: transform 0.25s cubic-bezier(0.34, 1.4, 0.4, 1), background 0.25s ease;
+}
+.lofi-toggle[aria-checked='true'] {
+  border-color: var(--azul);
+  color: var(--texto);
+  box-shadow: 0 0 0 1px var(--azul), 0 0 18px var(--azul-claro);
+}
+.lofi-toggle[aria-checked='true'] .lofi-toggle-nota {
+  background: var(--azul);
+  color: var(--azul-texto);
+}
+.lofi-toggle[aria-checked='true'] .lofi-toggle-trilho {
+  background: var(--azul);
+}
+.lofi-toggle[aria-checked='true'] .lofi-toggle-bolinha {
+  transform: translateX(16px);
+  background: var(--azul-texto);
+}
+/* Variante grande usada na página de configurações */
+.lofi-toggle-grande {
+  height: 44px;
+  padding: 4px 14px 4px 5px;
+  gap: 10px;
+  flex: none;
+}
+.lofi-toggle-rotulo {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  min-width: 74px;
+  text-align: left;
+}
+
+/* ---------- Lofi Mode: linha de ativação nas configurações ---------- */
+.lofi-linha {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--borda-suave);
+  border-radius: 14px;
+  background: var(--superficie-2);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.lofi-linha:has(.lofi-toggle[aria-checked='true']) {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 1px var(--azul), 0 10px 28px var(--azul-claro);
+}
+.lofi-linha-icone {
+  flex: none;
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--azul-claro);
+  color: var(--azul);
+}
+.lofi-linha-texto {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.lofi-linha-texto strong {
+  font-size: 15px;
+}
+.lofi-linha-texto small {
+  color: var(--texto-suave);
+  font-size: 12px;
+  line-height: 1.45;
+}
+@media (max-width: 560px) {
+  .lofi-linha {
+    flex-wrap: wrap;
+  }
+  .lofi-toggle-grande .lofi-toggle-rotulo {
+    min-width: 0;
+  }
+}
+
+/* ---------- Atividades da semana: linha inteira clicável ---------- */
+.dash-tarefa {
+  border-radius: 12px;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.dash-tarefa:hover {
+  background: var(--superficie-2);
+}
+.dash-tarefa-titulo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.dash-tarefa:hover .dash-tarefa-titulo {
+  color: var(--azul);
+}
+.dash-tarefa:focus-within {
+  outline: 2px solid var(--azul);
+  outline-offset: -2px;
+  background: var(--superficie-2);
+}
+
+/* ---------- Modo foco: ciclo concluído ---------- */
+.dash-foco-completo .dash-foco-gato {
+  animation: foco-gato-pula 0.9s ease 2;
+}
+.dash-foco-completo .dash-foco-barra i {
+  background: var(--verde) !important;
+}
+@keyframes foco-gato-pula {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-10px) scale(1.15); }
+}
+
+/* ---------- Calendário: dias clicáveis + filtro da lista ---------- */
+.cal-dia.com-eventos {
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+.cal-dia.com-eventos:hover {
+  transform: translateY(-2px);
+}
+.cal-dia.selecionado {
+  border-color: var(--azul) !important;
+  box-shadow: 0 0 0 2px var(--azul-claro), inset 0 0 0 1px var(--azul) !important;
+}
+.lofi-app .cal-dia.selecionado {
+  box-shadow: 0 0 0 3px var(--lf-lilac-strong) !important;
+}
+.cal-filtro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 4px 0 10px;
+  padding: 8px 12px;
+  border: 1px dashed var(--borda, var(--lf-border, #d9c9e8));
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--texto-suave, var(--lf-ink-soft, #7d6a8c));
+}
+.cal-filtro[hidden] {
+  display: none;
+}
+.cal-filtro strong {
+  color: var(--texto, var(--lf-ink, #4a3a63));
+}
+.cal-filtro-limpar {
+  border: 0;
+  background: var(--superficie-2, var(--lf-cream-2, #fdf3e8));
+  color: var(--azul, var(--lf-lilac-strong, #9a7fd1));
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+.cal-filtro-limpar:hover {
+  background: var(--azul-claro, var(--lf-azul-claro, #ede4fa));
+}
+.cal-lista-item[hidden],
+.lofi-lista-item[hidden] {
+  display: none;
+}

@@ -4,21 +4,31 @@
 (function () {
   'use strict';
 
-  /* ---------- Temas visuais (personalização) ---------- */
+  /* ---------- Aparência: Dark/Normal + Lofi Mode ---------- */
   var LISTA_TEMAS = window.SISTEMA_TEMAS || [];
   var MAPA_TEMAS = {};
   LISTA_TEMAS.forEach(function (t) {
     MAPA_TEMAS[t.id] = t;
   });
-  var TEMA_PADRAO = window.SISTEMA_TEMA_PADRAO || 'clean-minimal';
-  var LEGADO = { claro: 'clean-minimal', escuro: 'dark-minimal' }; // temas antigos do site
+  var TEMA_PADRAO = window.SISTEMA_TEMA_PADRAO || 'nuvia';
+  // Temas que existiam antes da simplificação → caem no modo equivalente
+  var LEGADO = {
+    claro: 'nuvia-day', escuro: 'nuvia',
+    'clean-minimal': 'nuvia-day', japandi: 'nuvia-day', 'soft-ui': 'nuvia-day', 'pastel-dream': 'nuvia-day',
+    'dark-minimal': 'nuvia', 'lo-fi-night': 'nuvia', moonroom: 'nuvia', 'dark-academia': 'nuvia',
+  };
+
+  function resolverTema(id) {
+    if (MAPA_TEMAS[id]) return id;
+    return LEGADO[id] || TEMA_PADRAO;
+  }
 
   function modoDoTema(id) {
     return MAPA_TEMAS[id] && MAPA_TEMAS[id].modo === 'escuro' ? 'escuro' : 'claro';
   }
 
   function idTemaAtual() {
-    return document.documentElement.getAttribute('data-tema') || TEMA_PADRAO;
+    return resolverTema(document.documentElement.getAttribute('data-tema') || TEMA_PADRAO);
   }
 
   function guardarLocal(id) {
@@ -36,39 +46,22 @@
     }, 450);
   }
 
-  /** Aplica o tema na página inteira (visual + galeria + formulário). */
+  /** Aplica o modo na página inteira (visual + cards de configuração). */
   function aplicarTema(id, comTransicao) {
-    if (!MAPA_TEMAS[id]) id = LEGADO[id] || TEMA_PADRAO;
+    id = resolverTema(id);
     var d = document.documentElement;
     if (comTransicao !== false) transicaoTema();
     d.setAttribute('data-tema', id);
     d.setAttribute('data-tema-modo', modoDoTema(id));
 
-    var salvo = d.getAttribute('data-tema-salvo') || id;
-    var nome = (MAPA_TEMAS[id] && MAPA_TEMAS[id].nome) || id;
-
-    // Indicadores dos cards da galeria
-    document.querySelectorAll('[data-tema-card]').forEach(function (card) {
-      var igual = card.getAttribute('data-tema-card') === id;
+    // Cards de modo da página de configuração
+    document.querySelectorAll('[data-tema-escolher]').forEach(function (card) {
+      var igual = card.getAttribute('data-tema-escolher') === id;
       card.classList.toggle('selecionado', igual);
       card.setAttribute('aria-pressed', igual ? 'true' : 'false');
       var selo = card.querySelector('.selo-tema');
-      if (selo) selo.textContent = igual && id !== salvo ? 'Visualizando' : '✓ Selecionado';
+      if (selo) selo.textContent = igual ? '✓ Selecionado' : 'Aplicar';
     });
-
-    var oculto = document.getElementById('tema-escondido');
-    if (oculto) oculto.value = id;
-
-    // Barra de ações: mostra quando há pré-visualização pendente
-    var barra = document.getElementById('barra-tema');
-    var texto = document.getElementById('barra-tema-texto');
-    if (barra && texto) {
-      var preview = id !== salvo;
-      barra.classList.toggle('preview', preview);
-      texto.innerHTML = preview
-        ? 'Pré-visualizando <strong>' + nome + '</strong> — clique em “Aplicar tema” para salvar'
-        : 'Tema atual: <strong>' + nome + '</strong>';
-    }
     return id;
   }
 
@@ -85,57 +78,88 @@
       .then(function (resposta) {
         if (resposta && resposta.ok) {
           document.documentElement.setAttribute('data-tema-salvo', id);
-          aplicarTema(id, false);
         }
       })
       .catch(function () {}); // sem rede: o tema continua aplicado neste dispositivo
   }
 
+  function lofiAtual() {
+    return document.documentElement.getAttribute('data-lofi') === 'on';
+  }
+
+  function aplicarLofi(ativo) {
+    var d = document.documentElement;
+    if (ativo) transicaoTema();
+    d.setAttribute('data-lofi', ativo ? 'on' : 'off');
+    document.querySelectorAll('#btn-lofi, #btn-lofi-cfg').forEach(function (botao) {
+      botao.setAttribute('aria-checked', ativo ? 'true' : 'false');
+      botao.classList.toggle('lofi-ativo', ativo);
+      var rotulo = botao.querySelector('.lofi-toggle-rotulo');
+      if (rotulo) rotulo.textContent = ativo ? 'Ativado' : 'Desativado';
+    });
+  }
+
+  /** Persiste o Lofi Mode: salva na conta (servidor). */
+  function salvarLofi(ativo) {
+    try {
+      localStorage.setItem('lofi', ativo ? 'on' : 'off');
+    } catch (e) {}
+    if (!window.SISTEMA_LOGADO || typeof fetch !== 'function') return Promise.resolve();
+    return fetch('/configuracoes/lofi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ lofi: ativo }),
+      keepalive: true,
+    }).catch(function () {}); // sem rede: o modo continua aplicado nesta página
+  }
+
   document.addEventListener('click', function (evento) {
-    // Alternador claro/escuro (barra superior e tela de login)
+    // Alternador Dark/Normal (menu lateral e tela de login)
     var botaoTema = evento.target.closest('#btn-tema');
     if (botaoTema) {
       var atual = idTemaAtual();
-      var par = MAPA_TEMAS[atual] && MAPA_TEMAS[atual].par;
-      if (!par || !MAPA_TEMAS[par]) {
-        var quero = modoDoTema(atual) === 'claro' ? 'escuro' : 'claro';
-        par = TEMA_PADRAO;
-        for (var i = 0; i < LISTA_TEMAS.length; i++) {
-          if (LISTA_TEMAS[i].modo === quero) {
-            par = LISTA_TEMAS[i].id;
-            break;
-          }
-        }
-        if (!MAPA_TEMAS[par]) par = atual;
-      }
+      var par = (MAPA_TEMAS[atual] && MAPA_TEMAS[atual].par) || TEMA_PADRAO;
       aplicarTema(par);
       salvarTema(par);
       return;
     }
-    // Card da galeria: pré-visualiza sem salvar
-    var card = evento.target.closest('[data-tema-card]');
+    // Card de modo na configuração: aplica o modo escolhido
+    var card = evento.target.closest('[data-tema-escolher]');
     if (card) {
-      aplicarTema(card.getAttribute('data-tema-card'));
+      evento.preventDefault();
+      var escolhido = aplicarTema(card.getAttribute('data-tema-escolher'));
+      salvarTema(escolhido);
       return;
     }
-    // Cancelar pré-visualização: volta ao tema salvo
-    if (evento.target.closest('#btn-cancelar-tema')) {
-      var salvo = document.documentElement.getAttribute('data-tema-salvo');
-      if (salvo) aplicarTema(salvo);
+    // Lofi Mode (menu lateral e configurações)
+    if (evento.target.closest('#btn-lofi') || evento.target.closest('#btn-lofi-cfg')) {
+      var ligado = !lofiAtual();
+      aplicarLofi(ligado);
+      // No calendário o markup muda conforme o modo — recarrega para aplicar
+      var promessa = salvarLofi(ligado);
+      if (document.body && document.body.dataset && document.body.dataset.pagina === 'calendario') {
+        Promise.resolve(promessa).then(function () { location.reload(); });
+        setTimeout(function () { location.reload(); }, 600); // fallback sem rede
+      }
+      return;
     }
   });
 
-  // Ao enviar o formulário da galeria, espelha a escolha no dispositivo
+  // Ao enviar o formulário da galeria de modos (sem JS o botão submit funciona)
   document.addEventListener('submit', function (evento) {
     var form = evento.target;
     if (form.id !== 'form-tema') return;
-    var restaurou = evento.submitter && evento.submitter.getAttribute('name') === 'restaurar';
-    var oculto = form.querySelector('#tema-escondido');
-    guardarLocal(restaurou ? TEMA_PADRAO : oculto ? oculto.value : TEMA_PADRAO);
+    var botao = evento.submitter;
+    if (botao && botao.getAttribute('data-tema-escolher')) {
+      evento.preventDefault();
+      var escolhido = aplicarTema(botao.getAttribute('data-tema-escolher'));
+      salvarTema(escolhido);
+    }
   });
 
-  // Sincroniza cards/estado inicial com o tema da página
+  // Sincroniza estado inicial com o que a página renderizou
   aplicarTema(idTemaAtual(), false);
+  aplicarLofi(lofiAtual());
 
   /* ---------- Menu lateral (gaveta) ---------- */
   function alternarGaveta(abrir) {
@@ -295,6 +319,8 @@
     var barra = cartao.querySelector('[data-foco-barra]');
     var botao = cartao.querySelector('[data-foco-acao="alternar"]');
     var zerar = cartao.querySelector('[data-foco-acao="zerar"]');
+    var dica = cartao.querySelector('.dash-foco-dica');
+    var dicaOriginal = dica ? dica.textContent : '';
 
     function doisDigitos(n) {
       return String(n).padStart(2, '0');
@@ -310,6 +336,10 @@
       if (intervalo) clearInterval(intervalo);
       intervalo = null;
       if (botao) botao.textContent = restante === 0 ? 'De novo' : 'Continuar';
+      if (restante === 0) {
+        cartao.classList.add('dash-foco-completo');
+        if (dica) dica.textContent = 'Ciclo concluído! Hora de 5 minutinhos de pausa ♡';
+      }
     }
 
     function iniciar() {
@@ -340,11 +370,83 @@
       zerar.addEventListener('click', function () {
         parar();
         restante = TOTAL;
+        cartao.classList.remove('dash-foco-completo');
+        if (dica) dica.textContent = dicaOriginal;
         if (botao) botao.textContent = 'Começar';
         pintar();
       });
     }
 
+    if (botao) {
+      botao.addEventListener('click', function () {
+        if (restante === 0) {
+          cartao.classList.remove('dash-foco-completo');
+          if (dica) dica.textContent = dicaOriginal;
+        }
+      });
+    }
+
     pintar();
   });
+
+  /* ---------- Calendário: filtrar a lista clicando num dia ---------- */
+  (function () {
+    var painelLista = document.getElementById('lista-eventos');
+    var filtro = document.getElementById('filtro-dia');
+    var filtroTexto = document.getElementById('filtro-dia-texto');
+    var filtroLimpar = document.getElementById('filtro-dia-limpar');
+    var itens = painelLista ? painelLista.querySelectorAll('.cal-lista-item, .lofi-lista-item') : [];
+    var selecionado = null;
+
+    function chaveParaTexto(chave) {
+      var partes = String(chave || '').split('-');
+      if (partes.length !== 3) return chave;
+      var meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+      var dia = Number(partes[2]);
+      var mes = Number(partes[1]) - 1;
+      var ano = partes[0];
+      if (Number.isNaN(dia) || Number.isNaN(mes) || mes < 0 || mes > 11) return chave;
+      return dia + ' de ' + meses[mes] + ' de ' + ano;
+    }
+
+    function aplicarFiltro(chave) {
+      selecionado = chave;
+      itens.forEach(function (item) {
+        item.hidden = !!chave && item.getAttribute('data-dia') !== chave;
+      });
+      if (filtro && filtroTexto) {
+        filtro.hidden = !chave;
+        if (chave) filtroTexto.textContent = chaveParaTexto(chave);
+      }
+      document.querySelectorAll('.cal-dia[data-dia]').forEach(function (dia) {
+        dia.classList.toggle('selecionado', !!chave && dia.getAttribute('data-dia') === chave);
+      });
+      document.querySelectorAll('[data-filtro-dia]').forEach(function (botao) {
+        botao.setAttribute('aria-pressed', botao.getAttribute('data-filtro-dia') === chave ? 'true' : 'false');
+      });
+    }
+
+    document.addEventListener('click', function (evento) {
+      var botaoDia = evento.target.closest('[data-filtro-dia]');
+      var diaCel = evento.target.closest('.cal-dia[data-dia]');
+      if (!botaoDia && !diaCel) return;
+      // Cliques em links/botões (exceto o próprio botão de filtro) mantêm o comportamento deles
+      var alvo = evento.target.closest('a, button, input, select, textarea');
+      if (alvo && !botaoDia) return;
+      var celula = diaCel || (botaoDia && botaoDia.closest('.cal-dia[data-dia]'));
+      if (!celula) return;
+      if (Number(celula.getAttribute('data-eventos') || 0) === 0) return;
+      var chave = celula.getAttribute('data-dia');
+      aplicarFiltro(selecionado === chave ? null : chave);
+      if (selecionado && painelLista) {
+        painelLista.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    if (filtroLimpar) {
+      filtroLimpar.addEventListener('click', function () {
+        aplicarFiltro(null);
+      });
+    }
+  })();
 })();

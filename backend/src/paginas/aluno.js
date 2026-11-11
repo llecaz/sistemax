@@ -8,7 +8,7 @@ function avatarProfessor(nome) {
   const cor = corDe(nome).claro;
   const partes = nome.trim().split(/\s+/);
   const ini = (partes[0][0] + (partes.length > 1 ? partes[partes.length - 1][0] : '')).toUpperCase();
-  return `<span class="avatar pequeno"><span style="background:${cor}">${esc(ini)}</span></span>`;
+  return `<span class="avatar pequeno"><span style="--faixa:${cor}">${esc(ini)}</span></span>`;
 }
 
 /** Grade de cards das matérias da turma do aluno. */
@@ -26,7 +26,7 @@ function gradeMaterias({ usuario, materias }) {
             }`;
       return `
       <a class="card-materia" href="/aluno/materia/${m.vinculo_id}">
-        <div class="card-faixa" style="background:${cor}">
+        <div class="card-faixa" style="--faixa:${cor}">
           <span class="card-nome">${esc(m.materia)}</span>
         </div>
         <div class="card-corpo">
@@ -199,7 +199,7 @@ function listaAtividades(atividades, aba) {
         const info = TIPOS[a.tipo] || TIPOS.trabalho;
         return `
       <article class="atividade">
-        <div class="atividade-icone" style="background:${cor}">
+        <div class="atividade-icone" style="--faixa:${cor}">
           <span style="font-size:20px;color:#fff">${info.icone}</span>
         </div>
         <div class="atividade-corpo">
@@ -222,7 +222,7 @@ function listaAtividades(atividades, aba) {
       }
       return `
       <article class="atividade">
-        <div class="atividade-icone" style="background:${cor}">
+        <div class="atividade-icone" style="--faixa:${cor}">
           <svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm0 2 4 4h-4zM8 13h8v2H8zm0 4h5v2H8z"/></svg>
         </div>
         <div class="atividade-corpo">
@@ -284,7 +284,7 @@ function paginaMateria({ usuario, materia, atividades, aba }) {
   const proximaS = proxima ? abasDe(proxima).s : null;
 
   return `
-  <header class="faixa-materia" style="background:${cor}">
+  <header class="faixa-materia" style="--faixa:${cor}">
     <div class="faixa-conteudo">
       <div>
         <h1>${esc(materia.materia)}</h1>
@@ -357,7 +357,7 @@ function paginaTrabalho({ usuario, a }) {
     !s.temEntrega ? '—' : a.metodo === 'link' ? 'Link' : a.metodo === 'drive' ? 'Google Drive' : 'Arquivo';
 
   return `
-  <header class="faixa-materia" style="background:${cor}">
+  <header class="faixa-materia" style="--faixa:${cor}">
     <div class="faixa-conteudo">
       <div>
         <span class="rotulo-faixa">${esc(a.materia)} · ${esc(a.turma)}</span>

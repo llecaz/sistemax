@@ -42,6 +42,7 @@
     botao = document.createElement('div');
     botao.setAttribute('role', 'region');
     botao.setAttribute('aria-label', 'Instalar o aplicativo Nuvia');
+    var compacto = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
     botao.style.cssText = [
       'position:fixed',
       'right:16px',
@@ -49,17 +50,27 @@
       'z-index:9999',
       'display:flex',
       'align-items:center',
-      'gap:10px',
-      'padding:10px 12px 10px 16px',
+      'gap:' + (compacto ? '6px' : '10px'),
+      'padding:' + (compacto ? '8px 10px 8px 12px' : '10px 12px 10px 16px'),
       'border-radius:999px',
       'border:1px solid rgba(255,255,255,.35)',
       'background:linear-gradient(145deg,#c7b7ff,#8064e8)',
       'box-shadow:0 12px 30px rgba(23,19,45,.35)',
       'font-family:inherit',
-      'font-size:14px',
+      'font-size:' + (compacto ? '12px' : '14px'),
       'font-weight:600',
       'color:#21183d',
+      'transition:opacity .3s ease, transform .3s ease',
     ].join(';');
+
+    // Não cobre o conteúdo para sempre: sai sozinho após alguns segundos
+    // (o usuário também pode fechar na hora pelo botão ×).
+    setTimeout(function () {
+      if (!botao) return;
+      botao.style.opacity = '0';
+      botao.style.transform = 'translateY(8px)';
+      setTimeout(esconder, 320);
+    }, 8000);
 
     var acao = document.createElement('button');
     acao.type = 'button';
