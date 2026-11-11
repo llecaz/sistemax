@@ -1,8 +1,23 @@
 /** Layout geral: sidebar fixa, barra superior, mensagens e páginas completas. */
+const fs = require('fs');
+const path = require('path');
 const { esc, iniciais } = require('../util');
 const { temaDe, scriptTemas } = require('../temas');
 
 const NOME_SISTEMA = 'Classroom Escolar';
+const PASTA_FRONTEND = path.join(__dirname, '..', '..', '..', 'frontend');
+
+/**
+ * Versão do arquivo estático baseada na data de modificação.
+ * Evita que o navegador use CSS/JS antigo em cache após um deploy.
+ */
+function versaoAsset(nome) {
+  try {
+    return `?v=${Math.floor(fs.statSync(path.join(PASTA_FRONTEND, nome)).mtimeMs)}`;
+  } catch {
+    return '';
+  }
+}
 
 /** Logotipo minimalista: capelo de formatura em roxo. */
 function iconeLogo(tamanho = 38) {
@@ -220,7 +235,7 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
   // Tema salvo na conta (sessão) — o servidor já renderiza com ele, sem "piscar".
   const tema = temaDe((req.session && req.session.usuario && req.session.usuario.tema) || (usuario && usuario.tema));
   // O CSS do Lo-fi Night só é carregado quando o tema está realmente aplicado.
-  const cssLofi = tema.id === 'lo-fi-night' ? '<link rel="stylesheet" href="/lofi.css">' : '';
+  const cssLofi = tema.id === 'lo-fi-night' ? `<link rel="stylesheet" href="/lofi.css${versaoAsset('lofi.css')}">` : '';
   // O painel inicial e as configurações usam classes próprias no body.
   const classeCorpo = /\bini-app\b/.test(corpo)
     ? ' class="pagina-inicio"'
@@ -239,9 +254,9 @@ ${scriptTemas()}
 <script>window.SISTEMA_LOGADO = true;</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/estilo.css">
-<link rel="stylesheet" href="/temas.css">
-<link rel="stylesheet" href="/decoracoes.css">
+<link rel="stylesheet" href="/estilo.css${versaoAsset('estilo.css')}">
+<link rel="stylesheet" href="/temas.css${versaoAsset('temas.css')}">
+<link rel="stylesheet" href="/decoracoes.css${versaoAsset('decoracoes.css')}">
 ${cssLofi}
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
@@ -260,8 +275,8 @@ ${mensagens(req)}
 ${corpo}
 </main>
 ${semDecoracao ? '' : decoracaoTema()}
-<script src="/app.js"></script>
-<script src="/pwa.js" defer></script>
+<script src="/app.js${versaoAsset('app.js')}"></script>
+<script src="/pwa.js${versaoAsset('pwa.js')}" defer></script>
 </body>
 </html>`;
 }
