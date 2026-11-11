@@ -3,8 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const { esc, iniciais } = require('../util');
 const { temaDe, scriptTemas } = require('../temas');
+const { decoracao } = require('./decoracoes');
 
-const NOME_SISTEMA = 'Classroom Escolar';
+const NOME_SISTEMA = 'Nuvia';
 const PASTA_FRONTEND = path.join(__dirname, '..', '..', '..', 'frontend');
 
 /**
@@ -17,15 +18,6 @@ function versaoAsset(nome) {
   } catch {
     return '';
   }
-}
-
-/** Logotipo minimalista: capelo de formatura em roxo. */
-function iconeLogo(tamanho = 38) {
-  return `<span class="logo-icone" style="width:${tamanho}px;height:${tamanho}px" aria-hidden="true">
-    <svg viewBox="0 0 48 48" width="${tamanho}" height="${tamanho}" fill="currentColor">
-      <path d="M24 6 3 16l21 10 21-10L24 6Zm-15 14.6v9.2C9 34.6 15.7 38 24 38s15-3.4 15-8.2v-9.2l-15 7.1-15-7.1Zm33 .9-6 2.9v7.4c0 1.2-.3 2.3-.9 3.2l4.3 2.1c1.6-1.5 2.6-3.4 2.6-5.3V21.5Z"/>
-    </svg>
-  </span>`;
 }
 
 /** Avatar circular: mostra a foto ou as iniciais com cor fixa. */
@@ -147,8 +139,10 @@ function gaveta(usuario, ativa = '') {
   <nav class="gaveta" id="gaveta" aria-label="Menu principal">
     <div class="gaveta-topo">
       <a class="marca" href="${homeDo(usuario)}">
-        ${iconeLogo(40)}
-        <span class="marca-texto">Classroom<span>Escolar</span></span>
+        <span class="marca-gato" aria-hidden="true">
+          <img src="/assets/decorations/cats/nuvia-cat-peeking.png" alt="" width="33" height="auto" loading="eager" decoding="async">
+        </span>
+        <span class="marca-texto">nuvia<small>escola &amp; estudos</small></span>
       </a>
       <button class="icone-botao btn-fechar" id="btn-fechar" aria-label="Fechar menu">${IC.fechar}</button>
     </div>
@@ -244,6 +238,17 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
       : '';
   // O dashboard segue o novo visual SaaS, sem os widgets decorativos antigos.
   const semDecoracao = ativa === 'inicio' || ativa === 'notificacoes';
+  const temaNuvia = tema.id === 'nuvia' || tema.id === 'nuvia-day';
+  const companheiro =
+    temaNuvia && ativa === 'inicio'
+      ? `<aside class="nuvia-companion" aria-hidden="true">
+          <span class="nuvia-companion-bubble">
+            <strong>dica da nuvia</strong>
+            Respira. Um passo de cada vez ♡
+          </span>
+          ${decoracao('nuvia-cat-peeking', { pasta: 'cats', tamanho: 82, carregamento: 'eager' })}
+        </aside>`
+      : '';
   return `<!DOCTYPE html>
 <html lang="pt-BR" data-tema="${tema.id}" data-tema-modo="${tema.modo}" data-tema-salvo="${tema.id}">
 <head>
@@ -253,10 +258,11 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
 ${scriptTemas()}
 <script>window.SISTEMA_LOGADO = true;</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Pixelify+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css${versaoAsset('estilo.css')}">
 <link rel="stylesheet" href="/temas.css${versaoAsset('temas.css')}">
 <link rel="stylesheet" href="/decoracoes.css${versaoAsset('decoracoes.css')}">
+<link rel="stylesheet" href="/nuvia.css${versaoAsset('nuvia.css')}">
 ${cssLofi}
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
@@ -275,10 +281,11 @@ ${mensagens(req)}
 ${corpo}
 </main>
 ${semDecoracao ? '' : decoracaoTema()}
+${companheiro}
 <script src="/app.js${versaoAsset('app.js')}"></script>
 <script src="/pwa.js${versaoAsset('pwa.js')}" defer></script>
 </body>
 </html>`;
 }
 
-module.exports = { pagina, avatar, iconeLogo, NOME_SISTEMA, homeDo, IC };
+module.exports = { pagina, avatar, NOME_SISTEMA, homeDo, IC };

@@ -4100,3 +4100,168 @@ body.tela-login {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ------------------- Semana / planner ------------------- */
+.dash-week {
+  margin: 0 0 18px;
+  padding: 15px 16px 14px;
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  background: var(--superficie);
+  box-shadow: var(--sombra);
+}
+.dash-week-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.dash-week-topo > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.dash-week-topo h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+.dash-week-icone {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--azul-claro);
+  color: var(--azul);
+}
+.dash-week-dias {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+}
+.dash-week-dia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px 5px 8px;
+  border: 1px solid var(--borda-suave);
+  border-radius: 10px;
+  color: var(--texto-suave);
+  text-align: center;
+  text-decoration: none;
+  transition: border-color 0.16s, background 0.16s, transform 0.16s;
+}
+.dash-week-dia:hover {
+  border-color: var(--azul);
+  background: var(--azul-claro);
+  transform: translateY(-1px);
+}
+.dash-week-dia.hoje {
+  border-color: var(--azul);
+  background: var(--azul-claro);
+  color: var(--texto);
+}
+.dash-week-nome {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dash-week-dia strong {
+  font-size: 17px;
+  line-height: 1.1;
+  color: var(--texto);
+}
+.dash-week-pontos {
+  display: flex;
+  gap: 3px;
+  min-height: 6px;
+}
+.dash-week-pontos .ponto {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.dash-week-dia small {
+  width: 100%;
+  overflow: hidden;
+  color: var(--texto-suave);
+  font-size: 8.5px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ------------------- Modo foco ------------------- */
+.dash-foco-corpo { padding: 14px 16px 16px; }
+.dash-foco-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.dash-foco-tempo {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: var(--texto);
+}
+.dash-foco-gato {
+  font-size: 12px;
+  color: var(--texto-suave);
+  white-space: nowrap;
+}
+.dash-foco-barra {
+  height: 7px;
+  margin: 13px 0 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--superficie-3);
+}
+.dash-foco-barra i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--azul), var(--vermelho));
+  transition: width 0.4s linear;
+}
+.dash-foco-botoes {
+  display: flex;
+  gap: 7px;
+}
+.dash-foco-btn {
+  flex: 1;
+  min-height: 34px;
+  border: 1px solid var(--borda);
+  border-radius: 9px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dash-foco-btn.principal {
+  border-color: transparent;
+  background: var(--azul);
+  color: var(--azul-texto);
+}
+.dash-foco-btn:hover { filter: brightness(1.05); }
+.dash-foco-dica {
+  display: block;
+  margin-top: 10px;
+  color: var(--texto-suave);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+@media (max-width: 760px) {
+  .dash-week-dias { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dash-week-dia:nth-child(n + 5) { display: none; }
+}
+

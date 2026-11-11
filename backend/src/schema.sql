@@ -44,7 +44,7 @@ ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_dados BYTEA;
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_tipo  TEXT;
 
 -- Tema visual preferido do usuário (sistema de personalização de temas)
-ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS tema TEXT NOT NULL DEFAULT 'clean-minimal';
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS tema TEXT NOT NULL DEFAULT 'nuvia';
 
 -- Vínculo com login social (Google / GitHub). O e-mail precisa ser o mesmo
 -- da conta Nuvia; o ID externo evita depender do e-mail em logins futuros.

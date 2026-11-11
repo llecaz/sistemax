@@ -280,6 +280,78 @@ function miniCalendario({ eventos, base, ano, mes, busca = '' }) {
   </section>`;
 }
 
+/* ------------------------------ Semana ------------------------------ */
+
+/** Faixa "sua semana": os próximos 7 dias com as atividades de cada um. */
+function plannerSemana(eventos, base = '/aluno') {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const porDia = {};
+  eventos.forEach((ev) => {
+    if (!ev.prazo) return;
+    const d = new Date(ev.prazo);
+    (porDia[chaveDia(d)] = porDia[chaveDia(d)] || []).push(ev);
+  });
+
+  const dias = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + i);
+    const doDia = (porDia[chaveDia(d)] || []).slice(0, 3);
+    const nome = DIAS_CURTO[d.getDay()];
+    const primeiro = doDia[0];
+    dias.push(`<a class="dash-week-dia ${i === 0 ? 'hoje' : ''} ${doDia.length ? 'tem' : ''}" href="${base}/calendario?ano=${d.getFullYear()}&mes=${d.getMonth() + 1}#calendario" title="${
+      doDia.length ? `${doDia.length} atividade${doDia.length > 1 ? 's' : ''}` : 'Dia livre'
+    }">
+      <span class="dash-week-nome">${nome}</span>
+      <strong>${String(d.getDate()).padStart(2, '0')}</strong>
+      <span class="dash-week-pontos">${doDia
+        .map((ev) => `<i class="ponto ${(TIPOS[ev.tipo] || TIPOS.trabalho).classe}"></i>`)
+        .join('')}</span>
+      <small>${primeiro ? esc(primeiro.titulo) : 'livre'}</small>
+    </a>`);
+  }
+
+  return `
+  <section class="dash-week" aria-label="Sua semana">
+    <header class="dash-week-topo">
+      <div>
+        <span class="dash-week-icone">${ICO.calendario}</span>
+        <h2>Sua semana</h2>
+      </div>
+      <a class="dash-ver" href="${base}/calendario">Ver calendário ${ICO.seta}</a>
+    </header>
+    <div class="dash-week-dias">${dias.join('')}</div>
+  </section>`;
+}
+
+/* ------------------------------ Modo foco ------------------------------ */
+
+/** Timer de estudos (Pomodoro) — funciona no navegador, sem recarregar a página. */
+function cartaoFoco() {
+  return `
+  <section class="dash-card dash-foco" data-foco aria-label="Modo foco">
+    <header class="dash-card-topo">
+      <div class="dash-card-titulo">
+        <span class="dash-icone dash-icone--roxo">${ICO.clock}</span>
+        <h2>Modo foco</h2>
+      </div>
+      <span class="dash-contagem">25 min</span>
+    </header>
+    <div class="dash-foco-corpo">
+      <div class="dash-foco-topo">
+        <span class="dash-foco-tempo" data-foco-tempo>25:00</span>
+        <span class="dash-foco-gato" aria-hidden="true">ฅ^•ﻌ•^ฅ</span>
+      </div>
+      <div class="dash-foco-barra" aria-hidden="true"><i data-foco-barra></i></div>
+      <div class="dash-foco-botoes">
+        <button type="button" class="dash-foco-btn principal" data-foco-acao="alternar">Começar</button>
+        <button type="button" class="dash-foco-btn" data-foco-acao="zerar">Zerar</button>
+      </div>
+      <small class="dash-foco-dica">Um ciclo de foco + pausa curtinha. Você consegue ♡</small>
+    </div>
+  </section>`;
+}
+
 /** Próximas atividades com prazo a partir de agora. */
 function proximasTarefas(eventos, base, perfil = 'aluno', busca = '') {
   const agora = Date.now();
@@ -397,6 +469,8 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
         : ''
     }
 
+    ${plannerSemana(eventos, '/aluno')}
+
     <div class="dash-grade">
       <div class="dash-col">
         <section class="dash-card" id="tarefas">
@@ -431,6 +505,7 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
 
       <aside class="dash-col dash-col-lateral">
         ${miniCalendario({ eventos, base: '/aluno', ano: anoCal, mes: mesCal, busca: q })}
+        ${cartaoFoco()}
         ${proximasTarefas(eventos, '/aluno', 'aluno', q)}
       </aside>
     </div>
@@ -504,6 +579,8 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos, busca = '
         : ''
     }
 
+    ${plannerSemana(eventos, '/professor')}
+
     <div class="dash-grade">
       <div class="dash-col">
         <section class="dash-card" id="correcoes">
@@ -537,6 +614,7 @@ function paginaInicioProfessor({ usuario, materias, entregas, eventos, busca = '
 
       <aside class="dash-col dash-col-lateral">
         ${miniCalendario({ eventos, base: '/professor', ano: anoCal, mes: mesCal, busca: q })}
+        ${cartaoFoco()}
         ${proximasTarefas(eventos, '/professor', 'professor', q)}
       </aside>
     </div>

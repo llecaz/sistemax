@@ -284,4 +284,67 @@
       feito();
     }
   });
+
+  /* ---------- Modo foco (timer de estudos) ---------- */
+  document.querySelectorAll('[data-foco]').forEach(function (cartao) {
+    var TOTAL = 25 * 60; // 25 minutos
+    var restante = TOTAL;
+    var rodando = false;
+    var intervalo = null;
+    var tempo = cartao.querySelector('[data-foco-tempo]');
+    var barra = cartao.querySelector('[data-foco-barra]');
+    var botao = cartao.querySelector('[data-foco-acao="alternar"]');
+    var zerar = cartao.querySelector('[data-foco-acao="zerar"]');
+
+    function doisDigitos(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function pintar() {
+      if (tempo) tempo.textContent = doisDigitos(Math.floor(restante / 60)) + ':' + doisDigitos(restante % 60);
+      if (barra) barra.style.width = Math.round((restante / TOTAL) * 100) + '%';
+    }
+
+    function parar() {
+      rodando = false;
+      if (intervalo) clearInterval(intervalo);
+      intervalo = null;
+      if (botao) botao.textContent = restante === 0 ? 'De novo' : 'Continuar';
+    }
+
+    function iniciar() {
+      if (restante <= 0) restante = TOTAL;
+      rodando = true;
+      if (botao) botao.textContent = 'Pausar';
+      intervalo = setInterval(function () {
+        restante -= 1;
+        if (restante <= 0) {
+          restante = 0;
+          pintar();
+          parar();
+          if (botao) botao.textContent = 'De novo';
+          return;
+        }
+        pintar();
+      }, 1000);
+    }
+
+    if (botao) {
+      botao.addEventListener('click', function () {
+        if (rodando) parar();
+        else iniciar();
+      });
+    }
+
+    if (zerar) {
+      zerar.addEventListener('click', function () {
+        parar();
+        restante = TOTAL;
+        if (botao) botao.textContent = 'Começar';
+        pintar();
+      });
+    }
+
+    pintar();
+  });
 })();

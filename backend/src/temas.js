@@ -9,9 +9,33 @@
  *   2. Crie o bloco de variáveis correspondente em frontend/temas.css
  *      com o seletor [data-tema='SEU-ID'].
  */
-const TEMA_PADRAO = 'clean-minimal';
+const TEMA_PADRAO = 'nuvia';
 
 const TEMAS = [
+  /* ---------- Nuvia (identidade principal) ---------- */
+  {
+    id: 'nuvia',
+    nome: 'Nuvia Pixel',
+    categoria: 'Cozy e aesthetic',
+    modo: 'escuro',
+    par: 'nuvia-day',
+    padrao: true,
+    descricao:
+      'Quarto de estudos em pixel art: noite lilás, gatinhos, laços cor-de-rosa e um planner aconchegante para organizar a rotina escolar.',
+    paleta: ['#141127', '#1e1838', '#f3eeff', '#c1a9ff', '#ffb4d9'],
+  },
+  {
+    id: 'nuvia-day',
+    nome: 'Nuvia Manhã',
+    categoria: 'Cozy e aesthetic',
+    modo: 'claro',
+    par: 'nuvia',
+    padrao: false,
+    descricao:
+      'A versão iluminada do cantinho Nuvia: creme, rosa e lilás suaves, com o mesmo carinho em pixel art.',
+    paleta: ['#f7eef7', '#fffaf4', '#4b3a63', '#a77bd8', '#d8638c'],
+  },
+
   /* ---------- Minimalistas e sofisticados ---------- */
   {
     id: 'clean-minimal',
@@ -19,7 +43,7 @@ const TEMAS = [
     categoria: 'Minimalistas e sofisticados',
     modo: 'claro',
     par: 'dark-minimal',
-    padrao: true,
+    padrao: false,
     descricao: 'Interface clara em lavanda e roxo, com cartões brancos, cantos arredondados e visual SaaS moderno.',
     paleta: ['#f4f2fb', '#ffffff', '#2e2947', '#7b5ce6', '#2f9e6e'],
   },

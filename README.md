@@ -1,6 +1,6 @@
 # 🎓 Classroom Escolar — Nuvia
 
-Site para a escola onde os alunos enviam seus trabalhos **direto para o professor daquela matéria**, com escolha automática de **turma → matéria → professor**, correção com nota/observação e um dashboard moderno em **lavanda e roxo**, no estilo SaaS.
+Site para a escola onde os alunos enviam seus trabalhos **direto para o professor daquela matéria**, com escolha automática de **turma → matéria → professor**, correção com nota/observação e um dashboard acolhedor em **pixel art** — o canto de estudos **Nuvia**, com gatinhos, laços e um planner semanal.
 
 Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas no servidor.
 
@@ -9,26 +9,27 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
 ## ✨ Principais recursos
 
 ### 🎨 Visual
-- **Dashboard SaaS em lavanda/roxo**: fundo lavanda muito claro, cartões brancos com bordas discretas, cantos arredondados e sombras suaves; tipografia limpa e ícones minimalistas.
+- **Identidade Nuvia em pixel art**: noite lilás, gatinhos, plantas e laços em tons de rosa, com tipografia `Pixelify Sans` nos títulos e fundos estrelados. Um tema claro correspondente, **Nuvia Manhã**, mantém o mesmo carinho em tons creme e rosa.
 - **Sidebar fixa à esquerda** com logo, navegação (Início, Minhas Tarefas, Matérias, Calendário, Notificações e Configurações), seletor claro/escuro e o perfil do estudante no rodapé. Em telas menores ela vira uma gaveta recolhível.
 - **Topbar** com campo de busca de tarefas e matérias, atalho para notificações, acesso ao perfil e saída.
 - **Banner de boas-vindas** com saudação por horário (“Bom dia / Boa tarde / Boa noite”) e cartão de data ao lado.
 - **🎨 Sistema de personalização de temas** (⚙️ Configurações → **Aparência**):
-  - **8 temas**: `Lavanda` (padrão), `Japandi`, `Lavanda Noturna`, `Soft UI`, `Lo-fi Night`, `Pastel Dream`, `Moonroom` e `Dark Academia`.
+  - **10 temas**: `Nuvia Pixel` (padrão), `Nuvia Manhã`, `Lavanda`, `Japandi`, `Lavanda Noturna`, `Soft UI`, `Lo-fi Night`, `Pastel Dream`, `Moonroom` e `Dark Academia`.
   - **Lo-fi Night** e **Moonroom** também mudam o **design** (decoração de fundo + widget exclusivo: rádio lo-fi e cantinho da lua), sem alterar a paleta do Lo-fi Night.
   - Galeria com **cards de pré-visualização** (miniatura da interface), **paleta de cores**, **descrição da estética** e selos `Selecionado` / `Visualizando` / `Padrão`.
   - Clique num card para **visualizar** a aparência na plataforma inteira e depois **Aplicar tema** (ou **Cancelar pré-visualização**).
   - O tema fica salvo **na conta (banco de dados)** — sobrevive a atualizar a página, sair e entrar novamente, e vale para qualquer dispositivo.
-  - **Restaurar padrão** volta ao tema Lavanda.
+  - **Restaurar padrão** volta ao tema Nuvia Pixel.
   - Alternador **Sol 🌞 / Lua 🌙** na sidebar troca rapidamente entre o par claro/escuro do tema atual.
   - Cada tema tem sua própria identidade (fontes, cores, decorações de fundo), mas mantém a mesma estrutura e funcionalidades.
   - O **calendário do mês** também acompanha o tema: cores das atividades, cantos, brilhos e cartões mudam junto; no **Lo-fi Night** ele usa o layout exclusivo de quarto de estudos.
-  - Organizado com **variáveis CSS**: base em `frontend/estilo.css` + identidade dos temas em `frontend/temas.css` + registro em `backend/src/temas.js`.
+  - Organizado com **variáveis CSS**: base em `frontend/estilo.css` + identidade dos temas em `frontend/temas.css` + a identidade Nuvia (escuro/claro) em `frontend/nuvia.css` + registro em `backend/src/temas.js`.
 - Ícone de **engrenagem ⚙️** na sidebar → página de **Configurações**.
 - Responsivo em desktop, notebook, tablet e celular.
 
 ### 🔐 Login
-- Tela de entrada **Nuvia**: card centralizado, campos Email/Senha e botão em destaque.
+- Tela de entrada **Nuvia**: noite lilás em pixel art, cena completa do quartinho de estudos (janela com lua, gato cochilando, laptop, plantas), formulário em painel escuro e botão com a patinha.
+- **Contas demo** com um clique na tela de entrada: cartões de `Aluna` (ana@escola.com) e `Professora` (maria@escola.com) — o cartão `Admin` só aparece fora de produção. Defina `MOSTRAR_DEMO=0` no `.env` para ocultar todos.
 - **Manter conectado** (sessão de 30 dias) ou sessão só no navegador.
 - **Cadastro de aluno pelo código da turma** (fornecido pela escola).
 - **Esqueci a senha**: recuperação por pergunta de segurança + redefinição pelo admin.
@@ -36,7 +37,7 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
 - Tentativas de login limitadas (proteção contra força bruta).
 
 ### 🎓 Área do Aluno
-- **Dashboard inicial**: banner com saudação por horário, cartão de data, **Minhas Tarefas** com filtros funcionais (`Todas`, `A fazer`, `Entregues`, `Corrigidas`), **Minhas Matérias** em cards com ícone, média/desempenho e barra de progresso, mini-calendário navegável e **Próximas Tarefas**.
+- **Dashboard inicial**: banner com saudação por horário, cartão de data, **Sua semana** (planner dos próximos 7 dias com dots por tipo de atividade), **Modo foco** (timer pomodoro de 25 minutos integrado), **Minhas Tarefas** com filtros funcionais (`Todas`, `A fazer`, `Entregues`, `Corrigidas`), **Minhas Matérias** em cards com ícone, média/desempenho e barra de progresso, mini-calendário navegável, **Próximas Tarefas** e um gatinho companheiro na página inicial.
 - **Status coloridos** nas tarefas: verde para corrigida, azul para entregue, laranja para pendente e vermelho para atrasada.
 - **Busca** na topbar filtra tarefas e matérias por nome/matéria (`?q=`), mantendo os filtros e a navegação do calendário.
 - **Notificações**: página com prazos próximos, atividades atrasadas, entregas enviadas e correções recebidas, geradas a partir dos dados reais da conta.
@@ -298,7 +299,7 @@ sistemax/
 3. (Opcional) Adicione toques de identidade no mesmo arquivo — fontes, decorações de fundo etc.
 
 Pronto: o tema aparece **automaticamente** na galeria de Configurações → Aparência.
-O tema padrão de novos usuários é o **Lavanda** (`clean-minimal`, coluna `usuarios.tema`).
+O tema padrão de novos usuários é o **Nuvia Pixel** (`nuvia`, coluna `usuarios.tema`); a identidade Nuvia fica toda em [`frontend/nuvia.css`](frontend/nuvia.css).
 
 ---
 

@@ -14,7 +14,7 @@ const PRODUCAO =
   // 1) Banco: PostgreSQL local embutido (desenvolvimento) ou externo (produção)
   let postgresLocal = null;
   try {
-    if (!PRODUCAO) {
+    if (!PRODUCAO && process.env.PG_LOCAL !== 'false') {
       const { iniciarPostgresLocal } = require('./src/postgresLocal');
       postgresLocal = await iniciarPostgresLocal();
     }
@@ -30,7 +30,15 @@ const PRODUCAO =
     await prepararBanco();
   } catch (erro) {
     console.error('❌ Falha ao preparar o banco de dados:', erro.message);
-    console.error('   Verifique o DATABASE_URL no arquivo .env');
+    if (process.env.PG_LOCAL === 'false') {
+      console.error('   O banco externo (DATABASE_URL_LOCAL) não respondeu.');
+      console.error('   Confirme que a instância do PostgreSQL em 5433 está no ar,');
+      console.error('   ou remova PG_LOCAL=false para tentar o PostgreSQL embutido.');
+    } else {
+      console.error('   Falha ao iniciar o PostgreSQL local. Se este caminho falhar de novo,');
+      console.error('   defina PG_LOCAL=false no .env e DATABASE_URL_LOCAL apontando para um');
+      console.error('   PostgreSQL rodando nesta máquina (ou use .env para um banco externo).');
+    }
     process.exit(1);
   }
 

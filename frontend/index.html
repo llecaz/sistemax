@@ -3,307 +3,329 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Classroom Escolar — plataforma de entrega de trabalhos escolares. Alunos enviam atividades, professores corrigem com nota e observação.">
-  <title>Classroom Escolar — Nuvia</title>
+  <meta name="description" content="Nuvia — planeje trabalhos, aulas, eventos e matérias escolares em um cantinho de estudos pixel art, com gatinhos e muito carinho.">
+  <title>Nuvia — seu cantinho de estudos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/home-nuvia.css">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#7b5ce6">
+  <meta name="theme-color" content="#17132d">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Classroom Escolar">
-  <style>
-    :root {
-      --fundo: #f4f2fb;
-      --superficie: #ffffff;
-      --superficie-2: #f7f5fd;
-      --texto: #2e2947;
-      --texto-suave: #7c7894;
-      --borda: #e6e2f2;
-      --azul: #7b5ce6;
-      --azul-hover: #6848d4;
-      --azul-claro: #efeafe;
-      --sombra: 0 1px 2px rgba(60, 50, 110, 0.04), 0 8px 24px rgba(90, 70, 160, 0.07);
-      --sombra-alta: 0 18px 44px rgba(76, 56, 140, 0.16);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: var(--fundo);
-      color: var(--texto);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: var(--azul); text-decoration: none; }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(244, 242, 251, 0.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--borda);
-      padding: 14px clamp(18px, 4vw, 48px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .marca {
-      display: inline-flex;
-      align-items: center;
-      gap: 11px;
-      color: var(--texto);
-      font-family: 'Nunito', 'Roboto', sans-serif;
-      font-size: 1.15rem;
-      font-weight: 800;
-      letter-spacing: -0.2px;
-    }
-    .marca-icone {
-      width: 40px;
-      height: 40px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #8f6ff0, #6a48d8);
-      color: #fff;
-      box-shadow: 0 6px 16px rgba(106, 72, 216, 0.3);
-    }
-    .marca small {
-      display: block;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--texto-suave);
-      line-height: 1.2;
-    }
-    nav { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    nav a.link { color: var(--texto-suave); font-weight: 600; font-size: 0.92rem; padding: 8px 10px; border-radius: 10px; }
-    nav a.link:hover { color: var(--azul); background: var(--azul-claro); }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 24px;
-      border-radius: 999px;
-      font-family: inherit;
-      font-size: 0.94rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-    }
-    .btn-primario { background: var(--azul); color: #fff; box-shadow: 0 10px 24px rgba(107, 72, 216, 0.26); }
-    .btn-primario:hover { background: var(--azul-hover); transform: translateY(-1px); }
-    .btn-secundario { background: var(--superficie); color: var(--azul); border-color: var(--borda); }
-    .btn-secundario:hover { background: var(--azul-claro); }
-
-    main { max-width: 1080px; margin: 0 auto; padding: clamp(32px, 6vw, 64px) clamp(18px, 4vw, 32px) 72px; }
-
-    .hero {
-      text-align: center;
-      padding: 20px 0 12px;
-    }
-    .selo {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 20px;
-      padding: 7px 14px;
-      border-radius: 999px;
-      background: var(--azul-claro);
-      color: var(--azul);
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    .selo i { width: 7px; height: 7px; border-radius: 50%; background: var(--azul); }
-    .hero h1 {
-      font-family: 'Nunito', 'Roboto', sans-serif;
-      font-size: clamp(2rem, 5vw, 3.4rem);
-      font-weight: 800;
-      letter-spacing: -1.2px;
-      line-height: 1.12;
-      margin-bottom: 18px;
-    }
-    .hero h1 span { color: var(--azul); }
-    .hero p {
-      font-size: 1.06rem;
-      color: var(--texto-suave);
-      max-width: 620px;
-      margin: 0 auto 32px;
-    }
-    .hero-acoes { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-
-    .cartas {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
-      gap: 18px;
-      margin-top: 56px;
-    }
-    .carta {
-      background: var(--superficie);
-      border: 1px solid var(--borda);
-      border-radius: 20px;
-      padding: 26px 24px;
-      box-shadow: var(--sombra);
-      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
-    }
-    .carta:hover { box-shadow: var(--sombra-alta); transform: translateY(-3px); border-color: transparent; }
-    .carta .icone {
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 14px;
-      border-radius: 13px;
-      background: var(--azul-claro);
-      color: var(--azul);
-    }
-    .carta h2 {
-      font-family: 'Nunito', 'Roboto', sans-serif;
-      font-size: 1.12rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-    .carta p { font-size: 0.94rem; color: var(--texto-suave); }
-    .carta a { display: inline-flex; align-items: center; gap: 5px; margin-top: 16px; font-weight: 700; font-size: 0.9rem; }
-    .carta a:hover { text-decoration: underline; }
-
-    .como-funciona { margin-top: 72px; }
-    .como-funciona h2 {
-      text-align: center;
-      font-family: 'Nunito', 'Roboto', sans-serif;
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: -0.4px;
-      margin-bottom: 28px;
-    }
-    .passos {
-      list-style: none;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 16px;
-      counter-reset: passo;
-    }
-    .passos li {
-      background: var(--superficie);
-      border: 1px solid var(--borda);
-      border-radius: 16px;
-      padding: 20px;
-      font-size: 0.92rem;
-      color: var(--texto-suave);
-    }
-    .passos li::before {
-      counter-increment: passo;
-      content: counter(passo);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 9px;
-      background: var(--azul-claro);
-      color: var(--azul);
-      font-weight: 800;
-      font-size: 0.85rem;
-      margin-bottom: 10px;
-    }
-    .passos strong { display: block; color: var(--texto); font-weight: 700; margin-bottom: 4px; }
-
-    footer {
-      text-align: center;
-      color: var(--texto-suave);
-      font-size: 0.85rem;
-      padding: 32px 24px 48px;
-      border-top: 1px solid var(--borda);
-    }
-
-    @media (max-width: 560px) {
-      header { flex-direction: column; align-items: flex-start; }
-      .hero h1 { font-size: 2.1rem; }
-    }
-  </style>
+  <meta name="apple-mobile-web-app-title" content="Nuvia">
 </head>
 <body>
-  <header>
-    <a class="marca" href="/" aria-label="Classroom Escolar, página inicial">
-      <span class="marca-icone" aria-hidden="true">
-        <svg viewBox="0 0 48 48" width="22" height="22" fill="currentColor">
-          <path d="M24 6 3 16l21 10 21-10L24 6Zm-15 14.6v9.2C9 34.6 15.7 38 24 38s15-3.4 15-8.2v-9.2l-15 7.1-15-7.1Zm33 .9-6 2.9v7.4c0 1.2-.3 2.3-.9 3.2l4.3 2.1c1.6-1.5 2.6-3.4 2.6-5.3V21.5Z"/>
-        </svg>
-      </span>
-      <span>Classroom<small>Escolar</small></span>
-    </a>
-    <nav>
-      <a class="link" href="/cadastro">Criar conta de aluno</a>
-      <a class="btn btn-primario" href="/entrar">Entrar</a>
-    </nav>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="Nuvia, página inicial">
+        <span class="brand-cat" aria-hidden="true"><img src="/assets/decorations/cats/nuvia-cat-peeking.png" alt=""></span>
+        <span class="brand-text">
+          <span class="brand-name">nuvia</span>
+          <span class="brand-tag">escola &amp; estudos</span>
+        </span>
+      </a>
+
+      <nav class="nav" id="nav-principal" aria-label="Navegação principal">
+        <a href="#planner">Planner</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#como-funciona">Como funciona</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-ghost" href="/entrar">Entrar</a>
+        <a class="btn btn-primary" href="/cadastro">Criar conta</a>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-principal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
   </header>
 
   <main>
     <section class="hero">
-      <span class="selo"><i></i>Seu espaço de aprendizado</span>
-      <h1>Estude, entregue e acompanhe<br><span>tudo em um só lugar.</span></h1>
-      <p>Entrega de trabalhos escolares direto para o professor da matéria, com correção, nota e observação — em um painel claro, organizado e feito para estudar.</p>
-      <div class="hero-acoes">
-        <a class="btn btn-primario" href="/entrar">Entrar na plataforma</a>
-        <a class="btn btn-secundario" href="/cadastro">Sou aluno — criar conta</a>
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">seu cantinho de estudos</span>
+          <h1>Estude no seu ritmo,<br><span class="pink">um passo</span> <span class="lilac">de cada vez.</span></h1>
+          <p class="hero-lead">
+            Trabalhos, aulas, eventos e matérias organizados em um só lugar — com prazos,
+            correções e um planner semanal que deixa tudo mais leve.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary btn-lg" href="/cadastro">
+              Começar agora
+              <span aria-hidden="true">♡</span>
+            </a>
+            <a class="btn btn-ghost btn-lg" href="/entrar">Já tenho conta</a>
+          </div>
+          <p class="hero-note"><span aria-hidden="true">✦</span> Feito para alunos, professores e escolas.</p>
+
+          <div class="hero-stats" aria-label="Destaques da plataforma">
+            <div class="stat">
+              <span class="stat-icon" aria-hidden="true">📚</span>
+              <span><strong>Matérias</strong><small>com professor e turma</small></span>
+            </div>
+            <div class="stat">
+              <span class="stat-icon" aria-hidden="true">⏰</span>
+              <span><strong>Prazos</strong><small>sem sustos de última hora</small></span>
+            </div>
+            <div class="stat">
+              <span class="stat-icon" aria-hidden="true">🌙</span>
+              <span><strong>Modo foco</strong><small>para estudar com calma</small></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-scene" aria-hidden="true">
+          <img class="scene-bow" src="/assets/decorations/accessories/nuvia-bow-pink.png" alt="">
+          <span class="scene-badge">✦ nuvia</span>
+
+          <div class="scene-chip scene-chip--task">
+            <span class="scene-chip-dot"></span>
+            <span><strong>Redação entregue</strong><small>Português · hoje</small></span>
+          </div>
+
+          <img class="scene-window" src="/assets/decorations/accessories/nuvia-window-night.png" alt="">
+          <img class="scene-hanging" src="/assets/decorations/plants/nuvia-plant-hanging.png" alt="">
+          <img class="scene-frame" src="/assets/decorations/accessories/nuvia-wall-hanging-cat.png" alt="">
+          <img class="scene-shelf" src="/assets/decorations/stationery/nuvia-bookshelf.png" alt="">
+          <img class="scene-laptop" src="/assets/decorations/stationery/nuvia-laptop.png" alt="">
+          <img class="scene-books" src="/assets/decorations/stationery/nuvia-books-stack.png" alt="">
+          <img class="scene-cat" src="/assets/decorations/cats/nuvia-cat-sleeping-pillow.png" alt="">
+          <img class="scene-plant" src="/assets/decorations/plants/nuvia-plant-potted.png" alt="">
+          <img class="scene-mug" src="/assets/decorations/accessories/nuvia-mug-cat.png" alt="">
+
+          <span class="scene-spark s1">✦</span>
+          <span class="scene-spark s2">✧</span>
+          <span class="scene-spark s3">✦</span>
+
+          <div class="scene-chip scene-chip--note">
+            <span class="scene-chip-dot green"></span>
+            <span><strong>Nota 9,5!</strong><small>Matemática ♡</small></span>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="cartas" aria-label="Áreas do sistema">
-      <article class="carta">
-        <div class="icone" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>
-          </svg>
+    <div class="strip">
+      <div class="wrap">
+        <span class="strip-item"><span aria-hidden="true">✦</span> Trabalhos e entregas</span>
+        <span class="strip-item"><span aria-hidden="true">✧</span> Calendário de provas</span>
+        <span class="strip-item"><span aria-hidden="true">✦</span> Notas e correções</span>
+        <span class="strip-item"><span aria-hidden="true">✧</span> Planner semanal</span>
+        <span class="strip-item"><span aria-hidden="true">✦</span> Modo foco</span>
+      </div>
+    </div>
+
+    <section class="section" id="planner">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">planeje com carinho</span>
+          <h2>Um planner que <span class="pink">cabe na sua rotina</span></h2>
+          <p>Organize a semana, marque o que já terminou e veja o que vem depois. Simples assim — sem planilhas complicadas.</p>
         </div>
-        <h2>Aluno</h2>
-        <p>Veja suas matérias, envie arquivos, links ou Google Drive e acompanhe o status: a fazer, entregue, corrigida ou atrasada.</p>
-        <a href="/entrar">Acessar área do aluno →</a>
-      </article>
-      <article class="carta">
-        <div class="icone" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/>
-          </svg>
+
+        <div class="planner-grid">
+          <div class="planner-window reveal" aria-label="Prévia do planner semanal">
+            <div class="planner-bar">
+              <span class="window-dot pink"></span>
+              <span class="window-dot peach"></span>
+              <span class="window-dot green"></span>
+              <span class="planner-bar-title">minha semana</span>
+              <span class="planner-bar-tag">novembro</span>
+            </div>
+            <div class="planner-body">
+              <div class="planner-tabs" role="tablist" aria-label="Visualização do planner">
+                <button class="planner-tab ativo" type="button" role="tab" aria-selected="true" data-planner-tab="semana">Semana</button>
+                <button class="planner-tab" type="button" role="tab" aria-selected="false" data-planner-tab="materias">Matérias</button>
+              </div>
+
+              <div class="planner-panel ativo" data-planner-panel="semana">
+                <div class="planner-row">
+                  <span class="planner-day">SEG<strong>09</strong></span>
+                  <span class="planner-task"><strong>Revisar frações</strong><small>Matemática · 19h</small></span>
+                  <span class="pill lilac">Estudo</span>
+                </div>
+                <div class="planner-row">
+                  <span class="planner-day">TER<strong>10</strong></span>
+                  <span class="planner-task"><strong>Entregar redação</strong><small>Português · até 23h59</small></span>
+                  <span class="pill pink">Trabalho</span>
+                </div>
+                <div class="planner-row">
+                  <span class="planner-day">QUA<strong>11</strong></span>
+                  <span class="planner-task"><strong>Prova de história</strong><small>Capítulos 4 e 5</small></span>
+                  <span class="pill peach">Prova</span>
+                </div>
+                <div class="planner-row">
+                  <span class="planner-day">QUI<strong>12</strong></span>
+                  <span class="planner-task"><strong>Projeto de ciências</strong><small>Montar maquete</small></span>
+                  <span class="pill green">Projeto</span>
+                </div>
+                <div class="planner-check feito"><i>✓</i><span>Ler capítulo de geografia</span></div>
+                <div class="planner-check"><i></i><span>Organizar resumo de inglês</span></div>
+              </div>
+
+              <div class="planner-panel" data-planner-panel="materias">
+                <div class="planner-row">
+                  <span class="planner-day">PT<strong>✦</strong></span>
+                  <span class="planner-task"><strong>Português</strong><small>2 trabalhos · média 8,7</small></span>
+                  <span class="pill pink">Em dia</span>
+                </div>
+                <div class="planner-row">
+                  <span class="planner-day">MT<strong>✦</strong></span>
+                  <span class="planner-task"><strong>Matemática</strong><small>1 prova · média 9,5</small></span>
+                  <span class="pill green">Ótima</span>
+                </div>
+                <div class="planner-row">
+                  <span class="planner-day">HI<strong>✦</strong></span>
+                  <span class="planner-task"><strong>História</strong><small>Prova na quarta · revisar</small></span>
+                  <span class="pill peach">Atenção</span>
+                </div>
+                <div class="planner-row">
+                  <span class="planner-day">CI<strong>✦</strong></span>
+                  <span class="planner-task"><strong>Ciências</strong><small>Projeto para quinta</small></span>
+                  <span class="pill lilac">Projeto</span>
+                </div>
+                <div class="planner-check"><i></i><span>Ver todas as matérias da turma</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal">
+            <h3 style="margin:0 0 4px;font-family:var(--pixel);font-size:clamp(24px,3vw,32px);font-weight:600;">Tudo no lugar certo ♡</h3>
+            <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.7;">O planner reúne o que a escola já organiza para você — e deixa a semana mais fácil de enxergar.</p>
+
+            <ul class="planner-side-list">
+              <li>
+                <span class="feature-dot" aria-hidden="true">📅</span>
+                <span><strong>Semana à vista</strong><p>Trabalhos, provas e eventos agrupados por dia, com prazos e horários.</p></span>
+              </li>
+              <li>
+                <span class="feature-dot" aria-hidden="true">✓</span>
+                <span><strong>Progresso de verdade</strong><p>Marque o que já estudou, acompanhe entregas e veja o quanto já avançou.</p></span>
+              </li>
+              <li>
+                <span class="feature-dot" aria-hidden="true">🌱</span>
+                <span><strong>No seu ritmo</strong><p>Um passo de cada vez, sem comparações — o cantinho é seu.</p></span>
+              </li>
+            </ul>
+
+            <a class="btn btn-primary btn-lg" href="/cadastro">Montar meu planner <span aria-hidden="true">↗</span></a>
+          </div>
         </div>
-        <h2>Professor</h2>
-        <p>Crie atividades com prazo, baixe as entregas e corrija com nota de 0 a 10 e observação para cada aluno.</p>
-        <a href="/entrar">Acessar área do professor →</a>
-      </article>
-      <article class="carta">
-        <div class="icone" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
-          </svg>
-        </div>
-        <h2>Admin</h2>
-        <p>Cadastre turmas, disciplinas e professores e vincule professor ↔ turma ↔ matéria para liberar o acesso dos alunos.</p>
-        <a href="/entrar">Acessar área do admin →</a>
-      </article>
+      </div>
     </section>
 
-    <section class="como-funciona">
-      <h2>Como funciona</h2>
-      <ol class="passos">
-        <li><strong>Admin organiza</strong>Cadastra turmas, matérias e professores e faz os vínculos.</li>
-        <li><strong>Aluno se cadastra</strong>Informa o código da turma fornecido pela escola.</li>
-        <li><strong>Professor publica</strong>Cria a atividade com prazo de entrega.</li>
-        <li><strong>Aluno entrega</strong>Envia arquivo, link ou Google Drive (pode reenviar antes da correção).</li>
-        <li><strong>Correção</strong>Professor dá nota e observação; aluno acompanha no painel.</li>
-      </ol>
+    <section class="section" id="recursos">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">tudo em um só cantinho</span>
+          <h2>Feito para a vida <span class="lilac">de estudante</span></h2>
+          <p>Do envio do trabalho até a nota na mão: cada pedacinho da rotina escolar com um lugar aconchegante para morar.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">📝</div>
+            <h3>Trabalhos &amp; entregas</h3>
+            <p>Envie arquivo, link ou Google Drive direto para o professor da matéria. Reenvie enquanto não for corrigido.</p>
+            <span class="tag">arquivo · link · drive</span>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">📚</div>
+            <h3>Aulas &amp; matérias</h3>
+            <p>Veja todas as matérias da sua turma, com professor, atividades e progresso em cards organizados.</p>
+            <span class="tag">turma · professor · progresso</span>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">📅</div>
+            <h3>Calendário &amp; eventos</h3>
+            <p>Provas, projetos e eventos em uma grade mensal colorida. O professor adiciona eventos em segundos.</p>
+            <span class="tag">prazos · provas · eventos</span>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">🌙</div>
+            <h3>Modo foco</h3>
+            <p>Um timer de estudos com pausas e gatinho de companhia para manter a concentração sem pressão.</p>
+            <span class="tag">pomodoro · pausas · foco</span>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">💜</div>
+            <h3>Notas &amp; correções</h3>
+            <p>O professor corrige com nota de 0 a 10 e observações. Você acompanha o status de cada entrega.</p>
+            <span class="tag">nota · feedback · status</span>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">🎀</div>
+            <h3>Do seu jeitinho</h3>
+            <p>Temas claro e escuro, decorações em pixel art e um visual que deixa estudar mais leve.</p>
+            <span class="tag">temas · pixel art · gatinhos</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="como-funciona">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">sem mistério</span>
+          <h2>Como <span class="pink">funciona</span></h2>
+          <p>Quatro passos e o seu semestre já começa mais organizado.</p>
+        </div>
+
+        <ol class="steps">
+          <li class="step reveal"><strong>A escola organiza</strong><p>Turmas, matérias e professores são vinculados pela coordenação.</p></li>
+          <li class="step reveal"><strong>Você cria a conta</strong><p>Use o código da turma que a escola enviou e personalize seu cantinho.</p></li>
+          <li class="step reveal"><strong>Planeje a semana</strong><p>Acompanhe trabalhos, provas e eventos direto no planner e no calendário.</p></li>
+          <li class="step reveal"><strong>Estude e entregue</strong><p>Envie suas atividades, receba a correção e comemore cada passo ♡</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="wrap" aria-label="Comece agora">
+      <div class="cta reveal">
+        <img class="cta-bow" src="/assets/decorations/accessories/nuvia-bow-purple.png" alt="" aria-hidden="true">
+        <img class="cta-bow left" src="/assets/decorations/accessories/nuvia-bow-pink.png" alt="" aria-hidden="true">
+        <img class="cta-cat" src="/assets/decorations/cats/nuvia-cat-angel-heart.png" alt="" aria-hidden="true">
+        <h2>Seu cantinho está <span class="pink">esperando</span> por você</h2>
+        <p>Entre com a conta da escola ou crie a sua agora. Um pequeno passo de cada vez — e o semestre inteiro fica mais leve.</p>
+        <div class="cta-actions">
+          <a class="btn btn-primary btn-lg" href="/cadastro">Criar minha conta</a>
+          <a class="btn btn-ghost btn-lg" href="/entrar">Entrar na plataforma</a>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer>Classroom Escolar &copy; 2026 — Nuvia · Seu espaço de aprendizado</footer>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-brand">
+        <img src="/assets/decorations/cats/nuvia-cat-peeking.png" alt="" aria-hidden="true">
+        <span>nuvia</span>
+      </div>
+      <nav class="footer-links" aria-label="Links do rodapé">
+        <a href="#planner">Planner</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="/entrar">Entrar</a>
+        <a href="/cadastro">Criar conta</a>
+      </nav>
+      <div class="footer-copy">
+        <span>© 2026 Nuvia — feito com carinho para estudar melhor.</span>
+        <span>Um pequeno passo de cada vez <span aria-hidden="true">♡</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/home-nuvia.js" defer></script>
   <script src="/pwa.js" defer></script>
 </body>
 </html>
