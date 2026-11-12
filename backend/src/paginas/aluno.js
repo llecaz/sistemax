@@ -3,6 +3,18 @@ const { esc, dataBR, dataHoraBR, decorrido, corDe, tamanhoLegivel, dominioLink }
 const { classificar, abasDe, ROTULOS_ABA } = require('../regras');
 const { TIPOS } = require('./calendario');
 
+/* Ícones em linha (mesmo traço do restante do site) — substituem os emojis. */
+const ICO_LIVRO = `<svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/></svg>`;
+const ICO_FESTA = `<svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 9 10 2 10l6 4.5-2.5 7L12 15.5 18.5 21.5 16 14.5l6-4.5-7 0z" stroke-width="1.6"/></svg>`;
+const ICO_TAREFA = `<svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>`;
+const ICO_DOC = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5"/><path d="M9 14h6M9 17h6M9 11h2"/></svg>`;
+const ICO_PLANILHA = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14.5h18M9.5 4v16M15.5 4v16"/></svg>`;
+const ICO_APRESENTACAO = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M9 21l3-4 3 4"/><path d="M12 4V3M8 10l3-3 3 3"/></svg>`;
+const ICO_IMAGEM = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m5 18 6-6 5 5M14 16l2-2 4 4"/></svg>`;
+const ICO_CLIP = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 11.5-8.5 8.5a5 5 0 0 1-7-7l8.5-8.5a3.5 3.5 0 0 1 5 5l-8 8a2 2 0 0 1-3-3l7.5-7.5"/></svg>`;
+const ICO_LINK = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l4-4a5 5 0 0 0-7-7l-2 2"/><path d="M14 10a5 5 0 0 0-7 0l-4 4a5 5 0 0 0 7 7l2-2"/></svg>`;
+const ICO_NUVEM = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1 0-9 6 6 0 0 1 11.6 2 4 4 0 0 1-.6 7z"/><path d="M12 12v7m0-7-3 3m3-3 3 3"/></svg>`;
+
 function avatarProfessor(nome) {
   if (!nome) return `<span class="avatar pequeno"><span style="background:#9aa0a6">?</span></span>`;
   const cor = corDe(nome).claro;
@@ -51,7 +63,7 @@ function gradeMaterias({ usuario, materias }) {
     materias.length
       ? `<div class="grade-materias">${cards}</div>`
       : `<div class="vazio">
-           <div class="vazio-icone">📚</div>
+           <div class="vazio-icone">${ICO_LIVRO}</div>
            <h3>Nenhuma matéria encontrada</h3>
            <p>Fale com a secretaria: sua turma ainda não tem matérias cadastradas.</p>
          </div>`
@@ -82,7 +94,7 @@ function blocoEntrega(a, s) {
   const detalhe =
     a.metodo === 'link' && a.link
       ? `<a class="arquivo-enviado link-entrega" href="${esc(a.link)}" target="_blank" rel="noopener noreferrer">
-           🔗 ${esc(dominioLink(a.link))} · abrir link entregue
+           ${ICO_LINK} ${esc(dominioLink(a.link))} · abrir link entregue
          </a>`
       : `<span class="arquivo-enviado">${esc(a.arquivo_nome || '')} · ${tamanhoLegivel(a.arquivo_tamanho)}</span>`;
   return `
@@ -95,10 +107,10 @@ function blocoEntrega(a, s) {
 
 /** Categorias de arquivo que o aluno pode enviar. */
 const CATEGORIAS_ARQUIVO = [
-  ['📄', 'Documentos', '.pdf, .doc, .docx, .txt'],
-  ['📊', 'Planilhas', '.xls, .xlsx'],
-  ['📽️', 'Apresentações', '.ppt, .pptx'],
-  ['🖼️', 'Imagens', '.jpg, .jpeg, .png'],
+  [ICO_DOC, 'Documentos', '.pdf, .doc, .docx, .txt'],
+  [ICO_PLANILHA, 'Planilhas', '.xls, .xlsx'],
+  [ICO_APRESENTACAO, 'Apresentações', '.ppt, .pptx'],
+  [ICO_IMAGEM, 'Imagens', '.jpg, .jpeg, .png'],
 ];
 
 function blocoAcoes(a, s) {
@@ -119,9 +131,9 @@ function blocoAcoes(a, s) {
   return `
   <div class="bloco-envio">
     <nav class="abas-envio" role="tablist" aria-label="Formas de entrega">
-      <button class="aba-envio ativa" type="button" role="tab" aria-selected="true" data-envio-aba="arquivo">📎 Arquivo</button>
-      <button class="aba-envio" type="button" role="tab" aria-selected="false" data-envio-aba="link">🔗 Link</button>
-      <button class="aba-envio" type="button" role="tab" aria-selected="false" data-envio-aba="drive">☁️ Drive</button>
+      <button class="aba-envio ativa" type="button" role="tab" aria-selected="true" data-envio-aba="arquivo">${ICO_CLIP} Arquivo</button>
+      <button class="aba-envio" type="button" role="tab" aria-selected="false" data-envio-aba="link">${ICO_LINK} Link</button>
+      <button class="aba-envio" type="button" role="tab" aria-selected="false" data-envio-aba="drive">${ICO_NUVEM} Drive</button>
     </nav>
 
     <form class="form-entrega" method="post" action="/aluno/entregar/${a.id}" enctype="multipart/form-data"
@@ -183,11 +195,11 @@ function listaAtividades(atividades, aba) {
       todos: ['Nenhum trabalho por aqui', 'Assim que o professor publicar uma atividade, ela aparece nesta lista.'],
       'nao-corrigidos': ['Nada aguardando correção', 'Quando você entregar um trabalho, ele fica aqui até o professor corrigir.'],
       corrigidos: ['Nenhum trabalho corrigido', 'As notas e observações dos professores aparecerão aqui.'],
-      atrasados: ['Nada atrasado 🎉', 'Você está em dia com todos os prazos.'],
+      atrasados: ['Nada atrasado', 'Você está em dia com todos os prazos.'],
     };
     const [titulo, texto] = textos[aba] || textos.todos;
     return `<div class="vazio">
-      <div class="vazio-icone">${aba === 'atrasados' ? '🎉' : '📋'}</div>
+      <div class="vazio-icone">${aba === 'atrasados' ? ICO_FESTA : ICO_TAREFA}</div>
       <h3>${titulo}</h3><p>${texto}</p>
     </div>`;
   }
@@ -200,7 +212,7 @@ function listaAtividades(atividades, aba) {
         return `
       <article class="atividade">
         <div class="atividade-icone" style="--faixa:${cor}">
-          <span style="font-size:20px;color:#fff">${info.icone}</span>
+          <span class="atividade-glyph">${info.icone}</span>
         </div>
         <div class="atividade-corpo">
           <div class="atividade-topo">

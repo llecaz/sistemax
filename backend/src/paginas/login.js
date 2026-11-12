@@ -53,7 +53,7 @@ function demoCards() {
     .join('');
   return `
     <div class="nv-demo" aria-label="Contas de demonstração">
-      <span class="nv-demo-rotulo"><span aria-hidden="true">✦</span> contas demo</span>
+      <span class="nv-demo-rotulo"><span aria-hidden="true"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span> contas demo</span>
       <div class="nv-demo-lista">${botoes}</div>
     </div>`;
 }
@@ -132,7 +132,7 @@ function modoEntrar(req) {
         ${campo('email', 'text', 'E-mail ou usuário', 'autocomplete="username" inputmode="email"', 'voce@exemplo.com')}
         ${campo('senha', 'password', 'Senha', 'autocomplete="current-password"', 'Digite sua senha')}
         <div class="nv-options">
-          <label class="nv-check"><input type="checkbox" name="manter" value="1"><span>Lembrar de mim</span></label>
+          <label class="nv-check"><input type="checkbox" name="manter" value="1"><span>Lembrar de mim (entrar automaticamente)</span></label>
           <a href="/recuperar">Esqueceu sua senha?</a>
         </div>
         <button class="nv-submit" type="submit">
@@ -274,14 +274,14 @@ function cenaLogin() {
     ${d('nuvia-plant-small-pot', { pasta: 'plants', tamanho: '8.5%', classe: 'nv-scene-small-plant' })}
     ${d('nuvia-plant-potted', { pasta: 'plants', tamanho: '18%', classe: 'nv-scene-plant' })}
 
-    <span class="nv-sparkle nv-sparkle--1">✦</span>
-    <span class="nv-sparkle nv-sparkle--2">✧</span>
-    <span class="nv-sparkle nv-sparkle--3">✦</span>
-    <span class="nv-sparkle nv-sparkle--4">✧</span>
+    <span class="nv-sparkle nv-sparkle--1"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
+    <span class="nv-sparkle nv-sparkle--2"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
+    <span class="nv-sparkle nv-sparkle--3"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
+    <span class="nv-sparkle nv-sparkle--4"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
 
     <div class="nv-scene-card">
-      <span class="nv-scene-card-star" aria-hidden="true">✦</span>
-      <p class="nv-scene-card-title">Seu cantinho de estudos ♡</p>
+      <span class="nv-scene-card-star" aria-hidden="true"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
+      <p class="nv-scene-card-title">Seu cantinho de estudos <svg class="ico-heart" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 20.7S4 14.6 4 8.6A4.6 4.6 0 0 1 12 5.3 4.6 4.6 0 0 1 20 8.6c0 6-8 12.1-8 12.1z"/></svg></p>
       <p class="nv-scene-card-text">Organize suas ideias, acompanhe suas atividades e aproveite seu ritmo.</p>
     </div>
   </section>`;
@@ -339,7 +339,7 @@ function telaLogin({ modo, dados, req }) {
             <span class="nv-brand-tag">escola &amp; estudos</span>
           </span>
         </a>
-        <span class="nv-top-note">Seu espaço de aprendizado <span aria-hidden="true">♡</span></span>
+        <span class="nv-top-note">Seu espaço de aprendizado <span aria-hidden="true"><svg class="ico-heart" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 20.7S4 14.6 4 8.6A4.6 4.6 0 0 1 12 5.3 4.6 4.6 0 0 1 20 8.6c0 6-8 12.1-8 12.1z"/></svg></span></span>
       </header>
 
       <div class="nv-shell">
@@ -350,8 +350,8 @@ function telaLogin({ modo, dados, req }) {
             <div class="nv-panel-glow" aria-hidden="true"></div>
 
             <header class="nv-hero">
-              <span class="nv-hero-spark nv-hero-spark--l" aria-hidden="true">✦</span>
-              <span class="nv-hero-spark nv-hero-spark--r" aria-hidden="true">✧</span>
+              <span class="nv-hero-spark nv-hero-spark--l" aria-hidden="true"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
+              <span class="nv-hero-spark nv-hero-spark--r" aria-hidden="true"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
               <span class="nv-hero-cat" aria-hidden="true">${d('nuvia-cat-peeking', { pasta: 'cats', tamanho: 74 })}</span>
               <p class="nv-wordmark">Nuvia</p>
               <p class="nv-welcome">Bem-vindo(a) de volta! ${d('nuvia-heart-pink-small', { pasta: 'celestial', tamanho: 15 })}</p>
@@ -371,7 +371,7 @@ function telaLogin({ modo, dados, req }) {
       <footer class="nv-footer">
         <span class="nv-footer-line" aria-hidden="true"></span>
         <span class="nv-footer-paw" aria-hidden="true">${d('nuvia-paw-print', { pasta: 'accessories', tamanho: 18 })}</span>
-        <p>Um pequeno passo de cada vez <span aria-hidden="true">♡</span></p>
+        <p>Um pequeno passo de cada vez <span aria-hidden="true"><svg class="ico-heart" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 20.7S4 14.6 4 8.6A4.6 4.6 0 0 1 12 5.3 4.6 4.6 0 0 1 20 8.6c0 6-8 12.1-8 12.1z"/></svg></span></p>
         <span class="nv-footer-paw" aria-hidden="true">${d('nuvia-paw-print', { pasta: 'accessories', tamanho: 18 })}</span>
         <span class="nv-footer-line" aria-hidden="true"></span>
       </footer>

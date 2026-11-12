@@ -1125,9 +1125,10 @@
 
 [data-tema='nuvia'] .dash-foco-tempo,
 [data-tema='nuvia-day'] .dash-foco-tempo {
-  font-family: var(--nv-pixel);
-  font-size: 37px;
-  letter-spacing: 1px;
+  font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-size: 34px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
 }
 [data-tema='nuvia'] .dash-foco-barra,
 [data-tema='nuvia-day'] .dash-foco-barra {

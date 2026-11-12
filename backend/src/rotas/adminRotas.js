@@ -3,6 +3,7 @@ const express = require('express');
 const { um, todos, query } = require('../db');
 const { exigePerfil, hash } = require('../auth');
 const { gerarCodigoTurma } = require('../util');
+const { revogarTodas } = require('../lembrarSessao');
 const { painelAdmin } = require('../paginas/admin');
 const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
@@ -254,6 +255,8 @@ router.post('/usuarios/:id/status', async (req, res) => {
       return res.redirect('/admin');
     }
     await query(`UPDATE usuarios SET ativo = NOT ativo WHERE id = $1`, [alvo]);
+    // Caso tenha sido desativado: invalida os tokens de "lembrar de mim" dele
+    await revogarTodas(alvo);
     flash(req, 'ok', 'Situação do usuário alterada.');
     res.redirect(`/admin?secao=${u.tipo === 'aluno' ? 'alunos' : 'professores'}`);
   } catch (erro) {

@@ -137,6 +137,16 @@ CREATE TABLE IF NOT EXISTS session (
 );
 CREATE INDEX IF NOT EXISTS idx_session_expire ON session(expire);
 
+-- "Lembrar de mim": tokens de auto-login entre visitas (guardamos só o hash)
+CREATE TABLE IF NOT EXISTS lembrar_sessao (
+  id         SERIAL PRIMARY KEY,
+  usuario_id INTEGER     NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  token_hash TEXT        NOT NULL UNIQUE,
+  expira_em  TIMESTAMPTZ NOT NULL,
+  criado_em  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_lembrar_sessao_usuario ON lembrar_sessao(usuario_id);
+
 -- Matérias que o professor leciona (escolhidas no cadastro, independentes da turma)
 CREATE TABLE IF NOT EXISTS professor_disciplinas (
   professor_id  INTEGER NOT NULL REFERENCES usuarios(id)    ON DELETE CASCADE,

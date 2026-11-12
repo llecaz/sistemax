@@ -1,6 +1,8 @@
 /** Painel exibido ao aluno que ainda não entrou em nenhuma turma. */
 const { esc } = require('../util');
 
+const SVG_ESCOLA = `<svg viewBox="0 0 24 24" width="54" height="54" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5 12 4l9 5.5"/><path d="M5 10v9h14v-9"/><path d="M9.5 19v-5h5v5"/><path d="M4 22h16"/></svg>`;
+
 function alunoSemTurma({ usuario, turmas, emailVerificado }) {
   const email = esc(usuario.email || '');
   const pretendida = Number(usuario.turma_pretendida_id || 0);
@@ -37,7 +39,7 @@ function alunoSemTurma({ usuario, turmas, emailVerificado }) {
 
   return `<div class="sem-turma">
     <div class="sem-turma-card">
-      <div class="vazio-icone" aria-hidden="true">🏫</div>
+      <div class="vazio-icone" aria-hidden="true">${SVG_ESCOLA}</div>
       <h3>Você ainda não está em nenhuma turma</h3>
       ${verificadoBloco}
     </div>

@@ -2,9 +2,10 @@
 const express = require('express');
 const { um, todos, query } = require('../db');
 const { hash, conferir, podeTentar, registrarTentativa, limparTentativas } = require('../auth');
+const { entrarNaSessao } = require('../sessao');
+const { criarLembrarSessao, definirCookie, revogarLembrarSessao, limparCookie, COOKIE } = require('../lembrarSessao');
 const { telaLogin } = require('../paginas/login');
 const { homeDo } = require('../paginas/layout');
-const { temaOuPadrao } = require('../temas');
 const {
   provedorValido,
   provedorConfigurado,
@@ -35,33 +36,6 @@ function emailValido(email) {
 
 function flash(req, tipo, texto) {
   req.session.flash = [{ tipo, texto }];
-}
-
-function entrarNaSessao(req, usuario, manter) {
-  return new Promise((resolve, reject) => {
-    req.session.regenerate((erro) => {
-      if (erro) return reject(erro);
-      req.session.usuario = {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        tipo: usuario.tipo,
-        matricula: usuario.matricula,
-        turma_id: usuario.turma_id,
-        turma_nome: usuario.turma_nome,
-        foto: usuario.foto,
-        pergunta_seg: usuario.pergunta_seg,
-        criado_em: usuario.criado_em,
-        email_verificado: Boolean(usuario.email_verificado),
-        turma_pretendida_id: usuario.turma_pretendida_id || null,
-        tema: temaOuPadrao(usuario.tema),
-        lofi: Boolean(usuario.lofi),
-      };
-      if (manter) req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 dias
-      else req.session.cookie.maxAge = null; // só enquanto o navegador abrir
-      req.session.save((e) => (e ? reject(e) : resolve()));
-    });
-  });
 }
 
 const CONSULTA_USUARIO = `
@@ -104,6 +78,11 @@ router.post('/entrar', async (req, res) => {
 
     limparTentativas(chave);
     await entrarNaSessao(req, usuario, manter);
+    if (manter) {
+      // "Lembrar de mim": token de auto-login de 90 dias (hash no banco)
+      const token = await criarLembrarSessao(usuario.id);
+      definirCookie(res, token);
+    }
     res.redirect(homeDo(usuario));
   } catch (erro) {
     console.error('[login]', erro);
@@ -234,7 +213,9 @@ async function cadastroAluno(req, res) {
     }
 
     const usuario = await um(`${CONSULTA_USUARIO} WHERE u.id = $1`, [novo.rows[0].id]);
-    await entrarNaSessao(req, usuario, false);
+    await entrarNaSessao(req, usuario, true);
+    const token = await criarLembrarSessao(usuario.id);
+    definirCookie(res, token);
     req.session.flash = [
       {
         tipo: 'ok',
@@ -325,7 +306,9 @@ router.post('/cadastro/professor', async (req, res) => {
     delete req.session.emailCadastro;
 
     const usuario = await um(`${CONSULTA_USUARIO} WHERE u.id = $1`, [novo.rows[0].id]);
-    await entrarNaSessao(req, usuario, false);
+    await entrarNaSessao(req, usuario, true);
+    const token = await criarLembrarSessao(usuario.id);
+    definirCookie(res, token);
     req.session.flash = [{ tipo: 'ok', texto: 'Conta de professor criada! Bem-vindo(a) ao Nuvia.' }];
     res.redirect('/professor');
   } catch (erro) {
@@ -523,7 +506,10 @@ router.get('/entrar/:provedor/callback', async (req, res) => {
       await query(`UPDATE usuarios SET ${coluna} = $1 WHERE id = $2`, [perfil.idExterno, usuario.id]);
     }
 
-    await entrarNaSessao(req, usuario, false);
+    await entrarNaSessao(req, usuario, true);
+    // "Lembrar de mim" — vale também para login social (auto-login por 90 dias)
+    const token = await criarLembrarSessao(usuario.id);
+    definirCookie(res, token);
     req.session.flash = [
       { tipo: 'ok', texto: `Bem-vindo(a), ${usuario.nome}! Você entrou com ${provedor === 'google' ? 'o Google' : 'o GitHub'}.` },
     ];
@@ -534,8 +520,18 @@ router.get('/entrar/:provedor/callback', async (req, res) => {
   }
 });
 
-/** Sair da conta. */
-router.post('/sair', (req, res) => {
+/** Sair da conta (revoga o token de "lembrar de mim" deste dispositivo). */
+router.post('/sair', async (req, res) => {
+  try {
+    const rex = new RegExp('(?:^|;\\s*)' + COOKIE + '=([^;\\s]+)');
+    const cookie = (req.headers.cookie || '').match(rex);
+    if (cookie) {
+      await revogarLembrarSessao(decodeURIComponent(cookie[1]));
+    }
+  } catch (erro) {
+    console.error('[sair]', erro);
+  }
+  limparCookie(res);
   req.session.destroy(() => res.redirect('/'));
 });
 

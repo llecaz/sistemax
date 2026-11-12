@@ -5,6 +5,7 @@ const fs = require('fs');
 const multer = require('multer');
 const { um, query } = require('../db');
 const { hash, conferir } = require('../auth');
+const { revogarTodas } = require('../lembrarSessao');
 const { nomeArquivoUnico } = require('../util');
 const { pagina } = require('../paginas/layout');
 const { paginaConfiguracoes } = require('../paginas/config');
@@ -161,6 +162,8 @@ router.post('/senha', async (req, res) => {
       return res.redirect('/configuracoes');
     }
     await query(`UPDATE usuarios SET senha_hash = $1 WHERE id = $2`, [hash(nova), req.session.usuario.id]);
+    // Invalida os tokens de "lembrar de mim" em todos os dispositivos
+    await revogarTodas(req.session.usuario.id);
     flash(req, 'ok', 'Senha alterada com sucesso.');
   } catch (e) {
     console.error('[config/senha]', e);

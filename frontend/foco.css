@@ -6,7 +6,7 @@
 /* ---------- Layout da página ---------- */
 .foco-app {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));
   gap: 18px;
   align-items: start;
   max-width: 1180px;
@@ -61,6 +61,19 @@
     0 0 0 5px var(--borda),
     8px 8px 0 var(--sobreposicao);
 }
+.foco-tempo {
+  display: block;
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  font-size: clamp(56px, 12vw, 104px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+  color: var(--azul);
+  text-shadow:
+    0 4px 0 var(--sobreposicao),
+    0 0 18px color-mix(in srgb, var(--azul) 35%, transparent);
+}
 .foco-moldura::before,
 .foco-moldura::after {
   content: '';
@@ -81,16 +94,6 @@
   right: -9px;
   border-left: 0;
   border-top: 0;
-}
-.foco-tempo {
-  font-family: 'Pixelify Sans', 'Courier New', ui-monospace, monospace;
-  font-weight: 700;
-  font-size: clamp(56px, 12vw, 104px);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  color: var(--azul);
-  text-shadow: 0 3px 0 var(--sobreposicao);
 }
 .foco-barra {
   width: min(420px, 100%);
@@ -181,12 +184,13 @@
   width: 84px;
   min-height: 46px;
   text-align: center;
-  font-family: 'Pixelify Sans', 'Courier New', monospace;
-  font-size: 22px;
+  font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-size: 20px;
   border: 1px solid var(--borda);
   border-radius: 10px;
   background: var(--superficie);
   color: var(--texto);
+  font-variant-numeric: tabular-nums;
 }
 .foco-duracao-campo span {
   font-size: 10.5px;
@@ -443,9 +447,11 @@
   letter-spacing: 0.13em;
 }
 .foco-widget-tempo {
-  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 19px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 .foco-widget-btn,
 .foco-widget-abrir {
@@ -476,9 +482,37 @@
 .foco-widget--concluido .foco-widget-tempo { color: var(--st-corrigida); }
 .foco-widget[hidden] { display: none; }
 
-@media (max-width: 900px) {
-  .foco-app { grid-template-columns: 1fr; }
-  .foco-tempo { font-size: clamp(56px, 18vw, 88px); }
+@media (max-width: 1080px) {
+  .foco-app {
+    grid-template-columns: 1fr;
+    max-width: 720px;
+  }
+  .foco-painel--timer { order: 1; }
+  .foco-painel--musica { order: 2; }
+}
+
+@media (max-width: 560px) {
+  .foco-app { gap: 12px; }
+  .foco-painel { padding: 18px 14px; gap: 12px; border-radius: 14px; }
+  .foco-titulo { font-size: 22px; }
+  .foco-tempo { font-size: clamp(48px, 20vw, 84px); }
+  .foco-moldura { padding: 12px 16px; box-shadow: 0 0 0 3px var(--superficie), 0 0 0 4px var(--borda), 6px 6px 0 var(--sobreposicao); }
+  .foco-moldura::before { top: -8px; left: -8px; width: 9px; height: 9px; }
+  .foco-moldura::after { bottom: -8px; right: -8px; width: 9px; height: 9px; }
+  .foco-controles { width: 100%; }
+  .foco-controles .btn { width: 100%; min-width: 0; }
+  .foco-btn-principal { min-width: 0; font-size: 16px; }
+  .foco-adicionar { gap: 6px; }
+  .foco-add { padding: 7px 11px; font-size: 12px; }
+  .foco-duracao { gap: 8px; padding: 10px; width: 100%; justify-content: center; }
+  .foco-duracao-campo input { width: 74px; font-size: 18px; }
+  .foco-duracao-sep { margin-top: -14px; font-size: 22px; }
+  .foco-abas { gap: 5px; }
+  .foco-aba { padding: 7px 12px; font-size: 12px; }
+  .foco-local-controles { flex-wrap: wrap; }
+  .foco-volume { flex-direction: column; align-items: stretch; gap: 6px; }
+  .foco-widget { right: 8px; left: 8px; bottom: 8px; justify-content: space-between; padding: 8px 10px 8px 8px; }
+  .foco-widget-tempo { font-size: 17px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .foco-pulso,

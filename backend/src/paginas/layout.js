@@ -212,10 +212,10 @@ function decoracaoTema() {
 <div class="tema-decoracao" aria-hidden="true">
   <div class="deco-lofi">
     <div class="deco-lofi-player">
-      <span class="deco-lofi-nota">♫</span>
+      <span class="deco-lofi-nota"><svg class="ico-nota" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
       <div class="deco-lofi-textos">
         <strong>lo-fi radio</strong>
-        <small>estudando com chuvinha ✿</small>
+        <small>estudando com chuvinha <svg class="ico-flor" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></small>
       </div>
       <span class="deco-equalizador"><i></i><i></i><i></i><i></i></span>
     </div>
@@ -239,7 +239,9 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
     ? ' class="pagina-inicio"'
     : /\bcfg-app\b/.test(corpo)
       ? ' class="pagina-config"'
-      : '';
+      : /\bcal-mes-layout\b/.test(corpo)
+        ? ' class="pagina-calendario"'
+        : '';
   // O dashboard segue o novo visual SaaS, sem os widgets decorativos antigos.
   const semDecoracao = ativa === 'inicio' || ativa === 'notificacoes';
   const temaNuvia = tema.id === 'nuvia' || tema.id === 'nuvia-day';
@@ -248,7 +250,7 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
       ? `<aside class="nuvia-companion" aria-hidden="true">
           <span class="nuvia-companion-bubble">
             <strong>dica da nuvia</strong>
-            Respira. Um passo de cada vez ♡
+            Respira. Um passo de cada vez <svg class="ico-heart" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 20.7S4 14.6 4 8.6A4.6 4.6 0 0 1 12 5.3 4.6 4.6 0 0 1 20 8.6c0 6-8 12.1-8 12.1z"/></svg>
           </span>
           ${decoracao('nuvia-cat-peeking', { pasta: 'cats', tamanho: 82, carregamento: 'eager' })}
         </aside>`
@@ -263,7 +265,7 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
 ${scriptTemas()}
 <script>window.SISTEMA_LOGADO = true;</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Pixelify+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Pixelify+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css${versaoAsset('estilo.css')}">
 <link rel="stylesheet" href="/temas.css${versaoAsset('temas.css')}">
 <link rel="stylesheet" href="/decoracoes.css${versaoAsset('decoracoes.css')}">

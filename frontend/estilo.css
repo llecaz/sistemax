@@ -1899,8 +1899,16 @@ body.tela-login {
   color: var(--texto-suave);
 }
 .vazio-icone {
-  font-size: 46px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--azul);
   margin-bottom: 10px;
+}
+.vazio-icone svg {
+  width: 46px;
+  height: 46px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .vazio h3 {
   font-size: 18px;
@@ -4188,10 +4196,11 @@ body.tela-login {
   gap: 10px;
 }
 .dash-foco-tempo {
-  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
   font-size: 32px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
   color: var(--texto);
 }
@@ -4941,4 +4950,51 @@ body.tela-login {
   .perfil-topo {
     flex-wrap: wrap;
   }
+}
+
+/* Ícone da atividade (linha, branco) */
+.atividade-glyph {
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+}
+
+/* ---------- Calendário: ocupa toda a largura da tela, sem flutuar no centro ---------- */
+.pagina-calendario .conteudo {
+  max-width: none;
+  padding: 20px 22px 56px;
+}
+@media (max-width: 1080px) {
+  .pagina-calendario .conteudo {
+    padding: 14px 10px 44px;
+  }
+}
+
+/* ---------- Calendário: botão Adicionar evento em linha própria ---------- */
+.cal-mes-acoes-linha {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--borda-suave);
+  margin-top: 2px;
+}
+.cal-mes-acoes-linha .cal-botao-evento {
+  padding: 8px 14px;
+  font-size: 12px;
+  border-radius: 10px;
+}
+.cal-mes-acoes-linha .cal-form-evento {
+  right: 0;
+  left: auto;
+  top: calc(100% + 10px);
+  width: min(380px, 94vw);
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+}
+@media (max-width: 640px) {
+  .cal-mes-acoes-linha { justify-content: flex-start; }
+  .cal-mes-acoes-linha .cal-botao-evento { width: 100%; justify-content: center; }
 }

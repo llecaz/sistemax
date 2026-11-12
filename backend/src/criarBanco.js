@@ -98,9 +98,9 @@ async function prepararBanco() {
   await criarTabelas();
   await garantirDadosBase();
 
-  // Limpeza barata de sessões vencidas (útil em serverless, onde o timer
-  // automático do connect-pg-simple fica desativado).
+  // Limpeza barata de sessões e tokens vencidos (útil em serverless).
   await query(`DELETE FROM session WHERE expire < now()`);
+  await query(`DELETE FROM lembrar_sessao WHERE expira_em < now()`);
   await query(`DELETE FROM verificacao_email WHERE expira_em < now() OR usado_em IS NOT NULL`);
   await query(`DELETE FROM codigos_turma_acesso WHERE expira_em < now()`);
 

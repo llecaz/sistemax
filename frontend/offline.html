@@ -30,7 +30,8 @@
     box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
     backdrop-filter: blur(14px);
   }
-  .gato { font-size: 54px; line-height: 1; }
+  .gato { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto; color: #c9b8ff; }
+  .gato svg { width: 56px; height: 56px; }
   h1 { margin: 18px 0 8px; font-size: 1.5rem; }
   p { margin: 0 0 24px; color: #c8b8ff; line-height: 1.55; }
   button, a.botao {
@@ -50,7 +51,7 @@
 </head>
 <body>
   <main class="cartao">
-    <div class="gato" aria-hidden="true">🐈‍⬛</div>
+    <div class="gato" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 26 10 8l16 10"/><path d="M50 26 54 8 38 18"/><path d="M12 30a22 22 0 0 1 40 0v13a14 14 0 0 1-14 14h-8a14 14 0 0 1-14-14z"/><path d="M25 37v5M39 37v5"/><path d="M31 48h2"/></svg></div>
     <h1>Você está offline</h1>
     <p>O Nuvia precisa de internet para carregar seus trabalhos e avisos. Verifique a conexão e tente novamente.</p>
     <button type="button" onclick="location.reload()">Tentar novamente</button>

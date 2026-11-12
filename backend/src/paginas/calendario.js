@@ -2,6 +2,7 @@
 const { esc, dataBR } = require('../util');
 const { homeDo, avatar } = require('./layout');
 const { decoracao } = require('./decoracoes');
+const IC = require('../icones');
 const { temaOuPadrao } = require('../temas');
 
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -12,13 +13,14 @@ const MESES = [
 ];
 const MESES_CURTO = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
-/** Tipos de atividade do calendário: rótulo e classe de cor. */
+/** Tipos de atividade do calendário: rótulo, classe de cor e ícone (linha, traço #fff). */
+const ic = (conteudo) => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${conteudo}</svg>`;
 const TIPOS = {
-  tarefa: { rotulo: 'Tarefa/Quiz', classe: 'tarefa', icone: '✎' },
-  trabalho: { rotulo: 'Entrega', classe: 'entrega', icone: '📤' },
-  avaliacao: { rotulo: 'Prova', classe: 'prova', icone: '📝' },
-  projeto: { rotulo: 'Projeto', classe: 'projeto', icone: '💻' },
-  evento: { rotulo: 'Evento', classe: 'evento', icone: '📌' },
+  tarefa: { rotulo: 'Tarefa/Quiz', classe: 'tarefa', icone: ic('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L10 16l-4 1 1-4z"/>') },
+  trabalho: { rotulo: 'Entrega', classe: 'entrega', icone: ic('<path d="M4 13v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="m8 17 4 4 4-4"/><path d="M12 3v12"/>') },
+  avaliacao: { rotulo: 'Prova', classe: 'prova', icone: ic('<path d="M7 3h10a1.5 1.5 0 0 1 1.5 1.5v15a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19.5v-15A1.5 1.5 0 0 1 7 3z"/><path d="M9.5 8h5M9.5 12h5M9.5 16h3"/>') },
+  projeto: { rotulo: 'Projeto', classe: 'projeto', icone: ic('<path d="m8 8-4 4 4 4"/><path d="m16 8 4 4-4 4"/><path d="M13 6l-2 12"/>') },
+  evento: { rotulo: 'Evento', classe: 'evento', icone: ic('<path d="M12 4a6 6 0 0 0-6 6v4l-2 4h16l-2-4V10a6 6 0 0 0-6-6z"/><path d="M10 18a2 2 0 0 0 4 0"/>') },
 };
 
 function tipoDe(ev) {
@@ -467,7 +469,7 @@ function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [], tema 
     <section class="lofi-card lofi-proximas">
       <header class="lofi-card-topo">
         <h2>Próximas tarefas</h2>
-        <span class="lofi-estrela" aria-hidden="true">✦</span>
+        <span class="lofi-estrela" aria-hidden="true"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
       </header>
       <ul class="lofi-proximas-lista">
         ${
@@ -704,9 +706,9 @@ function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], t
       <a class="cal-mes-nav" href="${linkAnterior}" aria-label="Mês anterior">‹</a>
       <span class="cal-mes-nome">${MESES[mes]} ${ano}</span>
       <a class="cal-mes-nav" href="${linkProximo}" aria-label="Próximo mês">›</a>
-      ${professor ? formEvento(materias) : ''}
-      <span class="cal-mes-estrela" aria-hidden="true">✦</span>
+      <span class="cal-mes-estrela" aria-hidden="true"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
     </div>
+    ${professor ? `<div class="cal-mes-acoes-linha">${formEvento(materias)}</div>` : ''}
   </header>`;
 
   const rodape = `
@@ -740,13 +742,13 @@ function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], t
     <section class="cal-proximas">
       <header class="cal-proximas-topo">
         <h2>Próximas tarefas</h2>
-        <span class="cal-proximas-estrela" aria-hidden="true">✦</span>
+        <span class="cal-proximas-estrela" aria-hidden="true"><svg class="ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l2.3 4.7 4.7 2.3-4.7 2.3L12 15.9l-2.3-4.6-4.7-2.3 4.7-2.3z"/></svg></span>
       </header>
       <ul class="cal-proximas-lista">
         ${
           proximas.length
             ? proximas.map((ev) => proximaTarefaClassica(ev, usuario)).join('')
-            : '<li class="cal-proximas-vazio">Nada marcado por aqui ainda 🌱</li>'
+            : '<li class="cal-proximas-vazio">Nada marcado por aqui ainda.</li>'
         }
       </ul>
       <a class="cal-ver-todas" href="#lista-eventos">Ver todas as tarefas →</a>
@@ -782,7 +784,7 @@ function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], t
           </li>`;
         })
         .join('')
-    : `<div class="vazio"><div class="vazio-icone">🗓️</div>
+    : `<div class="vazio"><div class="vazio-icone">${IC.agendaMarcada}</div>
         <h3>Nada marcado neste mês</h3>
         <p>${
           professor

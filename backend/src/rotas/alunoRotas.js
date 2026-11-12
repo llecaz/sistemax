@@ -14,6 +14,7 @@ const { pagina } = require('../paginas/layout');
 const { alunoSemTurma } = require('../paginas/alunoSemTurma');
 const { enviarCodigoTurma } = require('../email');
 const { enviarLinkConfirmacao } = require('../emailVerificacao');
+const IC = require('../icones');
 
 const router = express.Router();
 router.use(exigePerfil('aluno'));
@@ -359,7 +360,7 @@ router.get('/calendario', async (req, res) => {
           usuario,
           req,
           ativa: 'calendario',
-          corpo: `<div class="vazio"><div class="vazio-icone">🗓️</div>
+          corpo: `<div class="vazio"><div class="vazio-icone">${IC.agenda}</div>
             <h3>Sem turma definida</h3>
             <p>Fale com a secretaria para entrar em uma turma.</p></div>`,
         })

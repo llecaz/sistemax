@@ -2,6 +2,7 @@
 const { esc, dataBR, dataHoraBR, decorrido, corDe, tamanhoLegivel, paraInputDataHora, dominioLink } = require('../util');
 const { avatar } = require('./layout');
 const { TIPOS } = require('./calendario');
+const IC = require('../icones');
 
 function selo(texto, tipo) {
   return `<span class="chip ${tipo}">${esc(texto)}</span>`;
@@ -46,7 +47,7 @@ function gradeProfessor({ usuario, materias }) {
   ${
     materias.length
       ? `<div class="grade-materias">${cards}</div>`
-      : `<div class="vazio"><div class="vazio-icone">📖</div>
+      : `<div class="vazio"><div class="vazio-icone">${IC.livro}</div>
          <h3>Nenhuma matéria atribuída</h3>
          <p>Peça ao administrador para vincular você a uma turma e matéria.</p></div>`
   }`;
@@ -135,7 +136,7 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
             return `
         <article class="atividade">
           <div class="atividade-icone" style="--faixa:${cor}">
-            <span style="font-size:20px;color:#fff">${info.icone}</span>
+            <span class="atividade-glyph">${info.icone}</span>
           </div>
           <div class="atividade-corpo">
             <div class="atividade-topo">
@@ -186,7 +187,7 @@ function paginaMateriaProfessor({ materia, atividades, aba }) {
         </article>`;
         })
         .join('')
-    : `<div class="vazio"><div class="vazio-icone">📋</div>
+    : `<div class="vazio"><div class="vazio-icone">${IC.tarefa}</div>
        <h3>${aba === 'todas' ? 'Nenhuma atividade publicada' : 'Nada nesta aba'}</h3>
        <p>${aba === 'todas' ? 'Use o botão "+ Nova atividade" para publicar um trabalho com prazo.' : 'Nenhuma atividade corresponde a este filtro.'}</p></div>`;
 
@@ -300,7 +301,7 @@ function paginaAtividadeProfessor({ materia, atividade, alunos }) {
       const arquivo = temArquivo
         ? al.metodo && al.metodo !== 'arquivo' && al.link
           ? `<div class="linha-arquivo">
-               <a class="btn secundario pequeno" href="${esc(al.link)}" target="_blank" rel="noopener noreferrer">🔗 Abrir ${
+               <a class="btn secundario pequeno" href="${esc(al.link)}" target="_blank" rel="noopener noreferrer">${IC.link} Abrir ${
                al.metodo === 'drive' ? 'no Drive' : 'link'
              }</a>
                <div class="linha-arquivo-info">
@@ -376,7 +377,7 @@ function paginaAtividadeProfessor({ materia, atividade, alunos }) {
     <div class="painel">
       ${atividade.descricao ? `<p class="descricao-atividade">${esc(atividade.descricao)}</p>` : ''}
       <div class="lista-alunos">${
-        linhas || '<div class="vazio"><div class="vazio-icone">👥</div><h3>Sem alunos na turma</h3></div>'
+        linhas || '<div class="vazio"><div class="vazio-icone">${IC.usuarios}</div><h3>Sem alunos na turma</h3></div>'
       }</div>
     </div>
 
