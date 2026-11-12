@@ -48,9 +48,8 @@ async function enviarEmail({ para, assunto, texto, html }) {
 
   if (!smtpConfigurado()) {
     if (EM_PRODUCAO) {
-      throw new Error(
-        'SMTP não configurado no ambiente de produção (defina SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS e SMTP_FROM).'
-      );
+      // Produção sem SMTP: falha controlada com código claro, sem fingir envio.
+      return { entregue: false, modo: 'nao-configurado' };
     }
     console.log('');
     console.log('📧 [email — SMTP não configurado: impresso no console, nada foi enviado]');
@@ -118,7 +117,8 @@ async function enviarCodigoTurma({ para, nome, turma, codigo, validadeDias }) {
       <p style="font-size:28px;letter-spacing:6px;font-weight:700;background:#efe7ff;border-radius:12px;padding:14px 18px;display:inline-block;margin:8px 0 4px">${escapeHtml(codigo)}</p>
       <p style="font-size:13px;color:#6f6789">Para entrar na turma, acesse o Nuvia e digite o código no campo “Entrar em uma turma com código”.</p>
     </div>`;
-  return enviarEmail({ para, assunto, texto, html });
+  const envio = await enviarEmail({ para, assunto, texto, html });
+  return { ...envio, codigo };
 }
 
 function escapeHtml(valor) {

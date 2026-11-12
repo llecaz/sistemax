@@ -218,11 +218,15 @@ async function cadastroAluno(req, res) {
     definirCookie(res, token);
     req.session.flash = [
       {
-        tipo: 'ok',
+        tipo: envio.modo === 'nao-configurado' ? 'erro' : 'ok',
         texto:
-          envio.modo === 'console'
-            ? 'Conta criada! Enviamos o link de confirmação (modo de desenvolvimento: veja o e-mail no console do servidor). Depois confirme o e-mail para pedir o código da turma.'
-            : 'Conta criada! Enviamos um e-mail de confirmação. Depois de confirmar, peça o código da turma no seu perfil.',
+          envio.modo === 'nao-configurado'
+            ? 'Conta criada, mas o e-mail de confirmação NÃO foi enviado — o servidor não tem SMTP configurado. Avise o administrador.'
+            : envio.modo === 'console' && envio.link
+              ? `Conta criada! Desenvolvimento (sem SMTP): clique para confirmar — ${envio.link}`
+              : envio.modo === 'console'
+                ? 'Conta criada! Enviamos o link de confirmação (modo de desenvolvimento: veja o e-mail no console do servidor). Depois confirme o e-mail para pedir o código da turma.'
+                : 'Conta criada! Enviamos um e-mail de confirmação. Depois de confirmar, peça o código da turma no seu perfil.',
       },
     ];
     res.redirect('/aluno');

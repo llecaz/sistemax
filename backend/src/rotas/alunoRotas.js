@@ -173,8 +173,14 @@ router.post('/reenviar-confirmacao', async (req, res) => {
       flash(req, 'erro', 'Aguarde um minuto antes de pedir outro e-mail.');
       return res.redirect('/aluno');
     }
-    await enviarLinkConfirmacao(req, usuario);
-    flash(req, 'ok', 'E-mail de confirmação reenviado. Confira sua caixa de entrada (e o spam).');
+    const envio = await enviarLinkConfirmacao(req, usuario);
+    if (envio.modo === 'nao-configurado') {
+      flash(req, 'erro', 'Não foi possível enviar o e-mail — o servidor não tem SMTP configurado. Copie o link no console do servidor.');
+    } else if (envio.modo === 'console' && envio.link) {
+      flash(req, 'ok', `Desenvolvimento (sem SMTP): clique para confirmar — ${envio.link}`);
+    } else {
+      flash(req, 'ok', 'E-mail de confirmação reenviado. Confira sua caixa de entrada (e o spam).');
+    }
   } catch (erro) {
     console.error('[reenviar-confirmacao]', erro);
     flash(req, 'erro', 'Não foi possível reenviar agora. Tente novamente.');
@@ -240,14 +246,20 @@ router.post('/solicitar-codigo-turma', async (req, res) => {
     }
     if (!codigo) throw new Error('Não foi possível gerar um código único.');
 
-    await enviarCodigoTurma({
+    const envio = await enviarCodigoTurma({
       para: usuario.email,
       nome: usuario.nome,
       turma: turma.nome,
       codigo,
       validadeDias: 7,
     });
-    flash(req, 'ok', `Enviamos o código de acesso à turma ${turma.nome} para ${usuario.email}.`);
+    if (envio.modo === 'nao-configurado') {
+      flash(req, 'erro', `O código de acesso a ${turma.nome} foi gerado e está no console do servidor (SMTP não configurado). Avise o administrador.`);
+    } else if (envio.modo === 'console' && envio.codigo) {
+      flash(req, 'ok', `Desenvolvimento (sem SMTP): seu código de acesso a ${turma.nome} é ${envio.codigo}`);
+    } else {
+      flash(req, 'ok', `Enviamos o código de acesso à turma ${turma.nome} para ${usuario.email}.`);
+    }
   } catch (erro) {
     console.error('[solicitar-codigo]', erro);
     flash(req, 'erro', 'Não foi possível enviar o código agora. Tente novamente.');
