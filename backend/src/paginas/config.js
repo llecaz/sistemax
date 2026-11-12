@@ -91,9 +91,6 @@ function paginaConfiguracoes({ usuario }) {
   </div>
 
   <div class="grade-config">
-    <!-- ===== Aparência (galeria de temas) ===== -->
-    ${secaoAparencia(usuario)}
-
     <!-- ===== Perfil ===== -->
     <section class="cartao-config">
       <h2>Perfil</h2>
@@ -174,6 +171,9 @@ function paginaConfiguracoes({ usuario }) {
         <button class="btn secundario" type="submit">Sair da conta</button>
       </form>
     </section>
+
+    <!-- ===== Aparência (no final: o perfil ganha prioridade) ===== -->
+    ${secaoAparencia(usuario)}
   </div>
   </div>`;
 }

@@ -1231,3 +1231,205 @@ img {
   }
 }
 
+
+/* ---------------- Cadastro: duas divisórias (aluno / professor) ---------------- */
+.nv-tabs {
+  position: relative;
+  display: grid;
+  gap: 13px;
+}
+
+.nv-tab-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nv-tab-labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 6px;
+  border: 1.5px solid var(--nv-line);
+  border-radius: 15px;
+  background: rgba(11, 8, 25, 0.4);
+}
+
+.nv-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 45px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: #b9b0da;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+
+.nv-tab:hover {
+  color: #efe8ff;
+}
+
+#tab-aluno:checked ~ .nv-tab-labels .nv-tab--aluno,
+#tab-professor:checked ~ .nv-tab-labels .nv-tab--professor {
+  background: linear-gradient(160deg, #ffd7ee 0%, #dfb4ff 100%);
+  color: #3a2348;
+  box-shadow: 0 8px 22px rgba(255, 180, 217, 0.28);
+}
+
+#tab-aluno:focus-visible ~ .nv-tab-labels .nv-tab--aluno,
+#tab-professor:focus-visible ~ .nv-tab-labels .nv-tab--professor {
+  outline: 2px solid #ffb4d9;
+  outline-offset: 2px;
+}
+
+.nv-form--aluno,
+.nv-form--professor {
+  display: none;
+}
+
+#tab-aluno:checked ~ .nv-form--aluno,
+#tab-professor:checked ~ .nv-form--professor {
+  display: grid;
+}
+
+.nv-cadastro-legenda {
+  margin: 0;
+  padding: 11px 14px;
+  border: 1px solid var(--nv-line);
+  border-radius: 12px;
+  background: rgba(255, 180, 217, 0.07);
+  color: #e5ddf8;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.nv-campo-dica {
+  margin: -6px 2px 0;
+  color: #a79cc9;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.nv-campo-dica strong { color: #ffc7e4; }
+
+/* Select (turma desejada) */
+.nv-field--select select {
+  width: 100%;
+  min-width: 0;
+  min-height: 54px;
+  padding: 19px 42px 6px 45px;
+  border: 0;
+  outline: 0;
+  color: var(--nv-text);
+  background: transparent;
+  font-size: 14.5px;
+  font-family: inherit;
+  appearance: none;
+  cursor: pointer;
+}
+
+.nv-field--select::after {
+  content: "▾";
+  position: absolute;
+  right: 17px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--nv-purple);
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.nv-field--select select:focus + label,
+.nv-field--select select:valid + label {
+  top: 9px;
+  transform: none;
+  color: var(--nv-pink);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.nv-field--select select option {
+  color: #241f3a;
+  background: #fdf7ff;
+}
+
+/* Matérias (seleção múltipla do professor) */
+.nv-materias {
+  margin: 0;
+  padding: 12px 14px 14px;
+  border: 1px solid var(--nv-line);
+  border-radius: 13px;
+  background: rgba(11, 8, 25, 0.4);
+}
+
+.nv-materias legend {
+  padding: 0 6px;
+  color: #b9b0da;
+  font-size: 12px;
+}
+
+.nv-materias legend small {
+  color: #d9cef5;
+  font-weight: 600;
+}
+
+.nv-materias-lista {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 520px) {
+  .nv-materias-lista {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nv-materia {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 8px 11px;
+  border: 1.5px solid var(--nv-line);
+  border-radius: 11px;
+  background: rgba(18, 14, 35, 0.55);
+  color: #d8cff6;
+  font-size: 12px;
+  line-height: 1.35;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.nv-materia:hover {
+  border-color: rgba(255, 180, 217, 0.55);
+  color: #ffe9f5;
+}
+
+.nv-materia input {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #d9a5ff;
+}
+
+.nv-materia:has(input:checked) {
+  border-color: rgba(255, 180, 217, 0.85);
+  background: rgba(255, 180, 217, 0.14);
+  color: #ffe9f5;
+  box-shadow: 0 0 0 3px rgba(255, 180, 217, 0.1);
+}

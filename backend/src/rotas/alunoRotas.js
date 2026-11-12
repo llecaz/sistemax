@@ -5,12 +5,15 @@ const fs = require('fs');
 const multer = require('multer');
 const { um, todos, query, PRODUCAO } = require('../db');
 const { exigePerfil } = require('../auth');
-const { nomeArquivoUnico } = require('../util');
+const { nomeArquivoUnico, gerarCodigoAcesso, normalizarCodigoAcesso } = require('../util');
 const { abasDe, ROTULOS_ABA } = require('../regras');
 const { paginaMateria, paginaTrabalho } = require('../paginas/aluno');
 const { paginaInicioAluno, paginaNotificacoes } = require('../paginas/inicio');
 const { paginaCalendario } = require('../paginas/calendario');
 const { pagina } = require('../paginas/layout');
+const { alunoSemTurma } = require('../paginas/alunoSemTurma');
+const { enviarCodigoTurma } = require('../email');
+const { enviarLinkConfirmacao } = require('../emailVerificacao');
 
 const router = express.Router();
 router.use(exigePerfil('aluno'));
@@ -61,15 +64,22 @@ router.get('/', async (req, res) => {
   try {
     const usuario = req.session.usuario;
     if (!usuario.turma_id) {
+      const fresco = await um(
+        `SELECT email_verificado, turma_pretendida_id FROM usuarios WHERE id = $1`,
+        [usuario.id]
+      );
+      const turmas = await todos(`SELECT id, nome FROM turmas WHERE ativa ORDER BY ano_letivo, nome`);
       return res.send(
         pagina({
-          titulo: 'Minhas matérias',
+          titulo: 'Entrar em uma turma',
           usuario,
           req,
           ativa: 'inicio',
-          corpo: `<div class="vazio"><div class="vazio-icone">🏫</div>
-            <h3>Você ainda não está em nenhuma turma</h3>
-            <p>Fale com a secretaria para receber o código de matrícula da sua turma.</p></div>`,
+          corpo: alunoSemTurma({
+            usuario: { ...usuario, ...fresco },
+            turmas,
+            emailVerificado: Boolean(fresco && fresco.email_verificado),
+          }),
         })
       );
     }
@@ -140,6 +150,152 @@ router.get('/', async (req, res) => {
     flash(req, 'erro', 'Não foi possível carregar suas matérias.');
     res.redirect('/');
   }
+});
+
+/** Reenviar o e-mail de confirmação (no máximo um envio por minuto). */
+router.post('/reenviar-confirmacao', async (req, res) => {
+  try {
+    const usuario = await um(
+      `SELECT id, nome, email, email_verificado FROM usuarios WHERE id = $1`,
+      [req.session.usuario.id]
+    );
+    if (!usuario) return res.redirect('/aluno');
+    if (usuario.email_verificado) {
+      flash(req, 'ok', 'Seu e-mail já está confirmado.');
+      return res.redirect('/aluno');
+    }
+    const recente = await um(
+      `SELECT 1 FROM verificacao_email WHERE usuario_id = $1 AND criado_em > now() - interval '60 seconds'`,
+      [usuario.id]
+    );
+    if (recente) {
+      flash(req, 'erro', 'Aguarde um minuto antes de pedir outro e-mail.');
+      return res.redirect('/aluno');
+    }
+    await enviarLinkConfirmacao(req, usuario);
+    flash(req, 'ok', 'E-mail de confirmação reenviado. Confira sua caixa de entrada (e o spam).');
+  } catch (erro) {
+    console.error('[reenviar-confirmacao]', erro);
+    flash(req, 'erro', 'Não foi possível reenviar agora. Tente novamente.');
+  }
+  res.redirect('/aluno');
+});
+
+/** Pedir o código de acesso à turma (só com e-mail confirmado; uso único, 7 dias). */
+router.post('/solicitar-codigo-turma', async (req, res) => {
+  try {
+    const sessao = req.session.usuario;
+    const usuario = await um(
+      `SELECT id, nome, email, turma_id, turma_pretendida_id, email_verificado
+         FROM usuarios WHERE id = $1`,
+      [sessao.id]
+    );
+    if (!usuario) return res.redirect('/aluno');
+    if (usuario.turma_id) {
+      flash(req, 'ok', 'Você já está em uma turma.');
+      return res.redirect('/aluno');
+    }
+    if (!usuario.email_verificado) {
+      flash(req, 'erro', 'Confirme seu e-mail institucional antes de pedir o código.');
+      return res.redirect('/aluno');
+    }
+
+    const escolha = Number(req.body.turma || 0) || usuario.turma_pretendida_id || null;
+    const turma = escolha
+      ? await um(`SELECT id, nome FROM turmas WHERE id = $1 AND ativa`, [escolha])
+      : null;
+    if (!turma) {
+      flash(req, 'erro', 'Escolha uma turma válida.');
+      return res.redirect('/aluno');
+    }
+    if (usuario.turma_pretendida_id !== turma.id) {
+      await query(`UPDATE usuarios SET turma_pretendida_id = $1 WHERE id = $2`, [turma.id, usuario.id]);
+    }
+
+    // Limite anti-abuso: um pedido a cada 5 minutos.
+    const recente = await um(
+      `SELECT 1 FROM codigos_turma_acesso WHERE aluno_id = $1 AND criado_em > now() - interval '5 minutes'`,
+      [usuario.id]
+    );
+    if (recente) {
+      flash(req, 'erro', 'Aguarde alguns minutos antes de pedir outro código.');
+      return res.redirect('/aluno');
+    }
+
+    // Código único de 8 caracteres, uso único, válido por 7 dias.
+    let codigo = null;
+    for (let tentativa = 0; tentativa < 5 && !codigo; tentativa += 1) {
+      const candidato = gerarCodigoAcesso();
+      try {
+        await query(
+          `INSERT INTO codigos_turma_acesso (aluno_id, turma_id, codigo, expira_em)
+           VALUES ($1, $2, $3, now() + interval '7 days')`,
+          [usuario.id, turma.id, candidato]
+        );
+        codigo = candidato;
+      } catch (erro) {
+        if (!erro || erro.code !== '23505') throw erro; // conflito de único → tenta outro
+      }
+    }
+    if (!codigo) throw new Error('Não foi possível gerar um código único.');
+
+    await enviarCodigoTurma({
+      para: usuario.email,
+      nome: usuario.nome,
+      turma: turma.nome,
+      codigo,
+      validadeDias: 7,
+    });
+    flash(req, 'ok', `Enviamos o código de acesso à turma ${turma.nome} para ${usuario.email}.`);
+  } catch (erro) {
+    console.error('[solicitar-codigo]', erro);
+    flash(req, 'erro', 'Não foi possível enviar o código agora. Tente novamente.');
+  }
+  res.redirect('/aluno');
+});
+
+/** Entrar na turma com o código recebido por e-mail (validado no servidor). */
+router.post('/entrar-turma', async (req, res) => {
+  try {
+    const sessao = req.session.usuario;
+    const usuario = await um(`SELECT id, turma_id FROM usuarios WHERE id = $1`, [sessao.id]);
+    if (!usuario) return res.redirect('/aluno');
+    if (usuario.turma_id) {
+      flash(req, 'ok', 'Você já está em uma turma.');
+      return res.redirect('/aluno');
+    }
+    const codigo = normalizarCodigoAcesso(req.body.codigo);
+    if (!codigo) {
+      flash(req, 'erro', 'Digite o código de acesso.');
+      return res.redirect('/aluno');
+    }
+    const registro = await um(
+      `SELECT c.id, c.turma_id, t.nome AS turma_nome
+         FROM codigos_turma_acesso c
+         JOIN turmas t ON t.id = c.turma_id
+        WHERE c.codigo = $1
+          AND c.aluno_id = $2
+          AND c.usado_em IS NULL
+          AND c.expira_em > now()`,
+      [codigo, usuario.id]
+    );
+    if (!registro) {
+      flash(req, 'erro', 'Código inválido ou expirado. Confira o e-mail ou peça um novo.');
+      return res.redirect('/aluno');
+    }
+    await query(`UPDATE codigos_turma_acesso SET usado_em = now() WHERE id = $1`, [registro.id]);
+    await query(
+      `UPDATE usuarios SET turma_id = $1, turma_pretendida_id = NULL WHERE id = $2`,
+      [registro.turma_id, usuario.id]
+    );
+    req.session.usuario.turma_id = registro.turma_id;
+    req.session.usuario.turma_nome = registro.turma_nome;
+    flash(req, 'ok', `Bem-vindo à turma ${registro.turma_nome}! Suas matérias já estão liberadas.`);
+  } catch (erro) {
+    console.error('[entrar-turma]', erro);
+    flash(req, 'erro', 'Não foi possível entrar na turma agora. Tente novamente.');
+  }
+  res.redirect('/aluno');
 });
 
 /** Notificações: prazos, entregas e correções do aluno. */

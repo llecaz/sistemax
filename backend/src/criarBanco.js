@@ -10,7 +10,44 @@
  */
 const fs = require('fs');
 const path = require('path');
-const { pool, query, AMBIENTE, PRODUCAO } = require('./db');
+const { pool, query, um, AMBIENTE, PRODUCAO } = require('./db');
+
+/**
+ * Dados de referência que o sistema precisa para funcionar:
+ * as 14 matérias oficiais e a turma "1º DSB". Idempotente — pode rodar
+ * a cada inicialização, sem duplicar nada.
+ */
+const MATERIAS_OFICIAIS = [
+  'Introdução a Programação',
+  'Introdução a Computação',
+  'Análise e Métodos de Sistemas',
+  'Banco de Dados',
+  'Ed Dig Comp Prog e Ia',
+  'Lógica Computacional',
+  'Química',
+  'Matemática',
+  'Língua Portuguesa',
+  'Língua Inglesa',
+  'Geografia',
+  'Educação Física',
+  'Biologia',
+  'Artes',
+];
+
+async function garantirDadosBase() {
+  for (const nome of MATERIAS_OFICIAIS) {
+    await query(`INSERT INTO disciplinas (nome) VALUES ($1) ON CONFLICT (nome) DO NOTHING`, [nome]);
+  }
+  const turma = await um(`SELECT id FROM turmas WHERE nome = $1`, ['1º DSB']);
+  if (!turma) {
+    const { gerarCodigoTurma } = require('./util');
+    await query(`INSERT INTO turmas (nome, codigo, ativa) VALUES ($1, $2, TRUE) ON CONFLICT (codigo) DO NOTHING`, [
+      '1º DSB',
+      gerarCodigoTurma('1DSB'),
+    ]);
+    console.log('🏫 Turma 1º DSB garantida (criada agora; novas turmas também pelo admin).');
+  }
+}
 
 async function criarTabelas() {
   const sql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
@@ -59,10 +96,13 @@ async function garantirAdmin() {
 
 async function prepararBanco() {
   await criarTabelas();
+  await garantirDadosBase();
 
   // Limpeza barata de sessões vencidas (útil em serverless, onde o timer
   // automático do connect-pg-simple fica desativado).
   await query(`DELETE FROM session WHERE expire < now()`);
+  await query(`DELETE FROM verificacao_email WHERE expira_em < now() OR usado_em IS NOT NULL`);
+  await query(`DELETE FROM codigos_turma_acesso WHERE expira_em < now()`);
 
   const vazio = await bancoVazio();
   let semeado = false;

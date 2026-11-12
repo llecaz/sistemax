@@ -143,7 +143,7 @@ node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
    `{"ok":true,"ambiente":"producao"}`.
 2. Entre com o admin criado por `ADMIN_EMAIL` / `ADMIN_SENHA`.
 3. Crie uma turma, um professor e uma matéria pelo painel admin.
-4. Teste o cadastro de um aluno com o código da turma.
+4. Teste o cadastro de um aluno pela tela de cadastro (divisória **Aluno**): confirme o e-mail pelo link, peça o código da turma e entre na turma com o código.
 5. Teste envio de trabalho, download e foto de perfil.
 6. Atualize as URLs de callback do Google/GitHub com o domínio final.
 

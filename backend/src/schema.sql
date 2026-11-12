@@ -45,6 +45,10 @@ ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_tipo  TEXT;
 
 -- Tema visual preferido do usuário (Dark Mode ou Normal Mode)
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS tema TEXT NOT NULL DEFAULT 'nuvia';
+-- E-mail institucional confirmado? (alunos precisam confirmar para pedir o código da turma)
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS email_verificado BOOLEAN NOT NULL DEFAULT FALSE;
+-- Turma que o aluno escolheu no cadastro (só vira a turma dele após usar o código de acesso)
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS turma_pretendida_id INTEGER REFERENCES turmas(id) ON DELETE SET NULL;
 -- Lofi Mode: camada opcional de aparência, independente do tema escolhido
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS lofi BOOLEAN NOT NULL DEFAULT FALSE;
 
@@ -132,3 +136,34 @@ CREATE TABLE IF NOT EXISTS session (
   expire TIMESTAMPTZ  NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_session_expire ON session(expire);
+
+-- Matérias que o professor leciona (escolhidas no cadastro, independentes da turma)
+CREATE TABLE IF NOT EXISTS professor_disciplinas (
+  professor_id  INTEGER NOT NULL REFERENCES usuarios(id)    ON DELETE CASCADE,
+  disciplina_id INTEGER NOT NULL REFERENCES disciplinas(id) ON DELETE CASCADE,
+  PRIMARY KEY (professor_id, disciplina_id)
+);
+
+-- Tokens de confirmação de e-mail (guardamos apenas o hash do token)
+CREATE TABLE IF NOT EXISTS verificacao_email (
+  id         SERIAL PRIMARY KEY,
+  usuario_id INTEGER     NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  token_hash TEXT        NOT NULL UNIQUE,
+  expira_em  TIMESTAMPTZ NOT NULL,
+  usado_em   TIMESTAMPTZ,
+  criado_em  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_verificacao_usuario ON verificacao_email(usuario_id);
+
+-- Códigos de acesso à turma enviados por e-mail após a confirmação do e-mail.
+-- Uso único, com prazo de validade; sem ele o aluno não entra na turma escolhida.
+CREATE TABLE IF NOT EXISTS codigos_turma_acesso (
+  id         SERIAL PRIMARY KEY,
+  aluno_id   INTEGER     NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  turma_id   INTEGER     NOT NULL REFERENCES turmas(id)   ON DELETE CASCADE,
+  codigo     TEXT        NOT NULL UNIQUE,
+  expira_em  TIMESTAMPTZ NOT NULL,
+  usado_em   TIMESTAMPTZ,
+  criado_em  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_codigos_acesso_aluno ON codigos_turma_acesso(aluno_id);

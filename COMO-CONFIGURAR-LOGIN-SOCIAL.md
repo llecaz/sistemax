@@ -8,7 +8,7 @@ ambiente. Nenhuma senha ou chave fica salva no repositório.
 > “Continuar com GitHub”, autoriza no provedor e o Nuvia procura uma conta
 > com **o mesmo e-mail verificado**. Por segurança, contas novas não são
 > criadas automaticamente: o aluno precisa primeiro criar a conta pelo
-> `/cadastro` com o código da turma. Depois disso, poderá entrar com o
+> `/cadastro` (sem código). Depois disso, poderá entrar com o
 > Google/GitHub usando o mesmo e-mail.
 
 ---
@@ -38,6 +38,12 @@ ambiente. Nenhuma senha ou chave fica salva no repositório.
    GOOGLE_CLIENT_ID=...
    GOOGLE_CLIENT_SECRET=...
    ```
+   > ⚠️ **Atenção:** no `.env` local do projeto essas duas variáveis estão
+   > vazias neste momento. Cole os valores acima e reinicie (`npm start`)
+   > — sem isso o botão "Continuar com Google" mostra "ainda não foi
+   > configurado", mesmo que tudo esteja certo no console do Google.
+   > Se você usa o site publicado (Render), configure as mesmas variáveis
+   > no painel do serviço e faça um **Redeploy**.
 
 > Enquanto o app estiver em modo de teste no Google, somente os e-mails
 > adicionados em “Usuários de teste” conseguem entrar. Para abrir para toda a
@@ -101,15 +107,26 @@ GITHUB_CLIENT_SECRET=...
 ## 4. Testar
 
 1. Crie uma conta de aluno em `/cadastro` usando um e-mail que você controla
-   (ex.: o mesmo e-mail da sua conta Google/GitHub).
-2. Saia e clique em **Continuar com Google** (ou GitHub).
-3. Autorize. Você deve voltar logado no painel do aluno.
+   (ex.: o mesmo e-mail da sua conta Google/GitHub). O e-mail do provedor
+   precisa ser o **mesmo** da conta Nuvia (é assim que o vínculo acontece).
+2. Confirme o e-mail pelo link recebido (o sistema só mostra a opção de
+   pedir o código da turma depois disso).
+3. Saia e clique em **Continuar com Google** (ou GitHub).
+4. Autorize. Você deve voltar logado no painel do aluno (ou do professor).
 
 Se aparecer “Não encontramos uma conta Nuvia com o e-mail …”, significa que
-não existe conta com aquele e-mail — crie primeiro pelo `/cadastro`.
+não existe conta com aquele e-mail — crie primeiro pelo `/cadastro` (as
+divisórias "Aluno" e "Professor" usam o mesmo fluxo de login social).
 
 Se aparecer “ainda não foi configurado”, alguma das variáveis está vazia ou o
 servidor não foi reiniciado.
+
+> **GitHub: "redirect_uri is not associated with this application"** — o
+> GitHub aceita o login apenas para a URL cadastrada no OAuth App. Para o
+> endereço local ser `http://localhost:3000`, a **Authorization callback
+> URL** precisa ser exatamente `http://localhost:3000/entrar/github/callback`.
+> Para produção (HTTPS), crie um segundo OAuth App com a callback do domínio
+> público — os ids são diferentes.
 
 ---
 

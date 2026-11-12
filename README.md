@@ -27,13 +27,17 @@ Feito com **Express** (Node.js) + **PostgreSQL**, com páginas HTML renderizadas
 - Tela de entrada **Nuvia**: noite lilás em pixel art, cena completa do quartinho de estudos (janela com lua, gato cochilando, laptop, plantas), formulário em painel escuro e botão com a patinha.
 - **Contas demo** com um clique na tela de entrada: cartões de `Aluna` (ana@escola.com) e `Professora` (maria@escola.com) — o cartão `Admin` só aparece fora de produção. Defina `MOSTRAR_DEMO=0` no `.env` para ocultar todos.
 - **Manter conectado** (sessão de 30 dias) ou sessão só no navegador.
-- **Cadastro de aluno pelo código da turma** (fornecido pela escola).
+- **Cadastro em duas divisórias**: **Aluno** e **Professor**, escolhidas por abas na própria página de cadastro.
+  - **Aluno**: nome completo, **e-mail institucional da escola**, senha e confirmação de senha, e a **turma desejada**. O endereço precisa terminar em `ESCOLA_EMAIL_DOMINIO` (padrão `escola.pr.gov.br`). Ao criar a conta, o sistema envia um **e-mail de confirmação**; só depois de confirmar o aluno pode pedir o **código de acesso** da turma escolhida; o código chega por e-mail, vale 7 dias e é de **uso único** — o aluno digita o código na página "Entrar em uma turma" e só então fica vinculado à turma.
+  - **Professor**: nome completo, e-mail, senha e confirmação de senha, e as **matérias que leciona** em seleção múltipla (Introdução a Programação, Introdução a Computação, Análise e Métodos de Sistemas, Banco de Dados, Ed Dig Comp Prog e Ia, Lógica Computacional, Química, Matemática, Língua Portuguesa, Língua Inglesa, Geografia, Educação Física, Biologia e Artes). As matérias ficam salvas no banco associadas ao professor.
+  - As turmas (a começar por **1º DSB**) e as 14 matérias são gerenciadas pelo banco (o admin também pode adicionar outras turmas, ex.: 9º B), nunca por uma lista fixa no frontend.
+- **Login com Google e GitHub** (OAuth 2.0, authorization code): só entra quem já tem uma conta Nuvia com o mesmo e-mail verificado; ver [COMO-CONFIGURAR-LOGIN-SOCIAL.md](COMO-CONFIGURAR-LOGIN-SOCIAL.md).
 - **Esqueci a senha**: recuperação por pergunta de segurança + redefinição pelo admin.
 - Mensagens de erro seguras: `"Email ou senha incorretos"` (não revela se a conta existe).
 - Tentativas de login limitadas (proteção contra força bruta).
 
 ### 🎓 Área do Aluno
-- **Dashboard inicial**: banner com saudação por horário, cartão de data, **Sua semana** (planner dos próximos 7 dias com pontinhos por tipo de atividade), **Modo foco** (timer pomodoro de 25 min), **Minhas Tarefas** com filtros funcionais (`Todas`, `A fazer`, `Entregues`, `Corrigidas`), **Minhas Matérias** em cards com ícone, média/desempenho e barra de progresso, mini-calendário navegável, **Próximas Tarefas** e um gatinho companheiro na página.
+- **Dashboard inicial**: banner com saudação por horário, cartão de data, **Sua semana** (planner dos próximos 7 dias com pontinhos por tipo de atividade), **Modo foco** (cronômetro configurável com **trilha lo-fi** — 3 trilhas geradas offline no navegador + integração oficial com YouTube e Spotify; o cronômetro acompanha você por todas as páginas via mini-timer flutuante), **Minhas Tarefas** com filtros funcionais (`Todas`, `A fazer`, `Entregues`, `Corrigidas`), **Minhas Matérias** em cards com ícone, média/desempenho e barra de progresso, mini-calendário navegável, **Próximas Tarefas** e um gatinho companheiro na página.
 - **Status coloridos** nas tarefas: verde para corrigida, azul para entregue, laranja para pendente e vermelho para atrasada.
 - **Busca** na topbar filtra tarefas e matérias pelo nome (`?q=`).
 - **Notificações**: página com prazos próximos, atividades atrasadas, entregas enviadas e correções recebidas, geradas a partir dos dados reais da conta.
@@ -172,10 +176,10 @@ Abra <http://localhost:3000> — na rede da escola: `http://IP-DA-MÁQUINA:3000`
 | Professor (João) | `joao@escola.com` | `prof123` |
 | Aluna (Ana) | `ana@escola.com` | `aluno123` |
 
-Há 2 turmas (9º Ano A e 1º Ano B), 5 matérias e 7 vínculos professor ↔ turma ↔
-matéria já configurados. O acesso **administrador** é criado pelas variáveis
-`ADMIN_EMAIL` / `ADMIN_SENHA` configuradas no Render — a senha **não** fica no
-repositório. Troque-a em **Configurações** depois do primeiro acesso.
+Há 3 turmas (9º Ano A, 1º Ano B e **1º DSB**), as 14 matérias oficiais e vínculos
+professor ↔ turma ↔ matéria já configurados. O acesso **administrador** é criado
+pelas variáveis `ADMIN_EMAIL` / `ADMIN_SENHA` configuradas no Render — a senha
+**não** fica no repositório. Troque-a em **Configurações** depois do primeiro acesso.
 
 ### 🌐 Sistema online
 
@@ -209,6 +213,8 @@ cp .env.exemplo .env
 | `PORT` | Porta do site (padrão 3000) |
 | `SESSION_SECRET` | Segredo das sessões — troque por algo longo e único |
 | `SITE_URL` | URL pública do site |
+| `ESCOLA_EMAIL_DOMINIO` | Domínio do e-mail institucional dos alunos (padrão `escola.pr.gov.br`) |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | Envio de e-mails (confirmação e código da turma). Sem SMTP, em desenvolvimento, os e-mails são impressos no console do servidor |
 
 **No modo `local`** o servidor sobe um PostgreSQL de verdade automaticamente (pasta `.pglocal/`) — sem sudo e sem Docker.
 **No modo `producao`** basta apontar `DATABASE_URL_PRODUCAO` para o banco; as tabelas e os dados iniciais são criados sozinhos.
@@ -248,7 +254,7 @@ sistemax/
 │   ├── estilo.css           # Base (variáveis) + shell SaaS + dashboard
 │   ├── temas.css            # ⭐ Acabamentos compartilhados + Lofi Mode (transições, rádio)
 │   ├── decoracoes.css       # ⭐ Componente .deco da biblioteca
-│   ├── lofi.css             # ⭐ Camada Lofi Mode: quarto de estudos (calendário + configurações)
+│   ├── lofi.css             # ⭐ Camada Lofi Mode: quarto de estudos (calendário) + acento sutil nas configurações
 │   ├── lofi.js              # ⭐ Player lo-fi (Web Audio API)
 │   ├── assets/decorations/  # ⭐ PNGs transparentes Nuvia (cats, plants, stationery, celestial, accessories, details, ui)
 │   ├── assets/source/       # ⭐ Cartela original nuvia-assets-sheet.png
@@ -271,7 +277,7 @@ O sistema tem **dois modos** (`nuvia` = Dark Mode, `nuvia-day` = Normal Mode) e 
 
 1. **Modos**: registre em [`backend/src/temas.js`](backend/src/temas.js) e crie o bloco de variáveis em [`frontend/nuvia.css`](frontend/nuvia.css) com o seletor `[data-tema='seu-id']`.
 2. **Tokens compartilhados** (transição suave, rádio lo-fi): [`frontend/temas.css`](frontend/temas.css).
-3. **Lofi Mode**: ative/desative pelo botão na sidebar ou em Configurações → Aparência. O CSS em [`frontend/lofi.css`](frontend/lofi.css) só vale com `html[data-lofi='on']` e adapta a paleta (`--lf-*`) ao modo (`[data-tema-modo='claro'|'escuro']`). O calendário troca para o "quarto de estudos" quando o modo está ativo.
+3. **Lofi Mode**: ative/desative pelo botão na sidebar ou em Configurações → Aparência (vale nos dois modos). O CSS em [`frontend/lofi.css`](frontend/lofi.css) só vale com `html[data-lofi='on']`. O calendário troca para o "quarto de estudos" quando o modo está ativo; as Configurações mantêm a aparência do tema ativo (apenas títulos em Pixelify Sans e um fundo quadriculado discreto), sem mudar posição ou paleta.
 4. Contas antigas com temas removidos caem no modo equivalente (escuros → Dark Mode, claros → Normal Mode) automaticamente.
 
 O modo padrão de novos usuários é o **Dark Mode** (`nuvia`, coluna `usuarios.tema`).
@@ -282,12 +288,15 @@ O modo padrão de novos usuários é o **Dark Mode** (`nuvia`, coluna `usuarios.
 
 | Tabela | Função |
 |---|---|
-| `usuarios` | admin, professores e alunos (nome, e-mail, senha, pergunta de segurança, **modo de aparência** e **lofi**) |
-| `turmas` | turmas com **código de matrícula** (ex.: `TURMA-9ANOA-K7X2`) |
-| `disciplinas` | Matemática, Português, História... |
+| `usuarios` | admin, professores e alunos (nome, e-mail, senha, pergunta de segurança, **modo de aparência**, **lofi** e `email_verificado`) |
+| `turmas` | turmas (a começar por **1º DSB**) com código de matrícula |
+| `disciplinas` | as 14 matérias oficiais (Introdução a Programação, Banco de Dados, Matemática...) |
+| `professor_disciplinas` | matérias que o professor leciona (escolhidas no cadastro) |
 | `turma_disciplina` | ⭐ vínculo **turma ↔ matéria ↔ professor** (o coração do sistema) |
 | `atividades` | trabalho criado pelo professor: título, descrição e **prazo** |
 | `entregas` | arquivo do aluno + nota + observação do professor |
+| `verificacao_email` | tokens de confirmação de e-mail (guardados com hash, 24 h, uso único) |
+| `codigos_turma_acesso` | códigos enviados por e-mail para a turma (uso único, 7 dias, validados no servidor) |
 | `session` | sessões dos usuários (guardadas no PostgreSQL) |
 
 ---
@@ -301,15 +310,20 @@ O modo padrão de novos usuários é o **Dark Mode** (`nuvia`, coluna `usuarios.
 - Todo texto exibido é escapado (proteção contra XSS/injeção).
 - Mensagens de login genéricas, sem revelar se a conta existe.
 - `.env` (com as credenciais do banco) fora do Git.
+- **Cadastro de aluno fechado apenas para o e-mail da escola** (campo validado no servidor) e turma liberada só com código recebido por e-mail (uso único, 7 dias, expirado no servidor).
+- **Confirmação de e-mail obrigatória** antes de pedir o código da turma; links de confirmação de uso único e validade de 24 h.
+- Usuário não altera o próprio perfil para administrador (as rotas de configuração só tocam nome, foto, senha, aparência e pergunta de segurança).
+- Um usuário só vê o que é dele: o professor só enxerga os próprios vínculos; o aluno só vê as atividades da própria turma.
 
 ---
 
 ## 🧭 Fluxo completo de uso
 
-1. **Admin** entra → cadastra turmas (recebe os códigos), disciplinas e professores → **vincula professor ↔ turma ↔ matéria**.
-2. **Aluno** entra no site → *"Criar conta de aluno"* → informa o **código da turma** → já cai na turma certa.
-3. **Professor** cria uma **atividade com prazo** numa das suas matérias.
-4. **Aluno** abre a matéria → envia o arquivo (pode reenviar enquanto não corrigido).
-5. **Professor** baixa o arquivo → dá **nota e observação**.
-6. **Aluno** acompanha nas abas `Não corrigidos` / `Corrigidos` / `Atrasados`.
-7. Qualquer usuário configura **foto, dados e aparência** pelo ícone ⚙️.
+1. **Admin** entra → cadastra turmas (ex.: 1º DSB, 9º B) e professores → **vincula professor ↔ turma ↔ matéria**.
+2. **Professor** entra no site → *"Criar conta" → "Professor"* → preenche nome, e-mail, senha e escolhe as matérias que leciona.
+3. **Aluno** entra no site → *"Criar conta" → "Aluno"* → preenche nome, e-mail institucional, senha e confirmação + a turma desejada → confirma o e-mail pelo link → pede o **código de acesso** → recebe o código por e-mail → digita na página "Entrar em uma turma".
+4. **Professor** cria uma **atividade com prazo** numa das suas matérias.
+5. **Aluno** abre a matéria → envia o arquivo (pode reenviar enquanto não corrigido).
+6. **Professor** baixa o arquivo → dá **nota e observação**.
+7. **Aluno** acompanha nas abas `Não corrigidos` / `Corrigidos` / `Atrasados`.
+8. Qualquer usuário configura **foto, dados e aparência** pelo ícone ⚙️.

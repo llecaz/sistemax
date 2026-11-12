@@ -4,7 +4,7 @@
  */
 const fs = require('fs');
 const path = require('path');
-const { query } = require('./db');
+const { query, um } = require('./db');
 const { hash } = require('./auth');
 const { gerarCodigoTurma, nomeArquivoUnico } = require('./util');
 
@@ -47,8 +47,8 @@ async function semear() {
 
   // ---- Admin ----
   await query(
-    `INSERT INTO usuarios (nome, email, senha_hash, tipo)
-     VALUES ($1, $2, $3, 'admin')
+    `INSERT INTO usuarios (nome, email, senha_hash, tipo, email_verificado)
+     VALUES ($1, $2, $3, 'admin', TRUE)
      ON CONFLICT (email) DO NOTHING`,
     ['Administrador da Escola', 'admin@escola.com', hash('admin123')]
   );
@@ -82,8 +82,8 @@ async function semear() {
     ['João Souza', 'joao@escola.com'],
   ]) {
     const r = await query(
-      `INSERT INTO usuarios (nome, email, senha_hash, tipo, pergunta_seg, resposta_seg)
-       VALUES ($1, $2, $3, 'professor', $4, $5)
+      `INSERT INTO usuarios (nome, email, senha_hash, tipo, pergunta_seg, resposta_seg, email_verificado)
+       VALUES ($1, $2, $3, 'professor', $4, $5, TRUE)
        ON CONFLICT (email) DO UPDATE SET nome = EXCLUDED.nome
        RETURNING id`,
       [p[0], p[1], hash('prof123'), 'Qual o nome do seu primeiro professor?', hash('escola')]
@@ -93,12 +93,28 @@ async function semear() {
 
   // ---- Aluno de teste ----
   const aluno = await query(
-    `INSERT INTO usuarios (nome, email, senha_hash, tipo, matricula, turma_id, pergunta_seg, resposta_seg)
-     VALUES ('Ana Pereira', 'ana@escola.com', $1, 'aluno', '2026001', $2, $3, $4)
+    `INSERT INTO usuarios (nome, email, senha_hash, tipo, matricula, turma_id, pergunta_seg, resposta_seg, email_verificado)
+     VALUES ('Ana Pereira', 'ana@escola.com', $1, 'aluno', '2026001', $2, $3, $4, TRUE)
      ON CONFLICT (email) DO UPDATE SET nome = EXCLUDED.nome, turma_id = EXCLUDED.turma_id
      RETURNING id`,
     [hash('aluno123'), turmas['9º Ano A'].id, 'Qual o nome da sua cidade?', hash('curitiba')]
   );
+
+  // ---- Matérias que cada professor leciona (vinculadas ao cadastro) ----
+  for (const [prof, nomes] of [
+    ['Maria Silva', ['Matemática', 'Ciências', 'Química']],
+    ['João Souza', ['Português', 'História', 'Geografia']],
+  ]) {
+    for (const nome of nomes) {
+      const d = await um(`SELECT id FROM disciplinas WHERE nome = $1`, [nome]);
+      if (!d) continue;
+      await query(
+        `INSERT INTO professor_disciplinas (professor_id, disciplina_id) VALUES ($1, $2)
+         ON CONFLICT DO NOTHING`,
+        [professores[prof].id, d.id]
+      );
+    }
+  }
 
   // ---- Vínculos turma ↔ matéria ↔ professor ----
   const vinculos = {};

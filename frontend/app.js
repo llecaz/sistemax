@@ -309,94 +309,19 @@
     }
   });
 
-  /* ---------- Modo foco (timer de estudos) ---------- */
-  document.querySelectorAll('[data-foco]').forEach(function (cartao) {
-    var TOTAL = 25 * 60; // 25 minutos
-    var restante = TOTAL;
-    var rodando = false;
-    var intervalo = null;
-    var tempo = cartao.querySelector('[data-foco-tempo]');
-    var barra = cartao.querySelector('[data-foco-barra]');
-    var botao = cartao.querySelector('[data-foco-acao="alternar"]');
-    var zerar = cartao.querySelector('[data-foco-acao="zerar"]');
-    var dica = cartao.querySelector('.dash-foco-dica');
-    var dicaOriginal = dica ? dica.textContent : '';
+  /* O Modo foco agora é global: o cronômetro vive em foco-global.js (timestamp)
+     e atravessa as páginas. Nada a fazer aqui. */
 
-    function doisDigitos(n) {
-      return String(n).padStart(2, '0');
-    }
-
-    function pintar() {
-      if (tempo) tempo.textContent = doisDigitos(Math.floor(restante / 60)) + ':' + doisDigitos(restante % 60);
-      if (barra) barra.style.width = Math.round((restante / TOTAL) * 100) + '%';
-    }
-
-    function parar() {
-      rodando = false;
-      if (intervalo) clearInterval(intervalo);
-      intervalo = null;
-      if (botao) botao.textContent = restante === 0 ? 'De novo' : 'Continuar';
-      if (restante === 0) {
-        cartao.classList.add('dash-foco-completo');
-        if (dica) dica.textContent = 'Ciclo concluído! Hora de 5 minutinhos de pausa ♡';
-      }
-    }
-
-    function iniciar() {
-      if (restante <= 0) restante = TOTAL;
-      rodando = true;
-      if (botao) botao.textContent = 'Pausar';
-      intervalo = setInterval(function () {
-        restante -= 1;
-        if (restante <= 0) {
-          restante = 0;
-          pintar();
-          parar();
-          if (botao) botao.textContent = 'De novo';
-          return;
-        }
-        pintar();
-      }, 1000);
-    }
-
-    if (botao) {
-      botao.addEventListener('click', function () {
-        if (rodando) parar();
-        else iniciar();
-      });
-    }
-
-    if (zerar) {
-      zerar.addEventListener('click', function () {
-        parar();
-        restante = TOTAL;
-        cartao.classList.remove('dash-foco-completo');
-        if (dica) dica.textContent = dicaOriginal;
-        if (botao) botao.textContent = 'Começar';
-        pintar();
-      });
-    }
-
-    if (botao) {
-      botao.addEventListener('click', function () {
-        if (restante === 0) {
-          cartao.classList.remove('dash-foco-completo');
-          if (dica) dica.textContent = dicaOriginal;
-        }
-      });
-    }
-
-    pintar();
-  });
-
-  /* ---------- Calendário: filtrar a lista clicando num dia ---------- */
+  /* ---------- Calendário: filtro da lista por dia (aberto pelo modal) ----------
+     O clique num dia com atividades abre a JANELA do dia (calendario-modal.js).
+     O botão "Ver só este dia na lista" da janela aplica este filtro; o botão
+     "Mostrar todas ✕" limpa. A função fica em window.NuviaCalendarFilterDay. */
   (function () {
     var painelLista = document.getElementById('lista-eventos');
     var filtro = document.getElementById('filtro-dia');
     var filtroTexto = document.getElementById('filtro-dia-texto');
     var filtroLimpar = document.getElementById('filtro-dia-limpar');
     var itens = painelLista ? painelLista.querySelectorAll('.cal-lista-item, .lofi-lista-item') : [];
-    var selecionado = null;
 
     function chaveParaTexto(chave) {
       var partes = String(chave || '').split('-');
@@ -410,7 +335,6 @@
     }
 
     function aplicarFiltro(chave) {
-      selecionado = chave;
       itens.forEach(function (item) {
         item.hidden = !!chave && item.getAttribute('data-dia') !== chave;
       });
@@ -421,27 +345,10 @@
       document.querySelectorAll('.cal-dia[data-dia]').forEach(function (dia) {
         dia.classList.toggle('selecionado', !!chave && dia.getAttribute('data-dia') === chave);
       });
-      document.querySelectorAll('[data-filtro-dia]').forEach(function (botao) {
-        botao.setAttribute('aria-pressed', botao.getAttribute('data-filtro-dia') === chave ? 'true' : 'false');
-      });
+      return chave;
     }
 
-    document.addEventListener('click', function (evento) {
-      var botaoDia = evento.target.closest('[data-filtro-dia]');
-      var diaCel = evento.target.closest('.cal-dia[data-dia]');
-      if (!botaoDia && !diaCel) return;
-      // Cliques em links/botões (exceto o próprio botão de filtro) mantêm o comportamento deles
-      var alvo = evento.target.closest('a, button, input, select, textarea');
-      if (alvo && !botaoDia) return;
-      var celula = diaCel || (botaoDia && botaoDia.closest('.cal-dia[data-dia]'));
-      if (!celula) return;
-      if (Number(celula.getAttribute('data-eventos') || 0) === 0) return;
-      var chave = celula.getAttribute('data-dia');
-      aplicarFiltro(selecionado === chave ? null : chave);
-      if (selecionado && painelLista) {
-        painelLista.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
+    window.NuviaCalendarFilterDay = aplicarFiltro;
 
     if (filtroLimpar) {
       filtroLimpar.addEventListener('click', function () {

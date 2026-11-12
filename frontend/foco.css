@@ -1,0 +1,488 @@
+/* ============================================================
+   Modo Foco — página dedicada + widget flutuante
+   Mantém a identidade Nuvia (pixel art) sem alterar o tema.
+   ============================================================ */
+
+/* ---------- Layout da página ---------- */
+.foco-app {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.foco-painel {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  padding: 26px clamp(16px, 4vw, 34px);
+  background: var(--superficie);
+  border-radius: 18px;
+  box-shadow: var(--sombra);
+  text-align: center;
+}
+.foco-painel--musica {
+  justify-items: stretch;
+  align-content: start;
+  text-align: left;
+}
+.foco-selo {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--azul-claro);
+  color: var(--azul);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.foco-titulo {
+  font-size: clamp(24px, 3vw, 32px);
+  letter-spacing: -0.4px;
+}
+
+/* ---------- Cronômetro pixel art ---------- */
+.foco-cronometro {
+  display: grid;
+  place-items: center;
+  margin: 4px 0;
+}
+.foco-moldura {
+  position: relative;
+  display: inline-block;
+  padding: clamp(14px, 3vw, 22px) clamp(18px, 4vw, 34px);
+  border: 3px solid var(--borda);
+  border-radius: 4px;
+  background: var(--superficie-2);
+  box-shadow:
+    0 0 0 3px var(--superficie),
+    0 0 0 5px var(--borda),
+    8px 8px 0 var(--sobreposicao);
+}
+.foco-moldura::before,
+.foco-moldura::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 3px solid var(--azul);
+  background: var(--superficie);
+}
+.foco-moldura::before {
+  top: -9px;
+  left: -9px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.foco-moldura::after {
+  bottom: -9px;
+  right: -9px;
+  border-left: 0;
+  border-top: 0;
+}
+.foco-tempo {
+  font-family: 'Pixelify Sans', 'Courier New', ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(56px, 12vw, 104px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--azul);
+  text-shadow: 0 3px 0 var(--sobreposicao);
+}
+.foco-barra {
+  width: min(420px, 100%);
+  height: 10px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--superficie-3);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+.foco-barra i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--azul), #ff9ec4 130%);
+  transition: width 0.4s linear;
+}
+.foco-ciclos {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- Controles ---------- */
+.foco-controles {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.foco-btn-principal {
+  min-width: 160px;
+  font-size: 17px;
+}
+.foco-adicionar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+.foco-adicionar-rotulo {
+  font-size: 12px;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.foco-add {
+  border: 1px solid var(--borda);
+  background: var(--superficie-2);
+  color: var(--texto);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+.foco-add:hover {
+  border-color: var(--azul);
+  color: var(--azul);
+  transform: translateY(-1px);
+}
+.foco-add:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* ---------- Definir horas e minutos ---------- */
+.foco-duracao {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border: 1px dashed var(--borda);
+  border-radius: 14px;
+}
+.foco-duracao-campo {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+}
+.foco-duracao-campo input {
+  width: 84px;
+  min-height: 46px;
+  text-align: center;
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-size: 22px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--superficie);
+  color: var(--texto);
+}
+.foco-duracao-campo span {
+  font-size: 10.5px;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.foco-duracao-sep {
+  font-size: 26px;
+  color: var(--texto-suave);
+  margin-top: -18px;
+}
+.foco-dica {
+  max-width: 420px;
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.foco-concluido {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  padding: 14px 22px;
+  border-radius: 14px;
+  background: var(--st-corrigida-fundo);
+  color: var(--st-corrigida);
+  font-size: 14px;
+}
+.foco-concluido strong { font-size: 16px; }
+
+/* ---------- Painel de música ---------- */
+.foco-painel--musica h2 {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+.foco-abas {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.foco-aba {
+  border: 1px solid var(--borda-suave);
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.foco-aba:hover { color: var(--texto); }
+.foco-aba.ativa {
+  background: var(--azul-claro);
+  border-color: var(--azul);
+  color: var(--azul);
+}
+.foco-aba-painel {
+  display: grid;
+  gap: 12px;
+  padding-top: 4px;
+}
+.foco-aba-painel[hidden] { display: none; }
+
+.foco-local-topo {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--superficie-2);
+  border: 1px solid var(--borda-suave);
+}
+.foco-local-info { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.foco-local-info small { color: var(--texto-suave); font-size: 12px; }
+.foco-local-status {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+.foco-pulso {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--azul);
+  flex: none;
+  animation: focoPulso 1.6s ease-in-out infinite;
+}
+@keyframes focoPulso {
+  0%, 100% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+.foco-local-controles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.foco-btn-circular {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: var(--azul);
+  color: var(--azul-texto);
+  border-radius: 999px;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.foco-btn-circular:hover { transform: translateY(-1px); box-shadow: var(--sombra); }
+.foco-btn-redondo {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--borda);
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-size: 18px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.foco-btn-redondo:hover { border-color: var(--azul); color: var(--azul); transform: rotate(30deg); }
+.foco-trilhas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.foco-trilha {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  border: 1px solid var(--borda-suave);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--texto);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.foco-trilha small { color: var(--texto-suave); font-size: 11.5px; }
+.foco-trilha:hover { border-color: var(--azul); }
+.foco-trilha.selecionada {
+  border-color: var(--azul);
+  background: var(--azul-claro);
+}
+.foco-volume {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.foco-volume input { flex: 1; accent-color: var(--azul); }
+
+.foco-url-label {
+  font-size: 12px;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.foco-url-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--borda);
+  border-radius: 12px;
+  background: var(--superficie);
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 14px;
+}
+.foco-url-input:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 1px;
+  border-color: var(--azul);
+}
+.foco-yt-player iframe,
+.foco-spotify-player iframe {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  display: block;
+}
+.foco-yt-player iframe { aspect-ratio: 16 / 9; }
+.foco-musica-nota {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.foco-musica-nota code {
+  background: var(--superficie-3);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+/* ---------- Widget flutuante (todas as páginas) ---------- */
+.foco-widget {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px 9px 9px;
+  border: 1.5px solid var(--borda);
+  border-radius: 16px;
+  background: var(--superficie);
+  color: var(--texto);
+  box-shadow: var(--sombra-alta);
+  animation: focoWidgetEntra 0.35s cubic-bezier(0.34, 1.4, 0.4, 1);
+}
+@keyframes focoWidgetEntra {
+  from { opacity: 0; transform: translateY(24px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+.foco-widget-anel {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--azul-claro);
+  color: var(--azul);
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-size: 20px;
+}
+.foco-widget-infos {
+  display: grid;
+  line-height: 1.15;
+}
+.foco-widget-rotulo {
+  font-size: 10px;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+}
+.foco-widget-tempo {
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+.foco-widget-btn,
+.foco-widget-abrir {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--borda-suave);
+  border-radius: 10px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-size: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.foco-widget-btn:hover,
+.foco-widget-abrir:hover {
+  border-color: var(--azul);
+  color: var(--azul);
+  transform: translateY(-1px);
+}
+.foco-widget--concluido .foco-widget-anel {
+  background: var(--st-corrigida-fundo);
+  color: var(--st-corrigida);
+}
+.foco-widget--concluido .foco-widget-tempo { color: var(--st-corrigida); }
+.foco-widget[hidden] { display: none; }
+
+@media (max-width: 900px) {
+  .foco-app { grid-template-columns: 1fr; }
+  .foco-tempo { font-size: clamp(56px, 18vw, 88px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .foco-pulso,
+  .foco-widget { animation: none !important; }
+  .foco-barra i { transition: none; }
+  .foco-moldura { box-shadow: 0 0 0 3px var(--superficie), 0 0 0 5px var(--borda); }
+}

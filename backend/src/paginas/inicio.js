@@ -165,10 +165,35 @@ function filtrarBusca(lista, busca, campos) {
   );
 }
 
+/** Quantos dias faltam para o prazo (negativo = atrasada). */
+function diasParaPrazo(prazo) {
+  if (!prazo) return null;
+  const alvo = new Date(prazo);
+  if (Number.isNaN(alvo.getTime())) return null;
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  alvo.setHours(0, 0, 0, 0);
+  return Math.round((alvo - hoje) / 86400000);
+}
+
 function seloStatus(a) {
   const st = statusAtividade(a);
   const info = STATUS_INFO[st];
-  return `<span class="dash-status dash-status--${st}">${info.icone}${info.rotulo}</span>`;
+  let extra = '';
+  if (st === 'pendente' || st === 'atrasada') {
+    const d = diasParaPrazo(a.prazo);
+    if (d !== null) {
+      if (d === 0) extra = 'vence hoje';
+      else if (d === 1) extra = 'vence amanhã';
+      else if (d > 1) extra = `vence em ${d}d`;
+      else if (d === -1) extra = 'atrasada 1 dia';
+      else extra = `atrasada ${-d}d`;
+    }
+  }
+  const title = a.prazo ? ` title="Prazo: ${dataHoraBR(a.prazo)}"` : '';
+  return `<span class="dash-status dash-status--${st}"${title}>${info.icone}${info.rotulo}${
+    extra ? `<em class="dash-status-extra">${extra}</em>` : ''
+  }</span>`;
 }
 
 function linkTarefa(a, perfil) {
@@ -326,7 +351,7 @@ function plannerSemana(eventos, base = '/aluno') {
 
 /* ------------------------------ Modo foco ------------------------------ */
 
-/** Timer de estudos (Pomodoro) — funciona no navegador, sem recarregar a página. */
+/** Modo foco no painel: mostra o mesmo cronômetro global e abre a página dedicada. */
 function cartaoFoco() {
   return `
   <section class="dash-card dash-foco" data-foco aria-label="Modo foco">
@@ -335,19 +360,19 @@ function cartaoFoco() {
         <span class="dash-icone dash-icone--roxo">${ICO.clock}</span>
         <h2>Modo foco</h2>
       </div>
-      <span class="dash-contagem">25 min</span>
+      <span class="dash-contagem" data-foco-sessao>25 min</span>
     </header>
     <div class="dash-foco-corpo">
-      <div class="dash-foco-topo">
+      <a class="dash-foco-link" href="/foco" aria-label="Abrir o Modo foco">
         <span class="dash-foco-tempo" data-foco-tempo>25:00</span>
-        <span class="dash-foco-gato" aria-hidden="true">ฅ^•ﻌ•^ฅ</span>
-      </div>
-      <div class="dash-foco-barra" aria-hidden="true"><i data-foco-barra></i></div>
+        <span class="dash-foco-barra" aria-hidden="true"><i data-foco-barra></i></span>
+      </a>
       <div class="dash-foco-botoes">
-        <button type="button" class="dash-foco-btn principal" data-foco-acao="alternar">Começar</button>
+        <button type="button" class="dash-foco-btn principal" data-foco-acao="alternar" data-foco-alternar aria-pressed="false">Começar</button>
         <button type="button" class="dash-foco-btn" data-foco-acao="zerar">Zerar</button>
+        <a class="dash-foco-btn" href="/foco">Abrir</a>
       </div>
-      <small class="dash-foco-dica">Um ciclo de foco + pausa curtinha. Você consegue ♡</small>
+      <small class="dash-foco-dica">O cronômetro continua mesmo em outras páginas.</small>
     </div>
   </section>`;
 }
@@ -454,7 +479,7 @@ function paginaInicioAluno({ usuario, materias, atividades, eventos, aba = 'toda
     if (chave !== 'todas') params.set('aba', chave);
     if (q) params.set('q', q);
     const href = `${params.toString() ? `?${params.toString()}` : ''}#tarefas`;
-    return `<a class="dash-filtro ${aba === chave ? 'ativa' : ''}" href="${href}" role="tab" aria-selected="${aba === chave}">
+    return `<a class="dash-filtro ${aba === chave ? 'ativa' : ''}" href="${href}" role="tab" aria-selected="${aba === chave}"${aba === chave ? ' aria-current="page"' : ''}>
       ${rotulo}<span>${contagens[chave] || 0}</span>
     </a>`;
   }).join('');

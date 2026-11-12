@@ -63,7 +63,7 @@ function secaoTurmas(dados) {
         <label>Ano letivo</label></div>
       <div class="form-acoes"><button class="btn primario" type="submit">Criar turma</button></div>
     </form>
-    <p class="dica">O sistema gera automaticamente o <strong>código de matrícula</strong> que os alunos usam para se cadastrar.</p>
+    <p class="dica">O sistema gera automaticamente o <strong>código de matrícula</strong> da turma, caso algum aluno precise dele para se vincular ao se cadastrar.</p>
   </div>
   <div class="tabela-envolve">
     <table class="tabela">
@@ -279,7 +279,7 @@ function secaoAlunos(dados) {
   return `
   <div class="cartao-form aberto">
     <h3>Novo aluno (cadastro manual)</h3>
-    <p class="dica">Normalmente o aluno se cadastra sozinho com o código da turma. Use este formulário apenas para cadastros manuais.</p>
+    <p class="dica">Alunos normalmente se cadastram sozinhos pela tela de cadastro (sem código). Use este formulário apenas para cadastros manuais.</p>
     <form method="post" action="/admin/alunos" class="form-interno linha-tres">
       <div class="campo"><input type="text" id="nome-aluno" name="nome" placeholder=" " maxlength="120" required>
         <label for="nome-aluno">Nome completo</label></div>

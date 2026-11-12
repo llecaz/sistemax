@@ -50,6 +50,7 @@ const IC = {
   lofi: svg('<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>', 18),
   tarefas: svg('<rect x="3" y="4" width="18" height="16" rx="4"/><path d="m8 12 2.5 2.5L16 9"/>'),
   materias: svg('<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/>'),
+  foco: svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/><path d="M9 2h6"/>'),
   calendario: svg('<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>'),
   notificacoes: svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>'),
   engrenagem: svg('<circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>'),
@@ -120,6 +121,7 @@ function gaveta(usuario, ativa = '') {
     itens += itemGaveta('/aluno', 'Início', ativa === 'inicio', IC.casa);
     itens += itemGaveta('/aluno#tarefas', 'Minhas Tarefas', ativa === 'tarefas', IC.tarefas);
     itens += itemGaveta('/aluno#materias', 'Matérias', ativa === 'materias', IC.materias);
+    itens += itemGaveta('/foco', 'Modo foco', ativa === 'foco', IC.foco);
     itens += itemGaveta('/aluno/calendario', 'Calendário', ativa === 'calendario', IC.calendario);
     itens += itemGaveta('/aluno/notificacoes', 'Notificações', ativa === 'notificacoes', IC.notificacoes, '', true);
     itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
@@ -127,11 +129,13 @@ function gaveta(usuario, ativa = '') {
     itens += itemGaveta('/professor', 'Início', ativa === 'inicio', IC.casa);
     itens += itemGaveta('/professor#correcoes', 'Correções', ativa === 'correcoes', IC.tarefas);
     itens += itemGaveta('/professor#materias', 'Matérias', ativa === 'materias', IC.materias);
+    itens += itemGaveta('/foco', 'Modo foco', ativa === 'foco', IC.foco);
     itens += itemGaveta('/professor/calendario', 'Calendário', ativa === 'calendario', IC.calendario);
     itens += itemGaveta('/professor/notificacoes', 'Notificações', ativa === 'notificacoes', IC.notificacoes, '', true);
     itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   } else {
     itens += itemGaveta('/admin', 'Painel administrativo', ativa === 'admin', IC.casa);
+    itens += itemGaveta('/foco', 'Modo foco', ativa === 'foco', IC.foco);
     itens += itemGaveta('/admin/calendario', 'Calendário', ativa === 'calendario', IC.calendario);
     itens += itemGaveta('/configuracoes', 'Configurações', ativa === 'config', IC.engrenagem);
   }
@@ -228,6 +232,8 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
   const lofiAtivo = Boolean(sessao.lofi != null ? sessao.lofi : (usuario && usuario.lofi));
   // O CSS do Lofi Mode é sempre carregado (o visual reage a [data-lofi]).
   const cssLofi = `<link rel="stylesheet" href="/lofi.css${versaoAsset('lofi.css')}">`;
+  // O Modo foco sempre acompanha o usuário: página dedicada + widget flutuante.
+  const cssFoco = `<link rel="stylesheet" href="/foco.css${versaoAsset('foco.css')}">`;
   // O painel inicial e as configurações usam classes próprias no body.
   const classeCorpo = /\bini-app\b/.test(corpo)
     ? ' class="pagina-inicio"'
@@ -247,6 +253,7 @@ function pagina({ titulo, usuario, corpo, req, ativa = '' }) {
           ${decoracao('nuvia-cat-peeking', { pasta: 'cats', tamanho: 82, carregamento: 'eager' })}
         </aside>`
       : '';
+  const corTema = tema && tema.modo === 'claro' ? '#f7eef7' : '#141127';
   return `<!DOCTYPE html>
 <html lang="pt-BR" data-tema="${tema.id}" data-tema-modo="${tema.modo}" data-tema-salvo="${tema.id}" data-lofi="${lofiAtivo ? 'on' : 'off'}">
 <head>
@@ -262,10 +269,11 @@ ${scriptTemas()}
 <link rel="stylesheet" href="/decoracoes.css${versaoAsset('decoracoes.css')}">
 <link rel="stylesheet" href="/nuvia.css${versaoAsset('nuvia.css')}">
 ${cssLofi}
+${cssFoco}
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="theme-color" content="#7b5ce6">
+<meta name="theme-color" content="${corTema}">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -280,6 +288,16 @@ ${corpo}
 </main>
 ${semDecoracao ? '' : decoracaoTema()}
 ${companheiro}
+<div class="foco-widget" id="foco-widget" role="status" aria-label="Modo foco em andamento" hidden>
+  <span class="foco-widget-anel" aria-hidden="true">◷</span>
+  <span class="foco-widget-infos">
+    <span class="foco-widget-rotulo">modo foco</span>
+    <strong class="foco-widget-tempo" data-foco-tempo>25:00</strong>
+  </span>
+  <button class="foco-widget-btn" type="button" data-foco-acao="alternar" aria-pressed="false" aria-label="Pausar ou retomar o cronômetro">⏸</button>
+  <a class="foco-widget-abrir" href="/foco" aria-label="Abrir o Modo foco">↗</a>
+</div>
+<script src="/foco-global.js${versaoAsset('foco-global.js')}" defer></script>
 <script src="/app.js${versaoAsset('app.js')}"></script>
 <script src="/pwa.js${versaoAsset('pwa.js')}" defer></script>
 </body>

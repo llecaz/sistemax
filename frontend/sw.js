@@ -2,7 +2,7 @@
    - Páginas (navegação): rede primeiro; se falhar, mostra /offline.html.
    - Arquivos estáticos: cache primeiro, atualizando em segundo plano.
    - Nunca guarda HTML autenticado, uploads, fotos ou respostas de API. */
-const VERSAO = 'nuvia-v2';
+const VERSAO = 'nuvia-v6';
 const CACHE_ESTATICOS = `${VERSAO}-estaticos`;
 const CACHE_OFFLINE = `${VERSAO}-offline`;
 
@@ -15,6 +15,9 @@ const ESTATICOS = [
   '/login-nuvia.css',
   '/app.js',
   '/lofi.js',
+  '/calendario-modal.js',
+  '/foco.css',
+  '/foco-global.js',
   '/pwa.js',
   '/favicon.png',
   '/img/cat-icon.png',

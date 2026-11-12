@@ -12,7 +12,7 @@ const SVG_EYE_OFF = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.3 3
 
 const SVG_PERSON = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4.2 4.2 0 1 0 0-8.4A4.2 4.2 0 0 0 12 12Zm0 2c-4.1 0-7.4 2.3-7.4 5.1 0 .5.4.9.9.9h13c.5 0 .9-.4.9-.9 0-2.8-3.3-5.1-7.4-5.1Z"/></svg>`;
 
-const SVG_CODE = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.4 6.6a1 1 0 0 1 1.4 1.4L7.9 11l2.9 3a1 1 0 1 1-1.4 1.4l-3.6-3.7a1 1 0 0 1 0-1.4l3.6-3.7Zm5.2 0a1 1 0 0 0-1.4 1.4L16.1 11l-2.9 3a1 1 0 1 0 1.4 1.4l3.6-3.7a1 1 0 0 0 0-1.4l-3.6-3.7Z"/></svg>`;
+const SVG_BOOK = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5A2.5 2.5 0 0 1 8.5 2H20v15.5H8.7a.8.8 0 0 0-.7.5L6 20.6V4.5Zm2 1.5v11a.8.8 0 0 0 .6.9c1-.4 2.3-.6 5.4-.6H18V5h-9a.5.5 0 0 0-.5.5V6Z"/></svg>`;
 
 const SVG_GOOGLE = `<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.3 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>`;
 
@@ -58,11 +58,12 @@ function demoCards() {
     </div>`;
 }
 
-const ICONES = { email: SVG_EMAIL, senha: SVG_LOCK, nome: SVG_PERSON, codigo: SVG_CODE, resposta: SVG_LOCK };
+const ICONES = { email: SVG_EMAIL, senha: SVG_LOCK, nome: SVG_PERSON, resposta: SVG_LOCK, turma: SVG_BOOK };
 
 /** Campo com rótulo flutuante, ícone e botão de mostrar/ocultar senha. */
-function campo(id, tipo, rotulo, extra = '', placeholder = ' ') {
-  const icone = ICONES[id] || '';
+function campo(id, tipo, rotulo, extra = '', placeholder = ' ', nome) {
+  const name = nome || id;
+  const icone = ICONES[nome || id] || '';
   const ehSenha = tipo === 'password';
   const botaoOlho = ehSenha
     ? `<button class="nv-eye" type="button" data-toggle-password="${id}" aria-label="Mostrar senha" aria-pressed="false">
@@ -73,9 +74,21 @@ function campo(id, tipo, rotulo, extra = '', placeholder = ' ') {
   return `
     <div class="nv-field">
       <span class="nv-field-icon" aria-hidden="true">${icone}</span>
-      <input type="${tipo}" id="${id}" name="${id}" placeholder=" " ${extra} required>
+      <input type="${tipo}" id="${id}" name="${name}" placeholder=" " ${extra} required>
       <label for="${id}">${rotulo}</label>
       ${botaoOlho}
+    </div>`;
+}
+
+function campoSelect(id, name, rotulo, opcoes) {
+  return `
+    <div class="nv-field nv-field--select">
+      <span class="nv-field-icon" aria-hidden="true">${SVG_BOOK}</span>
+      <select id="${id}" name="${name}" required>
+        <option value="" selected></option>
+        ${opcoes}
+      </select>
+      <label for="${id}">${rotulo}</label>
     </div>`;
 }
 
@@ -136,22 +149,65 @@ function modoEntrar(req) {
 
 function modoCadastro(req, dados) {
   const email = dados && dados.email ? esc(dados.email) : '';
+  const tipo = dados && dados.tipo === 'professor' ? 'professor' : 'aluno';
+  const turmas = (dados && Array.isArray(dados.turmas) ? dados.turmas : [])
+    .map((t) => `<option value="${Number(t.id)}">${esc(t.nome)}</option>`)
+    .join('');
+  const disciplinas = dados && Array.isArray(dados.disciplinas) ? dados.disciplinas : [];
+  const dominio = dados && dados.dominio ? esc(dados.dominio) : 'escola.com';
+  const checkboxes = disciplinas
+    .map(
+      (d) => `<label class="nv-materia"><input type="checkbox" name="materias" value="${Number(d.id)}"><span>${esc(d.nome)}</span></label>`
+    )
+    .join('');
+
   return {
     titulo: 'Criar conta',
-    subtitulo: 'Alunos: use o código da turma fornecido pela escola.',
+    subtitulo: 'Escolha o seu perfil e crie a sua conta Nuvia',
     conteudo: `
       ${mensagensDoServidor(req)}
-      <form method="post" action="/cadastro" class="nv-form nv-form--cadastro">
-        ${campo('nome', 'text', 'Nome completo', 'autocomplete="name"', 'Como devemos chamar você?')}
-        ${campo('email', 'email', 'E-mail', `autocomplete="email" inputmode="email" value="${email}"`, 'voce@exemplo.com')}
-        ${campo('senha', 'password', 'Senha', 'minlength="6" autocomplete="new-password"', 'Crie uma senha com 6+ caracteres')}
-        ${campo('codigo', 'text', 'Código da turma', 'autocomplete="off" autocapitalize="characters"', 'Ex.: 9A2026')}
-        <button class="nv-submit" type="submit">
-          <span class="nv-submit-paw" aria-hidden="true">${decoracao('nuvia-paw-print-white', { pasta: 'accessories', tamanho: 21 })}</span>
-          <span>Criar minha conta</span>
-          <span class="nv-submit-arrow" aria-hidden="true">↗</span>
-        </button>
-      </form>
+      <div class="nv-tabs">
+        <input class="nv-tab-radio" type="radio" name="tipo-conta" id="tab-aluno"${tipo === 'aluno' ? ' checked' : ''}>
+        <input class="nv-tab-radio" type="radio" name="tipo-conta" id="tab-professor"${tipo === 'professor' ? ' checked' : ''}>
+        <div class="nv-tab-labels" role="tablist" aria-label="Tipo de conta">
+          <label class="nv-tab nv-tab--aluno" for="tab-aluno" role="tab">Aluno</label>
+          <label class="nv-tab nv-tab--professor" for="tab-professor" role="tab">Professor</label>
+        </div>
+
+        <form method="post" action="/cadastro/aluno" class="nv-form nv-form--cadastro nv-form--aluno">
+          <p class="nv-cadastro-legenda">Crie sua conta de aluno com o e-mail da escola. Depois de confirmar o e-mail, você pede o código da turma escolhida.</p>
+          ${campo('aluno-nome', 'text', 'Nome completo', 'autocomplete="name"', 'Como devemos chamar você?', 'nome')}
+          ${campo('aluno-email', 'email', 'E-mail institucional da escola', `autocomplete="email" inputmode="email" value="${email}"`, `nome@${dominio}`, 'email')}
+          <p class="nv-campo-dica">Use o seu e-mail da escola, como <strong>nome@${dominio}</strong>. É para lá que enviamos a confirmação e o código da turma.</p>
+          ${campo('aluno-senha', 'password', 'Senha', 'minlength="6" autocomplete="new-password"', 'Crie uma senha com 6+ caracteres', 'senha')}
+          ${campo('aluno-confirmacao', 'password', 'Confirmar senha', 'minlength="6" autocomplete="new-password"', 'Repita a senha', 'confirmacao')}
+          ${campoSelect('aluno-turma', 'turma', 'Turma que você quer entrar', turmas)}
+          <button class="nv-submit" type="submit">
+            <span class="nv-submit-paw" aria-hidden="true">${decoracao('nuvia-paw-print-white', { pasta: 'accessories', tamanho: 21 })}</span>
+            <span>Criar minha conta de aluno</span>
+            <span class="nv-submit-arrow" aria-hidden="true">↗</span>
+          </button>
+        </form>
+
+        <form method="post" action="/cadastro/professor" class="nv-form nv-form--cadastro nv-form--professor">
+          <p class="nv-cadastro-legenda">Crie sua conta de professor e escolha as matérias que você leciona.</p>
+          ${campo('professor-nome', 'text', 'Nome completo', 'autocomplete="name"', 'Como devemos chamar você?', 'nome')}
+          ${campo('professor-email', 'email', 'E-mail', `autocomplete="email" inputmode="email" value="${email}"`, 'voce@exemplo.com', 'email')}
+          ${campo('professor-senha', 'password', 'Senha', 'minlength="6" autocomplete="new-password"', 'Crie uma senha com 6+ caracteres', 'senha')}
+          ${campo('professor-confirmacao', 'password', 'Confirmar senha', 'minlength="6" autocomplete="new-password"', 'Repita a senha', 'confirmacao')}
+          <fieldset class="nv-materias">
+            <legend>Matérias que você leciona <small>(escolha pelo menos uma)</small></legend>
+            <div class="nv-materias-lista">
+              ${checkboxes}
+            </div>
+          </fieldset>
+          <button class="nv-submit" type="submit">
+            <span class="nv-submit-paw" aria-hidden="true">${decoracao('nuvia-paw-print-white', { pasta: 'accessories', tamanho: 21 })}</span>
+            <span>Criar minha conta de professor</span>
+            <span class="nv-submit-arrow" aria-hidden="true">↗</span>
+          </button>
+        </form>
+      </div>
       <p class="nv-signup">Já tem uma conta? <a href="/entrar">Entrar</a></p>`,
   };
 }
@@ -232,9 +288,14 @@ function cenaLogin() {
 }
 
 function telaLogin({ modo, dados, req }) {
-  let tela = modoEntrar(req);
+  // O modo decide QUAL tela é montada — apenas ela consome o flash da sessão
+  // (cada função de modo chama mensagensDoServidor, que apaga o flash).
+  // Antes, `modoEntrar` era sempre executado e consumia o flash antes das
+  // outras telas, fazendo as mensagens sumirem no cadastro e na recuperação.
+  let tela;
   if (modo === 'cadastro') tela = modoCadastro(req, dados);
-  if (modo === 'recuperar') tela = modoRecuperar(req, dados);
+  else if (modo === 'recuperar') tela = modoRecuperar(req, dados);
+  else tela = modoEntrar(req);
 
   const tituloPagina =
     modo === 'cadastro' ? 'Criar conta · Nuvia' : modo === 'recuperar' ? 'Recuperar senha · Nuvia' : 'Entrar · Nuvia';

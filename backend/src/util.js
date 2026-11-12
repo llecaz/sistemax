@@ -125,6 +125,32 @@ function dominioLink(valor) {
   }
 }
 
+/** Código de acesso à turma: 8 caracteres sem ambíguos (sem I, O, 0, 1). */
+function gerarCodigoAcesso() {
+  const alfabeto = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let codigo = '';
+  for (let i = 0; i < 8; i += 1) {
+    codigo += alfabeto[crypto.randomInt(0, alfabeto.length)];
+  }
+  return codigo;
+}
+
+/** Token de confirmação de e-mail: valor em claro para o link + hash para guardar. */
+function gerarTokenVerificacao() {
+  const raw = crypto.randomBytes(32).toString('hex');
+  const hash = crypto.createHash('sha256').update(raw).digest('hex');
+  return { raw, hash };
+}
+
+function hashToken(raw) {
+  return crypto.createHash('sha256').update(String(raw || '')).digest('hex');
+}
+
+/** Normaliza o código digitado pelo aluno (maiúsculas, sem espaços/traços). */
+function normalizarCodigoAcesso(valor) {
+  return String(valor || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
 module.exports = {
   esc,
   dataBR,
@@ -133,6 +159,10 @@ module.exports = {
   paraInputDataHora,
   gerarCodigoTurma,
   nomeArquivoUnico,
+  gerarCodigoAcesso,
+  gerarTokenVerificacao,
+  hashToken,
+  normalizarCodigoAcesso,
   iniciais,
   corDe,
   tamanhoLegivel,

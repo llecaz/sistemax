@@ -118,6 +118,7 @@ app.use(
 
 /* ---------- Rotas ---------- */
 app.use('/', require('./rotas/authRotas'));
+app.use('/foco', require('./rotas/focoRotas'));
 app.use('/aluno', require('./rotas/alunoRotas'));
 app.use('/professor', require('./rotas/professorRotas'));
 app.use('/admin', require('./rotas/adminRotas'));

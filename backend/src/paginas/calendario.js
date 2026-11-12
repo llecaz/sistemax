@@ -67,6 +67,85 @@ function linkDoEvento(ev, usuario) {
   return null; // admin: o calendário é só de acompanhamento
 }
 
+const TIPOS_ROTULO = {
+  tarefa: 'Tarefa/Quiz',
+  trabalho: 'Entrega',
+  avaliacao: 'Prova',
+  projeto: 'Projeto',
+  evento: 'Evento',
+};
+
+/** Serializa um evento para o modal do dia (blocos prontos com dia/hora, já no fuso do projeto). */
+function eventoParaModal(ev, usuario) {
+  const perfil = usuario && usuario.tipo;
+  const d = new Date(ev.prazo);
+  if (Number.isNaN(d.getTime())) return null;
+  const ehTrabalho = (ev.tipo || 'trabalho') === 'trabalho';
+  const base = {
+    id: ev.id,
+    tipo: ev.tipo || 'trabalho',
+    tipoRotulo: TIPOS_ROTULO[ev.tipo] || TIPOS.trabalho.rotulo,
+    titulo: ev.titulo || '',
+    descricao: ev.descricao || '',
+    materia: ev.materia || '',
+    turma: ev.turma || null,
+    diaSemana: DIAS_SEMANA_LONGO[d.getDay()],
+    diaNumero: d.getDate(),
+    mesNome: MESES[d.getMonth()],
+    ano: d.getFullYear(),
+    hora: horaDe(ev.prazo),
+    href: linkDoEvento(ev, usuario),
+    hrefRotulo: perfil === 'aluno' ? 'Ver e entregar' : perfil === 'professor' ? 'Abrir correção' : null,
+  };
+  if (perfil === 'aluno') {
+    const prazoPassou = d.getTime() < Date.now();
+    base.situacao = ev.entrega_id
+      ? ev.nota != null
+        ? `Corrigida · nota ${ev.nota}`
+        : 'Entregue'
+      : prazoPassou
+        ? 'Atrasada'
+        : 'Pendente';
+    base.entregou = Boolean(ev.entrega_id);
+    base.nota = ev.nota != null ? Number(ev.nota) : null;
+  } else if (perfil === 'professor') {
+    base.totalEntregas = Number(ev.total_entregas || 0);
+    base.corrigidas = Number(ev.corrigidas || 0);
+    base.alunosTurma = Number(ev.alunos_turma || 0);
+  } else if (perfil === 'admin') {
+    base.totalEntregas = Number(ev.total_entregas || 0);
+  }
+  return base;
+}
+
+/** Dados do mês para o modal (apenas eventos com prazo). Escape de "<" para uso seguro em <script>. */
+function dadosModalEventos(eventos, usuario) {
+  const lista = eventos
+    .map((ev) => eventoParaModal(ev, usuario))
+    .filter(Boolean);
+  return JSON.stringify(lista).replace(/</g, '\\u003c');
+}
+
+/** Janela com os detalhes do dia (dia, data, hora, tipo, descrição e situação). */
+function modalDia() {
+  return `
+  <dialog class="cal-dia-modal" id="cal-dia-modal" aria-labelledby="cal-dia-modal-titulo" aria-describedby="cal-modal-contador">
+    <div class="cal-modal-interior">
+      <button type="button" class="cal-modal-fechar" id="cal-modal-fechar" aria-label="Fechar">✕</button>
+      <header class="cal-modal-topo">
+        <span class="cal-modal-selo" id="cal-modal-selo">Segunda-feira</span>
+        <h2 id="cal-dia-modal-titulo">1 de janeiro de 2026</h2>
+        <p class="cal-modal-contador" id="cal-modal-contador">1 atividade neste dia</p>
+      </header>
+      <div class="cal-modal-eventos" id="cal-modal-eventos"></div>
+      <footer class="cal-modal-rodape">
+        <button type="button" class="btn primario" id="cal-modal-filtrar">Ver só este dia na lista</button>
+        <button type="button" class="btn secundario" id="cal-modal-fechar-2">Fechar</button>
+      </footer>
+    </div>
+  </dialog>`;
+}
+
 /** Celula de um evento dentro da grade. */
 function pilulaEvento(ev, usuario) {
   const t = tipoDe(ev);
@@ -103,7 +182,7 @@ function gradeMes({ ano, mes, porDia, usuario }) {
     const visiveis = lista.slice(0, 3);
     const resto = lista.length - visiveis.length;
     const filtroDia = lista.length
-      ? `<button type="button" class="cal-num cal-num-botao" data-filtro-dia="${k}" aria-pressed="false" aria-label="Filtrar atividades de ${d}/${mes + 1}/${ano}">${d}</button>`
+      ? `<button type="button" class="cal-num cal-num-botao" data-abrir-dia="${k}" aria-label="Ver detalhes de ${lista.length} ${lista.length === 1 ? 'atividade' : 'atividades'} de ${d}/${mes + 1}/${ano}">${d}</button>`
       : `<span class="cal-num">${d}</span>`;
     celulas += `
     <div class="cal-dia ${hoje ? 'hoje' : ''} ${lista.length ? 'com-eventos' : ''}" data-dia="${k}" data-eventos="${lista.length}">
@@ -544,7 +623,11 @@ function paginaCalendarioLofi({ usuario, eventos, ano, mes, materias = [], tema 
 
     ${lateral}
   </div>
-  <script src="/lofi.js"></script>`;
+
+  ${modalDia()}
+  <script type="application/json" id="cal-eventos-json">${dadosModalEventos(eventos, usuario)}</script>
+  <script src="/lofi.js"></script>
+  <script src="/calendario-modal.js" defer></script>`;
 }
 
 /** Item "Próximas tarefas" no visual clássico. */
@@ -729,16 +812,22 @@ function paginaCalendarioClassico({ usuario, eventos, ano, mes, materias = [], t
       <span>Filtrado por <strong id="filtro-dia-texto"></strong></span>
       <button type="button" class="cal-filtro-limpar" id="filtro-dia-limpar">Mostrar todas ✕</button>
     </div>
-  </section>`;
+  </section>
+
+  ${modalDia()}
+  <script type="application/json" id="cal-eventos-json">${dadosModalEventos(eventos, usuario)}</script>
+  <script src="/calendario-modal.js" defer></script>`;
 }
 
-/** Escolhe o visual do calendário conforme o Lofi Mode da conta. */
-function paginaCalendario({ usuario, eventos, ano, mes, materias = [], tema, lofi }) {
+/**
+ * O calendário é SEMPRE o visual clássico, fixo ao tema ativo — sem reações ao
+ * Lofi Mode (que antes escondia a barra lateral e trocava a identidade inteira
+ * da página, dando a sensação de "o tema mudar sozinho"). O visual novo fica
+ * de fora até nova decisão — o calendário não muda mais por conta própria.
+ */
+function paginaCalendario({ usuario, eventos, ano, mes, materias = [], tema }) {
   const temaId = tema || temaOuPadrao(usuario && usuario.tema);
-  const lofiAtivo = lofi != null ? Boolean(lofi) : Boolean(usuario && usuario.lofi);
-  return lofiAtivo
-    ? paginaCalendarioLofi({ usuario, eventos, ano, mes, materias, tema: temaId })
-    : paginaCalendarioClassico({ usuario, eventos, ano, mes, materias, tema: temaId });
+  return paginaCalendarioClassico({ usuario, eventos, ano, mes, materias, tema: temaId });
 }
 
 module.exports = { paginaCalendario, chaveDia, MESES, TIPOS };

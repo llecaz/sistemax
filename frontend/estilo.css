@@ -1447,7 +1447,7 @@ body.tela-login {
   color: var(--azul);
   transform: scale(1.08);
 }
-.cal-num-botao[aria-pressed='true'] {
+.cal-dia.selecionado .cal-num-botao {
   background: var(--azul);
   color: var(--azul-texto);
 }
@@ -3611,6 +3611,13 @@ body.tela-login {
   color: var(--st-atrasada);
   background: var(--st-atrasada-fundo);
 }
+.dash-status-extra {
+  font-style: normal;
+  font-size: 10px;
+  opacity: 0.9;
+  border-left: 1px solid currentColor;
+  padding-left: 6px;
+}
 .dash-materias {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -4512,4 +4519,426 @@ body.tela-login {
 .cal-lista-item[hidden],
 .lofi-lista-item[hidden] {
   display: none;
+}
+
+/* ------------------- Entrar em uma turma (aluno sem turma) ------------------- */
+.sem-turma {
+  display: grid;
+  place-items: center;
+  padding: 40px 16px;
+}
+.sem-turma-card {
+  width: min(520px, 100%);
+  text-align: center;
+  padding: 34px 30px 26px;
+  border-radius: 16px;
+  background: var(--superficie);
+  box-shadow: var(--sombra);
+  color: var(--texto-suave);
+}
+.sem-turma-card h3 {
+  font-size: 19px;
+  color: var(--texto);
+  margin: 4px 0 8px;
+}
+.sem-turma-card p {
+  margin: 0 auto 14px;
+  max-width: 440px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.sem-turma-form {
+  display: grid;
+  gap: 8px;
+  margin: 0 auto;
+  max-width: 400px;
+}
+.sem-turma-label {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+.sem-turma-form select,
+.sem-turma-form input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--campo-fundo, rgba(127, 127, 127, 0.08));
+  color: var(--texto);
+  font-size: 14.5px;
+  font-family: inherit;
+}
+.sem-turma-form select:focus-visible,
+.sem-turma-form input:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 1px;
+}
+.sem-turma-divisor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px auto 12px;
+  max-width: 400px;
+  color: var(--texto-suave);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.sem-turma-divisor::before,
+.sem-turma-divisor::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--borda);
+}
+.sem-turma-dica {
+  margin-top: 14px !important;
+  font-size: 12px !important;
+  color: var(--texto-suave);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sem-turma-card .vazio-icone {
+    animation: semTurmaFlutua 3.2s ease-in-out infinite;
+  }
+  @keyframes semTurmaFlutua {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+}
+
+/* ---------- Polimento: feedback tátil e pressão nos elementos interativos ---------- */
+.dash-tarefa {
+  cursor: pointer;
+}
+.dash-tarefa:active {
+  transform: scale(0.985);
+}
+.dash-filtro:active {
+  transform: scale(0.96);
+}
+.btn {
+  transition: background 0.15s ease, box-shadow 0.15s ease, opacity 0.15s, transform 0.12s ease;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
+.card-materia {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card-materia:hover {
+  transform: translateY(-2px);
+}
+.card-materia:active {
+  transform: translateY(0) scale(0.98);
+}
+.dash-prox-item {
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.dash-prox-item:hover {
+  transform: translateX(3px);
+}
+
+/* ------------------- Janela do dia (calendário) ------------------- */
+.cal-dia-modal {
+  border: 0;
+  padding: 0;
+  width: min(560px, calc(100vw - 28px));
+  max-height: min(82vh, 720px);
+  border-radius: 18px;
+  background: var(--superficie);
+  color: var(--texto);
+  box-shadow: var(--sombra-alta);
+  overflow: hidden;
+}
+.cal-dia-modal::backdrop {
+  background: var(--sobreposicao);
+  backdrop-filter: blur(3px);
+}
+.cal-modal-interior {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+  padding: 26px 22px 18px;
+  gap: 14px;
+}
+.cal-modal-fechar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--borda-suave);
+  border-radius: 10px;
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.cal-modal-fechar:hover {
+  color: var(--texto);
+  border-color: var(--azul);
+  transform: rotate(90deg);
+}
+.cal-modal-topo {
+  display: grid;
+  gap: 2px;
+  padding-right: 44px;
+}
+.cal-modal-selo {
+  justify-self: start;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--azul-claro);
+  color: var(--azul);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.cal-modal-topo h2 {
+  font-size: clamp(22px, 4vw, 30px);
+  line-height: 1.1;
+  letter-spacing: -0.4px;
+}
+.cal-modal-contador {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.cal-modal-eventos {
+  display: grid;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+.cal-modal-evento {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--borda-suave);
+  border-left: 4px solid var(--azul);
+  border-radius: 14px;
+  background: var(--superficie-2);
+}
+.cal-modal-evento--tarefa { border-left-color: var(--tipo-tarefa); }
+.cal-modal-evento--trabalho { border-left-color: var(--tipo-entrega); }
+.cal-modal-evento--avaliacao { border-left-color: var(--tipo-prova); }
+.cal-modal-evento--projeto { border-left-color: var(--tipo-projeto); }
+.cal-modal-evento--evento { border-left-color: var(--tipo-evento); }
+.cal-modal-evento-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cal-modal-evento-titulo {
+  font-size: 15px;
+  flex: 1;
+  min-width: 0;
+}
+.cal-modal-evento-meta .cal-modal-evento-sub {
+  color: var(--texto-suave);
+  font-size: 12px;
+}
+.cal-modal-descricao {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.cal-modal-evento-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid var(--borda-suave);
+}
+.cal-modal-situacao {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--azul-claro);
+  color: var(--azul);
+}
+.cal-modal-situacao--pendente {
+  background: var(--st-pendente-fundo);
+  color: var(--st-pendente);
+}
+.cal-modal-situacao--atrasada {
+  background: var(--st-atrasada-fundo);
+  color: var(--st-atrasada);
+}
+.cal-modal-situacao--entregue {
+  background: var(--st-entregue-fundo);
+  color: var(--st-entregue);
+}
+.cal-modal-situacao--corrigida {
+  background: var(--st-corrigida-fundo);
+  color: var(--st-corrigida);
+}
+.cal-modal-link {
+  text-decoration: none;
+}
+.cal-modal-vazio {
+  color: var(--texto-suave);
+  font-size: 13px;
+  padding: 18px 4px;
+  text-align: center;
+}
+.cal-modal-rodape {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--borda-suave);
+  padding-top: 12px;
+}
+@media (max-width: 520px) {
+  .cal-modal-rodape {
+    flex-direction: column-reverse;
+  }
+  .cal-modal-rodape .btn {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cal-modal-fechar {
+    transition: none;
+  }
+  .cal-modal-fechar:hover {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cal-dia-modal[open] {
+    animation: calModalEntra 0.22s ease;
+  }
+  @keyframes calModalEntra {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+}
+
+/* ---------- Modo foco: link do cartão + transição suave entre páginas ---------- */
+.dash-foco-link {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  align-items: center;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.dash-foco-link:hover {
+  background: var(--superficie-2);
+}
+.dash-foco-link:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 2px;
+}
+.dash-foco-link:active {
+  transform: scale(0.97);
+}
+.dash-foco-link .dash-foco-barra {
+  display: block;
+  width: min(200px, 100%);
+  height: 6px;
+  border-radius: 99px;
+  background: var(--superficie-3);
+  overflow: hidden;
+}
+.dash-foco-link .dash-foco-barra i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--azul), #ff9ec4 130%);
+  transition: width 0.4s linear;
+}
+
+/* Transição leve e pequena entre páginas — sem @view-transition (ele causava tela preta em cargas lentas) */
+.conteudo {
+  animation: conteudoEntraSuave 0.28s ease;
+}
+@keyframes conteudoEntraSuave {
+  from { opacity: 0.72; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .conteudo {
+    animation: none;
+  }
+}
+
+/* ---------- Configurações: cards equilibrados + perfil alinhado ---------- */
+.grade-config {
+  align-items: stretch;
+}
+.cartao-config {
+  display: flex;
+  flex-direction: column;
+}
+.cartao-config > form:last-child {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--borda-suave);
+}
+.cartao-config > .lofi-linha:last-child {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--borda-suave);
+}
+.cartao-config h2 {
+  margin-top: 0;
+}
+.cartao-config > .subtitulo-config:first-of-type {
+  margin-top: 4px;
+}
+
+.lista-info > div {
+  align-items: baseline;
+  gap: 18px;
+}
+.lista-info dt {
+  flex: none;
+}
+.lista-info dd {
+  flex: 1 1 auto;
+}
+
+.perfil-topo {
+  flex-wrap: nowrap;
+}
+.foto-grande .avatar {
+  flex: none;
+}
+.perfil-acoes {
+  align-content: center;
+}
+
+@media (max-width: 560px) {
+  .perfil-topo {
+    flex-wrap: wrap;
+  }
 }

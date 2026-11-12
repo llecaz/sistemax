@@ -1271,269 +1271,33 @@ html[data-lofi='on'] body[data-pagina="calendario"] .mensagens {
   }
 }
 
-
 /* ==========================================================================
-   Configurações — mesmo visual lo-fi/dreamy do calendário
-   Só vale com o Lofi Mode ativo (html[data-lofi='on']), em qualquer modo.
+   Lofi Mode nas Configurações — sem interferir na interface
+   --------------------------------------------------------------------------
+   O Lofi Mode não troca o tema nem muda posições ou paleta da página:
+   mantém a aparência do modo ativo (Dark ou Normal) e acrescenta apenas
+   a atmosfera lofi — tipografia pixel nos títulos e um fundo quadriculado
+   bem sutil. Desativado, tudo volta ao visual do tema atual.
    ========================================================================== */
 
-html[data-lofi='on'] .cfg-selo {
-  display: inline-block;
-  margin-bottom: 5px;
-  padding: 2px 8px;
-  background: #f3bccb;
-  border: 2px solid #d98aa6;
-  border-radius: 6px;
-  color: var(--lf-on-pink);
-  font-family: 'Pixelify Sans', monospace;
-  font-size: 10px;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-}
-
+/* Fundo quadriculado bem discreto, sobre a cor de fundo do TEMA ativo (funciona nos dois modos) */
 html[data-lofi='on'] body.pagina-config {
-  background-color: var(--lf-bg);
-  background-image:
-    linear-gradient(var(--lf-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--lf-grid-line-2) 1px, transparent 1px);
-  background-size: 26px 26px;
-  color: var(--lf-ink);
-}
-html[data-lofi='on'] body.pagina-config .conteudo {
-  max-width: 1240px;
-  padding: 18px 16px 56px;
+  background-image: radial-gradient(circle, rgba(203, 150, 200, 0.14) 1.2px, transparent 1.3px);
+  background-size: 22px 22px;
 }
 
-/* Barra superior e gaveta no tom do calendário */
-html[data-lofi='on'] body.pagina-config .topo {
-  background: #2f2547;
-  border-bottom: 2px solid #52406f;
-  box-shadow: 0 3px 0 rgba(74, 58, 99, 0.22);
-}
-html[data-lofi='on'] body.pagina-config .marca {
-  color: #f8e8d4;
-  font-family: 'Pixelify Sans', monospace;
-  font-size: 19px;
-}
-html[data-lofi='on'] body.pagina-config .marca:hover {
-  background: #3b2f57;
-}
-html[data-lofi='on'] body.pagina-config .icone-botao {
-  color: #d9c9e8;
-}
-html[data-lofi='on'] body.pagina-config .icone-botao:hover {
-  background: #3b2f57;
-}
-html[data-lofi='on'] body.pagina-config .avatar-link:hover {
-  border-color: #cbb8ea;
-}
-html[data-lofi='on'] body.pagina-config .gaveta {
-  background: #2f2547;
-  color: #f3e6f5;
-}
-html[data-lofi='on'] body.pagina-config .gaveta .marca {
-  color: #f8e8d4;
-}
-html[data-lofi='on'] body.pagina-config .gaveta .marca:hover {
-  background: #3b2f57;
-}
-html[data-lofi='on'] body.pagina-config .gaveta-usuario {
-  border-color: #52406f;
-}
-html[data-lofi='on'] body.pagina-config .gaveta-usuario strong {
-  color: #f8e8d4;
-}
-html[data-lofi='on'] body.pagina-config .gaveta-usuario small {
-  color: #b9a6cf;
-}
-html[data-lofi='on'] body.pagina-config .gaveta-item {
-  color: #d9c9e8;
-}
-html[data-lofi='on'] body.pagina-config .gaveta-item:hover {
-  background: #3b2f57;
-  color: var(--lf-cream);
-}
-html[data-lofi='on'] body.pagina-config .gaveta-item.ativo {
-  background: #cbb8ea;
-  color: #2f2547;
-  font-weight: 700;
-  border-radius: 0 10px 10px 0;
-  margin-right: 10px;
-}
-html[data-lofi='on'] body.pagina-config .gaveta-rodape {
-  border-top-color: #52406f;
-}
-html[data-lofi='on'] body.pagina-config #btn-fechar {
-  color: #d9c9e8;
-}
-
-/* Paleta local — a página é sempre clara, mesmo no tema escuro */
-html[data-lofi='on'] .cfg-app {
-  --superficie: var(--lf-cream);
-  --superficie-2: var(--lf-cream-2);
-  --superficie-3: var(--lf-cream-3);
-  --texto: var(--lf-ink);
-  --texto-suave: var(--lf-ink-soft);
-  --borda: var(--lf-border);
-  --borda-suave: var(--lf-border-soft);
-  --azul: var(--lf-azul);
-  --azul-hover: var(--lf-azul-hover);
-  --azul-texto: #ffffff;
-  --azul-claro: var(--lf-azul-claro);
-  --vermelho: var(--lf-tarefa-ink);
-  --vermelho-fundo: var(--lf-tarefa-bg);
-  color: var(--texto);
-  font-family: 'Nunito', 'Roboto', sans-serif;
-}
+/* Títulos em Pixelify Sans (a assinatura do Lofi) — tamanho, cor e posição seguem o tema (sem mudança de layout) */
 html[data-lofi='on'] body.pagina-config .cfg-app h1,
 html[data-lofi='on'] body.pagina-config .cfg-app h2,
-html[data-lofi='on'] body.pagina-config .cfg-app h3 {
+html[data-lofi='on'] body.pagina-config .cfg-app h3,
+html[data-lofi='on'] body.pagina-config .cabecalho-secao h1 {
   font-family: 'Pixelify Sans', 'Courier New', monospace;
   font-weight: 600;
-  color: var(--texto);
+  letter-spacing: 0.2px;
 }
 
-/* Cabeçalho como o topo do calendário */
-html[data-lofi='on'] body.pagina-config .cabecalho-secao {
-  background: var(--lf-cream);
-  border: 2px solid var(--lf-border);
-  border-radius: 18px;
-  box-shadow: 0 4px 0 var(--lf-shadow);
-  padding: 18px 22px;
-  margin-bottom: 16px;
-  align-items: center;
-}
-html[data-lofi='on'] body.pagina-config .cabecalho-secao h1 {
-  font-size: clamp(28px, 3vw, 38px);
-  line-height: 1.05;
-  text-shadow: 2px 2px 0 var(--lf-text-shadow);
-}
-html[data-lofi='on'] body.pagina-config .cabecalho-secao .descricao {
-  color: var(--texto-suave);
-}
-
-/* Cartões */
-html[data-lofi='on'] body.pagina-config .grade-config {
-  gap: 16px;
-}
-html[data-lofi='on'] body.pagina-config .cartao-config {
-  background: var(--lf-cream);
-  border: 2px solid var(--lf-border);
-  border-radius: 16px;
-  box-shadow: 0 4px 0 var(--lf-shadow);
-  padding: 20px 22px;
-}
-html[data-lofi='on'] body.pagina-config .cartao-config h2 {
-  font-size: 19px;
-}
-html[data-lofi='on'] body.pagina-config .subtitulo-config {
-  border-top: 2px dashed var(--lf-dash);
-  font-size: 15px;
-}
-html[data-lofi='on'] body.pagina-config .descricao,
-html[data-lofi='on'] body.pagina-config .perfil-acoes small,
-html[data-lofi='on'] body.pagina-config .tema-descricao {
-  color: var(--texto-suave);
-}
-html[data-lofi='on'] body.pagina-config .foto-grande .avatar {
-  border: 3px solid #f3bccb;
-  box-shadow: 0 4px 0 var(--lf-shadow);
-}
-html[data-lofi='on'] body.pagina-config .lista-info > div {
-  border-bottom: 1px dashed var(--lf-dash);
-}
-html[data-lofi='on'] body.pagina-config .lista-info dd {
-  color: var(--texto);
-}
-
-/* Formulários */
-html[data-lofi='on'] body.pagina-config .campo input,
-html[data-lofi='on'] body.pagina-config .campo textarea,
-html[data-lofi='on'] body.pagina-config .campo select {
-  background: var(--lf-campo);
-  border: 2px solid var(--lf-border-lilac);
-  border-radius: 8px;
-}
-html[data-lofi='on'] body.pagina-config .campo input:focus,
-html[data-lofi='on'] body.pagina-config .campo textarea:focus,
-html[data-lofi='on'] body.pagina-config .campo select:focus {
-  border-color: var(--azul);
-  box-shadow: 0 0 0 2px var(--lf-azul-claro);
-}
-html[data-lofi='on'] body.pagina-config .btn {
-  border-radius: 9px;
-  font-family: 'Pixelify Sans', monospace;
-  font-weight: 600;
-  font-size: 13px;
-}
-html[data-lofi='on'] body.pagina-config .btn.primario {
-  background: #f3bccb;
-  border: 2px solid #d98aa6;
-  box-shadow: 0 3px 0 #d98aa6;
-  color: var(--lf-on-pink);
-  padding: 7px 16px;
-}
-html[data-lofi='on'] body.pagina-config .btn.primario:hover {
-  background: var(--lf-btn-hover);
-  box-shadow: 0 3px 0 #d98aa6;
-}
-html[data-lofi='on'] body.pagina-config .btn.secundario {
-  background: var(--lf-cream-2);
-  border: 2px solid var(--lf-border-lilac);
-  box-shadow: 0 3px 0 var(--lf-border-lilac);
-  color: var(--lf-azul-hover);
-  padding: 7px 16px;
-}
-html[data-lofi='on'] body.pagina-config .btn.secundario:hover {
-  background: var(--lf-bg);
-}
-html[data-lofi='on'] body.pagina-config .btn.texto,
-html[data-lofi='on'] body.pagina-config .btn.text {
-  color: var(--lf-azul);
-}
-html[data-lofi='on'] body.pagina-config .btn.texto:hover,
-html[data-lofi='on'] body.pagina-config .btn.text:hover {
-  background: var(--lf-azul-claro);
-}
-
-/* Galeria de temas */
-html[data-lofi='on'] body.pagina-config .tema-card {
-  background: var(--lf-cream-2);
-  border: 2px solid var(--lf-border-soft);
-  border-radius: 12px;
-  box-shadow: 0 3px 0 var(--lf-shadow);
-}
-html[data-lofi='on'] body.pagina-config .tema-card:hover {
-  border-color: #d98aa6;
-  box-shadow: 0 5px 0 var(--lf-shadow);
-}
-html[data-lofi='on'] body.pagina-config .tema-card.selecionado {
-  border-color: #d98aa6;
-  box-shadow: 0 0 0 3px var(--lf-hoje-anel), 0 3px 0 #d98aa6;
-}
-html[data-lofi='on'] body.pagina-config .tema-card-topo strong {
-  font-family: 'Pixelify Sans', monospace;
-  font-size: 14px;
-}
-html[data-lofi='on'] body.pagina-config .selo-tema {
-  background: var(--lf-azul);
-  color: var(--lf-cream);
-  font-family: 'Pixelify Sans', monospace;
-  font-size: 10px;
-}
-html[data-lofi='on'] body.pagina-config .selo-padrao {
-  background: var(--lf-cream-3);
-  color: var(--lf-ink-soft);
-}
-
-@media (max-width: 760px) {
-  html[data-lofi='on'] body.pagina-config .conteudo {
-    padding: 12px 10px 40px;
-  }
-  html[data-lofi='on'] body.pagina-config .cabecalho-secao {
-    padding: 16px;
-  }
-  html[data-lofi='on'] body.pagina-config .cartao-config {
-    padding: 16px;
+@media (prefers-reduced-motion: reduce) {
+  html[data-lofi='on'] body.pagina-config {
+    background-image: none;
   }
 }
